@@ -1,0 +1,2 @@
+Time taken for http download from mantidwebserver over internet for a small file of size 1KB is 0.06 seconds
+Time taken for http download from mantidwebserver over internet for a small file of size 1KB is 0.08 seconds
