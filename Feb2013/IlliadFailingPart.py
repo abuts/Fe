@@ -1,0 +1,13 @@
+LoadRaw(Filename=r'D:\Data\Fe\Feb2013\EI400\MAP15181.raw',OutputWorkspace='MAP15181.raw')
+GetEi(InputWorkspace='MAP15181.raw',Monitor1Spec='41474',Monitor2Spec='41475',EnergyEstimate='400')
+ChangeBinOffset(InputWorkspace='MAP15181.raw',OutputWorkspace='15181.spe',Offset='-1183.62979333')
+MoveInstrumentComponent(Workspace='15181.spe',ComponentName='undulator',Z='-1.6950000000000001',RelativePosition='0')
+LoadDetectorInfo(Workspace='15181.spe',DataFilename=r'C:\Users\wkc26243\Documents\work\Libisis\InstrumentFiles\maps\detector_095_libisis.nxs',RelocateDets='1')
+AddSampleLog(Workspace='15181.spe',LogName='DirectInelasticReductionNormalisedBy',LogText='monitor-1')
+ConvertUnits(InputWorkspace='15181.spe',OutputWorkspace='15181.spe',Target='DeltaE',EMode='Direct')
+#
+DetectorEfficiencyCor(InputWorkspace='15181.spe',OutputWorkspace='15181.spe')
+#
+CorrectKiKf(InputWorkspace='15181.spe',OutputWorkspace='15181.spe')
+Rebin(InputWorkspace='15181.spe',OutputWorkspace='15181.spe',Params='-71,2,381',PreserveEvents='0')
+GroupDetectors(InputWorkspace='15181.spe',OutputWorkspace='15181.spe',MapFile=r'C:\Users\wkc26243\Documents\work\Libisis\InstrumentFiles\maps\4to1_mid_lowang.map',Behaviour='Average')
