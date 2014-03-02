@@ -74,11 +74,8 @@ classdef parWithCorrections
             end
         end
         function valid = evalid(self,energy,s)
-            if energy < self.emax(s) && energy>self.emin(s)
-                valid = true;
-            else
-                valid = false;
-            end
+            is_valid = @(x)(x < self.emax(s) & x>self.emin(s));
+            valid = arrayfun(is_valid,energy);
         end
         %
         function xx=getXonE(self,erange,side)
