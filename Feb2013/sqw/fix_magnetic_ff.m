@@ -32,7 +32,7 @@ J2_ff = @(x2)(((A2*exp(-a2*x2)+B2*exp(-b2*x2)+C2*exp(-c2*x2)+D2).*x2));
 k0 = u0(1:3)';%/(2*pi);
 ki = (direction/sqrt(sum(direction.^2)));%/(2*pi);
 
-q2_atCut=@(x)(sum(((k0+ki*x).*rlu2u(1:3)/(2*pi)).^2));
+q2_atCut=@(x)(sum(((k0+ki*x).*rlu2u(1:3)/(4*pi)).^2));
 
 qt=arrayfun(q2_atCut,q);
 if nargin<7
