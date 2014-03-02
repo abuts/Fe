@@ -8,7 +8,7 @@ function [swPar,qs,es,q_err,IonBr1,IonBr2] = fit_1SpinWave(datasource,bragg,swPa
 % IonBr1,IonBr2 -- the IXTdataset_1d objects of the intensity along 2 branches of the
 %                  wave.
 free_params = [1,1,1,1,1];
-if swPar.cut_at_e_points
+if swPar.fix_x_coordinate
     free_params = [1,0,1,1,1];
 end
 
@@ -89,8 +89,11 @@ if numel(fit1.I)>5
     IL    = IL(correct);
     ILERR = ILERR(correct);
     %
-    
-    parR = fit_parabola(qs,es,q_err);
+    if swPar.fix_x_coordinate
+        parR = swPar.p;
+    else
+        parR = fit_parabola(qs,es,q_err);
+    end
     disp([' SW at', cut_id,' fitting parameters:']);
     disp(parR)
     
