@@ -116,9 +116,9 @@ classdef parWithCorrections
         end
         %
         function e_max = emax(self,s)
-            if s<1
+            if (s+1)<1.e-6
                 e_max = max(self.ref_par_Y(1),self.ref_par_Y(2));
-            elseif s>0
+            elseif abs(s-1)<1.e-6
                 e_max = max(self.ref_par_Y(4),self.ref_par_Y(5));
             else
                 e_max = min(max(self.ref_par_Y(1),self.ref_par_Y(2)),max(self.ref_par_Y(4),self.ref_par_Y(5)));
