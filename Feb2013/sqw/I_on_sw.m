@@ -37,19 +37,12 @@ fit_rez.direction = u;
 
 
 if parWithCorr.cut_at_e_points
-    e_sw = parWithCorr.energies;
-    xx   = parWithCorr.getXonE(e_sw,s);
-    if ~parWithCorr.evalid(max(e_sw),s)
-        fit_rez.xx=NaN;
-        fit_rez.xx_err=NaN;
-        fit_rez.en=NaN;
-        fit_rez.I = NaN;
-        fit_rez.dI = NaN;
-        fit_rez.pic_loc=[];       
-        fit_rez.RealI_max=NaN;
-        return
-    end
-   pic_loc=pic_spread();        
+    e_sw  = parWithCorr.energies;
+    xx    = parWithCorr.getXonE(e_sw,s);
+    valid = parWithCorr.evalid(e_sw,s);
+    e_sw  =e_sw(valid);
+    xx  = xx(valid);
+    pic_loc=pic_spread();        
 else
     e_min=parWithCorr.emin(s);
     e_max=parWithCorr.emax(s);
