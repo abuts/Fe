@@ -106,9 +106,9 @@ classdef parWithCorrections
      
         %
         function e_min = emin(self,s)
-            if s<1
+            if (s+1)<1.e-6
                 e_min = min(self.ref_par_Y(1),self.ref_par_Y(2));
-            elseif s>1
+            elseif abs(s-1)<1.e-6
                 e_min = min(self.ref_par_Y(4),self.ref_par_Y(5));
             else
                 e_min = max(min(self.ref_par_Y(1),self.ref_par_Y(2)),min(self.ref_par_Y(4),self.ref_par_Y(5)));
