@@ -149,8 +149,8 @@ disp([' SW at', cut_id,' reference points \n'])
 disp(ref_points)
 
 % here we fit magnetic form factor.
-[IonBr1,q01,magff1,avrg_MFF1,I12plot,dI12plot] =build_IonQ(fit1,ylimit);
-[IonBr2,q02,magff2,avrg_MFF2,I22plot,dI22plot] =build_IonQ(fit2,ylimit);
+[IonBr1,q01,magff1,avrg_MFF1,I12plot,dI12plot,en1] =build_IonQ(fit1,ylimit);
+[IonBr2,q02,magff2,avrg_MFF2,I22plot,dI22plot,en2] =build_IonQ(fit2,ylimit);
 
 if numel(fit1.I)>3
     avrg_MFF = 0.5*(avrg_MFF1+avrg_MFF2);
@@ -168,7 +168,8 @@ if numel(fit1.I)>3
     
     Ip = [I12plot,I22plot];
     dIp=[dI12plot,dI22plot];
-    [Ip,dIp,en]=swPar.break_heterogeneous(Ip,dIp,es);
+    eplot = [en1,en2];
+    [Ip,dIp,en]=swPar.break_heterogeneous(Ip,dIp,eplot);
     figure(fhI);
     h3= errorbar(en,Ip,dIp,'k');
     leg3= sprintf('MagFF-corrected intensity multiplied by %4.2f',avrg_MFF);
@@ -187,7 +188,7 @@ end
 
 end
 
-function [IOnQ,q0,mag_ff,avrgMFF,I_cor,dI]=build_IonQ(fit,Imax)
+function [IOnQ,q0,mag_ff,avrgMFF,I_cor,dI,en]=build_IonQ(fit,Imax)
 
 [en,ind]=sort(fit.en);
 I = fit.I(ind);
