@@ -6,11 +6,8 @@ classdef parWithCorrections
     %   Detailed explanation goes here
     
     properties
-        p; % The coefficients of the parabola, which describes spit wave in the form E=p(1)+q*p(2)+q^2*p(3)
         A_cor;        % a normalization constant calculated at some point of q
         legend='';    % the legend desctibes the SW position
-        ref_par_X; % the X points seelcted manually to plot spin wave through
-        ref_par_Y; % the Y points seelcted manually to plot spin wave through
         % the q-range to do fitting within
         QRange=0.2;
         % energy limit below wihich spin wave appear
@@ -25,20 +22,66 @@ classdef parWithCorrections
         dk=0.05;
         correction = 1;
         %
-        cut_at_e_points = false;
+        fix_x_coordinate = true;
+        cut_at_e_points  = false; % specify energy points to cut rather them q-points
         energies;
         
         result_pic;
     end
+    properties(Dependent)
+        p; % The coefficients of the parabola, which describes spit wave in the form E=p(1)+q*p(2)+q^2*p(3)
+        ref_par_X; % the X points seelcted manually to plot spin wave through
+        ref_par_Y; % the Y points seelcted manually to plot spin wave through      
+    end
+    properties(Access=private)
+        p_;
+        XY_ref_points_;
+    end
     
     methods
         %---------------------------------------------------------------------------------
-        function self=parWithCorrections(referencePoints)
-            
-            x1 = referencePoints(1,:);
-            y1 = referencePoints(2,:);
-            self.ref_par_X=x1;
-            self.ref_par_Y=y1;
+        function self=parWithCorrections(rp)
+            if isa(rp,'parWithCorrections')
+                self.A_cor=rp.A_cor;        % a normalization constant calculated at some point of q
+                self.legend=rp.legend;      % the legend desctibes the SW position
+                self.XY_ref_points_=rp.XY_ref_points_; % the X points seelcted manually to plot spin wave through
+                %self.ref_par_Y=rp.ref_par_Y; % the Y points seelcted manually to plot spin wave through
+                self.QRange=rp.QRange;  % the q-range to do fitting within
+                self.Esw_threshold=rp.Esw_threshold;   % energy limit below wihich spin wave appear
+                self.peak_width =rp.peak_width;       % initial peak width
+                self.num_steps_in_cut=rp.num_steps_in_cut; % minimal number of steps in 1D cut to fit
+                %
+                self.cut_direction=rp.cut_direction;
+                self.dE=rp.dE;
+                self.dk=rp.dk;
+                self.correction = rp.correction;
+                %
+                self.cut_at_e_points = rp.cut_at_e_points;
+                self.fix_x_coordinate= rp.fix_x_coordinate;
+                self.energies=rp.energies;
+                
+                self.result_pic=rp.result_pic;
+                self.p_ = rp.p_;
+            else
+                self.ref_par_X=rp;
+            end
+        end
+        function val=get.ref_par_X(self)
+            val = self.XY_ref_points_(1,:);
+        end
+        function val=get.ref_par_Y(self)
+            val = self.XY_ref_points_(2,:);
+        end
+        function self=set.ref_par_X(self,rp)
+            if size(rp) == [2,5]
+                self.XY_ref_points_ = rp;          
+            elseif numel(rp) == 5
+                self.XY_ref_points_(1,:) = rp;
+            else
+                error('Invalid number of parameters')
+            end
+            x1 = self.XY_ref_points_(1,:);
+            y1 = self.XY_ref_points_(2,:);
             er1= ones(size(x1));
             [ym,ind] = max(y1);
             p3_0 = ym/(x1(ind)*x1(ind));
@@ -48,16 +91,24 @@ classdef parWithCorrections
             %
             p0 = par.p;
             %
-            self.p = p0;
+            self.p_ = p0;
             q0=0.4;
             self.A_cor = p0(1)+q0*(p0(2)+q0*p0(3));
-            
+      
         end
+       function self=set.ref_par_Y(self,rp)
+            if numel(rp) == 5
+                self.XY_ref_points_(2,:)=rp;
+            else
+                error('Invalid number of parameters')              
+            end              
+       end
+     
         %
         function e_min = emin(self,s)
-            if s<1
+            if (s+1)<1.e-6
                 e_min = min(self.ref_par_Y(1),self.ref_par_Y(2));
-            elseif s>1
+            elseif abs(s-1)<1.e-6
                 e_min = min(self.ref_par_Y(4),self.ref_par_Y(5));
             else
                 e_min = max(min(self.ref_par_Y(1),self.ref_par_Y(2)),min(self.ref_par_Y(4),self.ref_par_Y(5)));
@@ -105,7 +156,7 @@ classdef parWithCorrections
             %                 qi = (-self.p(2)+sqrt(Det))/(2*self.p(3));
             %             end
             if self.correction==1
-                corr = (2*self.p(3)*abs(qi));
+                corr = (2*self.p_(3)*abs(qi));
             else
                 pp= self.p;
                 e0 = qi*(pp(2)+qi*pp(3));
@@ -169,10 +220,15 @@ classdef parWithCorrections
                 error('SW_PAR:set_p','SW parabola parameters have to be a 3-vector');
             end
             if size(val,2)==1
-                this.p=val;
+                this.p_=val;
             else
-                this.p=val;
+                this.p_=val;
             end
+            
+            this.ref_par_Y = this.dispersion(this.ref_par_X);
+        end
+        function val = get.p(this)
+            val = this.p_;
         end
         %
         
@@ -186,17 +242,17 @@ classdef parWithCorrections
                 ym2 = self.ref_par_Y(1)-self.dE;
                 xm2 = self.getXonE(ym2,-1);
             end
-            self.ref_par_X(1) = xm2;
-            self.ref_par_Y(1) = ym2;
+            self.XY_ref_points_(1,1) = xm2;
+            self.XY_ref_points_(2,1) = ym2;
             
-            xp2 = self.ref_par_X(5);
+            xp2 = self.XY_ref_points_(1,5);
             yp2 = self.dispersion(xp2);
-            if yp2 > self.ref_par_Y(5)
-                yp2 = self.ref_par_Y(5)-self.dE;
+            if yp2 > self.XY_ref_points_(2,5)
+                yp2 = self.XY_ref_points_(2,5)-self.dE;
                 xp2 = self.getXonE(yp2,1);
             end
-            self.ref_par_X(5) = xp2;
-            self.ref_par_Y(5) = yp2;
+            self.XY_ref_points_(1,5) = xp2;
+            self.XY_ref_points_(2,5) = yp2;
             
             self.ref_par_Y = self.dispersion(self.ref_par_X);
             
@@ -204,7 +260,7 @@ classdef parWithCorrections
         end
         %
         function en = dispersion(self,q)
-            en =(self.p(1)+(self.p(2)+self.p(3)*q).*q);
+            en =(self.p_(1)+(self.p_(2)+self.p_(3)*q).*q);
         end
         
     end
