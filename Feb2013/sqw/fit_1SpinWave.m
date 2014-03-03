@@ -60,7 +60,11 @@ parR   = parOld;
 cut_id = [swPar.legend,' Direction: ',swPar.getTextFromVector(cutDir)];
 qs =[fit1.xx,fit2.xx];
 es =[fit1.en,fit2.en];
-q_err=[fit1.xx_err,fit2.xx_err];
+if swPar.cut_at_e_points
+    q_err=ones(numel(qs),1);
+else
+    q_err=[fit1.xx_err,fit2.xx_err];
+end
 IL=[fit1.I,fit2.I];
 ILERR=[fit1.dI,fit2.dI];
 
