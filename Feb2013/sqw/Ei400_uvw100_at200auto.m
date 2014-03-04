@@ -6,11 +6,11 @@ no_chkpnts= 'True';
 Imax = 1; % fitting considered wrong if intensity deviates from average by this range
 if nargin == 0
     repPoints1= [-0.4375,-0.1875,0,0.1875,0.4625;
-        215,53,0,53,213];
+        215,53,0,50,215];
     repPoints2 = [-0.3375,-0.1375,0,0.2375,0.5125
-        175,31,0,49,249];
+        175,31,0,50,250];
     repPoints3 = [-0.3875,-0.1375,0,0.1625,0.3375;
-        161,37,0,25,127];
+        160,40,0,25,130];
     
     rp1 = parWithCorrections(repPoints1);
     rp1.fix_x_coordinate = false;
@@ -32,7 +32,7 @@ else
     % check it, true sets cut position on the spin wave exactly
     rp1.fix_x_coordinate = true;
 end
-rp1.Esw_threshold=50;
+rp1.Esw_threshold=40;
 rp1.cut_direction=[0,1,0];
 rp1.dE =5;
 rp1.dk =0.1;
@@ -52,5 +52,5 @@ if(nargin>0)
     n_energy_points = numel(varargin{1});
 end
 
-run_cuts(data_source,no_chkpnts,repP,[2,0,0],Imax,n_energy_points)
+run_cuts(data_source,no_chkpnts,repP,[2,0,0],Imax,n_energy_points,'Ei400','<1,0,0>')
 

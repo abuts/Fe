@@ -6,13 +6,13 @@ no_chkpnts= 'True';
 Imax = 1; % fitting considered wrong if intensity deviates from average by this range
 
 if nargin == 0
-    repPoints1= [-0.3375,-0.1625,0,0.1875,0.3875;
-        135,31,0,23,187];
+    repPoints1= [-0.3375,-0.175,0,0.175,0.375;
+        135,30,0,30,190];
     
-    repPoints2 = [-0.3375,-0.1625,0,0.1875,0.4375;
-        133,31,0,25,189];
-    repPoints3 = [-0.3875,-0.1375,0,0.1625,0.3875;
-        159,25,0,25,163];
+    repPoints2 = [-0.325,-0.125,0,0.175,0.425;
+        130,30,0,30,190];
+    repPoints3 = [-0.375,-0.125,0,0.125,0.375;
+        170,20,0,20,170];
 
     rp1 = parWithCorrections(repPoints1);
     rp1.fix_x_coordinate = false;
@@ -31,13 +31,13 @@ else
     % ignore reference points and set spin wave parameters directly
     %rp1.p = avrg_par;
     % check it, true sets cut position on the spin wave exactly
-    rp1.fix_x_coordinate = true;
+    rp1.fix_x_coordinate = false;
 end
 % Cuts
 % #1
 rp1.cut_direction=[0,1,0];
-rp1.dE = 4;
-rp1.dk = 0.1;
+rp1.dE = 5;
+rp1.dk = 0.05;
 % #2
 rp2 = parWithCorrections(rp1);
 rp2.ref_par_X = repPoints2;
@@ -52,5 +52,5 @@ n_energy_points=10;
 if(nargin>0)
     n_energy_points = numel(varargin{1});
 end
-run_cuts(data_source,no_chkpnts,repP,[1,1,0],Imax,n_energy_points)
+run_cuts(data_source,no_chkpnts,repP,[1,1,0],Imax,n_energy_points,'Ei400','<1,0,0>')
 

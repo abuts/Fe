@@ -51,15 +51,23 @@ figH=dd(ISW1{1});
 fig_name = sprintf('%s; Spin wave intensity along %s  directions around lattice point: %s',EiName,CutName,BraggName);
 set(figH,'Name',fig_name)
 pd(ISW2{1})
+str_2save = struct();
 for i=2:n_cuts
     acolor(colors{i})
     pd(ISW1{i})
     pd(ISW2{i})
 end
+
+for i=1:n_cuts
+    name = sprintf('%d',i);
+    str_2save.(['cut_par_',name])=repP{i};
+    str_2save.(['ISW1_',name])=ISW1{i};
+    str_2save.(['ISW2_',name])=ISW2{i};
+end
+
 %ly(0.4*I_max,I_max*1.2);
 ly(0,I_max*1.2);
 lx 40 190
-
 
 % all cuts
 fitpar=@(x,par)(par(1)+(par(2)+par(3)*x).*x);
@@ -73,11 +81,22 @@ for i=1:n_cuts
     plot(SWErr{i}(1,:),SWErr{i}(2,:),['-',colors{i}]);
     yyi=fitpar(xxi,fit_par{i}.p);
     plot(xxi,yyi,colors{i});
+    
+    name = sprintf('%d',i);
+    str_2save.(['SWX_',name])=SWX{i};
+    str_2save.(['SWY_',name])=SWY{i};
+    str_2save.(['fit_par_',name])=fit_par{i};  
 end
 lx -0.5 0.5
 
 disp([' D of SQ avrg=',num2str(D/(2.18093^2))])
+% save results to plotting later
+file_name = sprintf('%s_%s_%s.mat',EiName,CutName,BraggName);
+file_name = regexprep(file_name,'[\<\>]','!');
+file_name = regexprep(file_name,'\,','d');
+file_name = regexprep(file_name,'-','m');
 
+save(file_name,'str_2save');
 
 
 end
