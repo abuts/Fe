@@ -25,6 +25,9 @@ classdef parWithCorrections
         fix_x_coordinate = true;
         cut_at_e_points  = false; % specify energy points to cut rather them q-points
         energies;
+        % the value used in error filtering so the error, exeeding 
+        % sigma*accepted_sig_multiplier asumed unacceptable and filtred;
+        accepted_sig_multiplier=3;
         
         result_pic;
     end
@@ -214,6 +217,27 @@ classdef parWithCorrections
             
         end
         
+        function accepted=filter_error(self,errors)
+            % filter errors so that max error is within
+            % sigma*self.accepted_sig_multiplier value
+            
+            n_accepted = numel(errors);
+            accepted = logical(ones(n_accepted,1));
+            mult = self.accepted_sig_multiplier;
+            finish = false;
+            while(~finish)
+                [max_err,ind] = max(errors(accepted));                
+                accepted(ind)=false;                
+                sigma = sum(errors(accepted))/(n_accepted-1);
+                if max_err<=mult*sigma || n_accepted<3
+                    finish = true;
+                    accepted(ind)=true;
+                else
+                    n_accepted = n_accepted-1;
+                end
+            end
+            
+        end
         %---------------------------------------------------------------------------------
         function this=set.p(this,val)
             if(numel(val)<3)

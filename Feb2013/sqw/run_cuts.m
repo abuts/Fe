@@ -1,8 +1,10 @@
-function [ D ] = run_cuts(data_source,use_chkpnts,repP,bragg,Imax,n_energy_points)
+function [ D ] = run_cuts(data_source,use_chkpnts,repP,bragg,Imax,n_energy_points,EiName,CutName)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 colors={'r','g','blue','k','m','u'};
 lines ={'ro','gs','bx','kd','yo','rd'};
+
+BraggName = parWithCorrections.getTextFromVector(bragg);
 
 n_cuts =numel(repP);
 fit_par= cell(n_cuts,1);
@@ -46,7 +48,8 @@ end
 acolor(colors{1})
 aline('-')
 figH=dd(ISW1{1});
-set(figH,'Name','Ei400; Spin wave intensity along <1,0,0> directions around lattice point [1,1,0]')
+fig_name = sprintf('%s; Spin wave intensity along %s  directions around lattice point: %s',EiName,CutName,BraggName);
+set(figH,'Name',fig_name)
 pd(ISW2{1})
 for i=2:n_cuts
     acolor(colors{i})
@@ -55,12 +58,13 @@ for i=2:n_cuts
 end
 %ly(0.4*I_max,I_max*1.2);
 ly(0,I_max*1.2);
-lx 20 190
+lx 40 190
 
 
 % all cuts
 fitpar=@(x,par)(par(1)+(par(2)+par(3)*x).*x);
-figure('Name','dispersion: Ei400, <1,0,0>; at 110');
+fig_name = sprintf('dispersion: %s %s; at %s',EiName,CutName,BraggName);
+figure('Name',fig_name);
 
 xxi=-0.38:0.01:0.38;
 for i=1:n_cuts
