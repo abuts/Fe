@@ -14,20 +14,7 @@ function [fit_rez,parWithCorr] = I_on_sw(w2,u,parWithCorr,dk,dE,s,free_par)
 %p = [ 0.0    0.0  966.0];
 
 y_cut = 0;
-% % for Ei=400,z=(1,1,0)
-% p = [0.3556    0.0082  905.1404];
-% % for Ei=400,z=(2,0,0)
-% p=[0.1676    0.0087  918.6542];
-% % for Ei=800,z=(2,0,0)
-% p=[0.1053    0.0043  794.2148];
-% for Ei=800,z=(1,1,0)
-%p=[0.1856    0.0032  886.8619];
-% % for Ei=1400,z=(1,1,0)
-%p=[0.2869  0.0059  1.2319e+03];
 %
-% % for Ei=200, z=2,0,0
-% u=[1,1,0]
-% p=[0.2042    0.0248  748.3035];
 [proj.u,proj.v,proj.w]=make_ortho_set(u);
 proj.type = 'ppp';
 proj.uoffset= w2.data.uoffset;
@@ -55,18 +42,14 @@ width = parWithCorr.peak_width;
 
 
 
-
-
-
 I = zeros(1,numel(xx));
 x1=zeros(1,numel(xx));
 x1_err=zeros(1,numel(xx));
-I1= zeros(1,numel(xx));
-I1cor=zeros(1,numel(xx));
-dI1cor=zeros(1,numel(xx));
+I_area_fit= zeros(1,numel(xx));
+I_area_fitCor=zeros(1,numel(xx));
+dI_area_fitCor=zeros(1,numel(xx));
 dI= zeros(1,numel(xx));
-dI1= zeros(1,numel(xx));
-
+dI_area_fit= zeros(1,numel(xx));
 sigma_arr=zeros(1,numel(xx));
 
 for i=1:numel(xx)
@@ -81,8 +64,8 @@ for i=1:numel(xx)
     try
         w1=cut_sqw(w2,proj,[k_min,dk_cut,k_max],[-dk,dk],[-dk,dk],[e_sw(i)-dE,e_sw(i)+dE]);
     catch
-        I1(i)=NaN;
-        dI1(i)=NaN;
+        I_area_fit(i)=NaN;
+        dI_area_fit(i)=NaN;
         x1(i) = xx(i);
         x1_err(i) = 0;
         continue
@@ -114,56 +97,86 @@ for i=1:numel(xx)
     
     I(i)=w0.data.s;
     dI(i) = w0.data.e;
+
     
     keep_figure;
     
     
     sigma=abs(par.p(3));
-    I1(i) = par.p(1); %par.p(1)*sigma*sqrt(2*pi);
+    I_area_fit(i) = par.p(1); %par.p(1)*sigma*sqrt(2*pi);
     sigma_arr(i)=sigma;
     %disp(['Sigma =' num2str(sigma)]);
-    if I1(i) >0
-        dI1(i) = par.sig(1); %(par.sig(1)*sigma+par.sig(3)*par.p(1))*sqrt(2*pi);
-        [I1cor(i),dI1cor(i)] = parWithCorr.correctIntensity(I1(i),dI1(i),x1(i),sigma,dk,dE);                
+    if I_area_fit(i) >0 && ~all(par.sig==0)
+        dI_area_fit(i) = par.sig(1); %(par.sig(1)*sigma+par.sig(3)*par.p(1))*sqrt(2*pi);
+        [I_area_fitCor(i),dI_area_fitCor(i)] = parWithCorr.correctIntensity(I_area_fit(i),dI_area_fit(i),x1(i),sigma,dk,dE);                
     else
-        I1(i) = NaN;
-        I1cor(i)=NaN;
-        dI1(i)= NaN;
+        I_area_fit(i) = NaN;
+        I_area_fitCor(i)=NaN;
+        dI_area_fit(i)= NaN;
     end
     
 end
+corect = ~isnan(I)&(~isnan(I_area_fit));
+
+xx = xx(corect);
+e_sw=e_sw(corect);
+I = I(corect);
+x1=x1(corect);
+x1_err=x1_err(corect);
+I_area_fit= I_area_fit(corect);
+I_area_fitCor=I_area_fitCor(corect);
+dI_area_fitCor=dI_area_fitCor(corect);
+dI= dI(corect);
+dI_area_fit=dI_area_fit(corect);
+sigma_arr=sigma_arr(corect);
+
+corect = parWithCorr.filter_error(x1_err) | parWithCorr.filter_error(dI);
+xx = xx(corect);
+e_sw=e_sw(corect);
+I = I(corect);
+x1=x1(corect);
+x1_err=x1_err(corect);
+I_area_fit= I_area_fit(corect);
+I_area_fitCor=I_area_fitCor(corect);
+dI_area_fitCor=dI_area_fitCor(corect);
+dI= dI(corect);
+dI_area_fit=dI_area_fit(corect);
+sigma_arr=sigma_arr(corect);
+
+
+
 if numel(xx)>3
     f1=figure('Name',['SW intensity along dE; peak: ',parWithCorr.legend,' Direction: ',parWithCorr.getTextFromVector(u)]);
     %branch1=IXTdataset_1d(e_sw,I,dI);
     %plot(branch1)
     pl1=errorbar(e_sw,I,dI,'b');
     hold on
-    %branch2=IXTdataset_1d(e_sw,I1,dI1);
+    %branch2=IXTdataset_1d(e_sw,I_area_fit,dI_area_fit);
     %plot(branch2)
-    pl2=errorbar(e_sw,I1,dI1,'r');
+    pl2=errorbar(e_sw,I_area_fit,dI_area_fit,'r');
     %
-    scale = max(I1cor)/2;
-    I1pCor = I1cor/scale;
-    dIpCor = dI1cor/scale;
-    pl3=errorbar(e_sw,I1pCor,dIpCor,'g');
+    scale = max(I_area_fitCor)/2;
+    I_area_fitpCor = I_area_fitCor/scale;
+    dIpCor = dI_area_fitCor/scale;
+    pl3=errorbar(e_sw,I_area_fitpCor,dIpCor,'g');
     plots = [pl1, pl2, pl3];
     ly 0 5
     leg3= sprintf('curvature-corrected intensity divided by %4.2f',scale);
     legend(plots,'Integral intensity','Gaussian fitted intensity',leg3);
     parWithCorr.result_pic=parWithCorr.result_pic.place_pic(f1,'-rize');
 else
-    disp('      q       En      I_gauss,    Error   I_qCorr   Error__qCor');
+    disp('      q       En      I_areaFit,    I_Err   I_qCorr   Error__qCor');
     for i=1:numel(xx)
-        disp([xx(i),e_sw(i),I1(i),dI(i),I1cor(i),dI1cor(i)]);
+        disp([xx(i),e_sw(i),I_area_fit(i),dI(i),I_area_fitCor(i),dI_area_fitCor(i)]);
     end
 end
 fit_rez.xx=x1;
 fit_rez.xx_err=x1_err;
 fit_rez.en=e_sw;
-fit_rez.I = I1cor;
-fit_rez.dI = dI1cor;
+fit_rez.I = I_area_fitCor;
+fit_rez.dI = dI_area_fitCor;
 fit_rez.pic_loc=pic_loc;
-[mv,ind] = max(I);
+[mv,ind] = max(I_area_fit);
 fit_rez.RealI_max = parWithCorr.correctIntensity(mv,1,x1(ind),sigma_arr(ind),dk,dE);
 
 

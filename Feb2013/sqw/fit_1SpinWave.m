@@ -29,11 +29,16 @@ swPar.legend = swPar.getTextFromVector(bragg);
 
 Ireal_max=fit1.RealI_max;
 
+handles  = [];
+caption  = {};
 if numel(fit1.I)>3
     fhI=figure('Name',['Curv corrected SW intensity along dE; peak: ',swPar.legend,' Direction: ',swPar.getTextFromVector(cutDir)]);
     h1=errorbar(fit1.en,fit1.I,fit1.dI,'g');
-    legend(h1,'Curvature corrected intensity q<0');
+    caption{1} = 'Curvature corrected intensity q<0';
+    legend(h1,caption{1});
+    handles = h1;
     % store this picture
+    
     swPar.result_pic = swPar.result_pic.place_pic(fhI,'-rize');
     if exist('no_chkpts','var') && isempty(no_chkpts)
         pause
@@ -45,10 +50,18 @@ end
 swPar.legend = swPar.getTextFromVector(bragg);
 [fit2,swPar]=I_on_sw(w2,cutDir,swPar,dk,dE,1,free_params);
 
-if numel(fit1.I)>3
-    figure(fhI);
-    h2=errorbar(fit2.en,fit2.I,fit2.dI,'g');
-    legend([h1,h2],'Curvature corrected intensity q<0','Curvature corrected intensity q>0');
+if numel(fit2.I)>3
+    if exist('fhI','var')
+        figure(fhI);   
+        caption{2} = 'Curvature corrected intensity q>0';
+    else
+        fhI=figure('Name',['Curv corrected SW intensity along dE; peak: ',swPar.legend,' Direction: ',swPar.getTextFromVector(cutDir)]);
+        caption{1} = 'Curvature corrected intensity q>0';
+    end
+    
+    h2=errorbar(fit2.en,fit2.I,fit2.dI,'g');    
+    handles=[handles,h2];    
+    legend(handles,caption{:});    
     if exist('no_chkpts','var') && isempty(no_chkpts)
         pause
     end
@@ -69,13 +82,21 @@ IL=[fit1.I,fit2.I];
 ILERR=[fit1.dI,fit2.dI];
 
 ylimit = max(IL)*1.1;
-if numel(fit1.I)>5
+if numel(fit1.I)+numel(fit2.I)>5
     ly(0, 1.2*Ireal_max);
     
     fit2.pic_loc=fit2.pic_loc.close_pics_all();
     pause(3)
     
     % drop all out of sence values;
+
+    correct = swPar.filter_error(ILERR);
+    qs = qs(correct);
+    es = es(correct);
+    IL = IL(correct);
+    ILERR=ILERR(correct);
+    q_err=q_err(correct);
+    
     correct = IL>0 | IL<Ireal_max;
     qs = qs(correct);
     es = es(correct);
@@ -104,7 +125,7 @@ if numel(fit1.I)>5
     parOld = swPar.p;
     swPar.p = parR;
     xxi1=min(qs):0.01:max(qs);
-    yyi1=swPar.dispersion(xxi1);  
+    yyi1=swPar.dispersion(xxi1);
     
     
     fh=figure('Name',['Spin wave for: ', cut_id ]);
@@ -152,7 +173,7 @@ disp(ref_points)
 [IonBr1,q01,magff1,avrg_MFF1,I12plot,dI12plot,en1] =build_IonQ(fit1,ylimit);
 [IonBr2,q02,magff2,avrg_MFF2,I22plot,dI22plot,en2] =build_IonQ(fit2,ylimit);
 
-if numel(fit1.I)>3
+if numel(fit1.I)+numel(fit2.I)>5
     avrg_MFF = 0.5*(avrg_MFF1+avrg_MFF2);
     I12plot   = I12plot*avrg_MFF;
     dI12plot  = dI12plot*avrg_MFF;
@@ -169,12 +190,17 @@ if numel(fit1.I)>3
     Ip = [I12plot,I22plot];
     dIp=[dI12plot,dI22plot];
     eplot = [en1,en2];
+    
     [Ip,dIp,en]=swPar.break_heterogeneous(Ip,dIp,eplot);
+    
+    
     figure(fhI);
     h3= errorbar(en,Ip,dIp,'k');
     leg3= sprintf('MagFF-corrected intensity multiplied by %4.2f',avrg_MFF);
-    legend([h1,h2,h3],'Curve corrercted intensity','Curve corrercted intensity refit by sw par',leg3);
-    
+    handles=[handles,h3];    
+    caption{end+1}=leg3;
+    legend(handles,caption{:});    
+       
     pause(5)
 else
     disp('      q       En      I_qCorr   Error__qCor   magff1');
