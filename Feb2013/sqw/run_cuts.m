@@ -1,8 +1,8 @@
 function [ D ] = run_cuts(data_source,use_chkpnts,repP,bragg,Imax,n_energy_points,EiName,CutName)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
-colors={'r','g','blue','k','m','u'};
-lines ={'ro','gs','bx','kd','yo','rd'};
+colors={'r','g','blue','c','m','k'};
+lines ={'ro','gs','bx','cd','mo','kd'};
 
 BraggName = parWithCorrections.getTextFromVector(bragg);
 
