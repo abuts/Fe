@@ -50,7 +50,7 @@ classdef parWithCorrections
                 self.XY_ref_points_=rp.XY_ref_points_; % the X points seelcted manually to plot spin wave through
                 %self.ref_par_Y=rp.ref_par_Y; % the Y points seelcted manually to plot spin wave through
                 self.QRange=rp.QRange;  % the q-range to do fitting within
-                self.Esw_threshold=rp.Esw_threshold;   % energy limit below wihich spin wave appear
+                self.Esw_threshold=rp.Esw_threshold;   % energy limit above wihich spin wave can be separated from phonons
                 self.peak_width =rp.peak_width;       % initial peak width
                 self.num_steps_in_cut=rp.num_steps_in_cut; % minimal number of steps in 1D cut to fit
                 %

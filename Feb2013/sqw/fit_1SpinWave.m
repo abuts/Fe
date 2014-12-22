@@ -16,11 +16,16 @@ cutDir = swPar.cut_direction;
 dk     = swPar.dk;
 dE     = swPar.dE;
 w2=make_fitting_cut( datasource,dk,dE,bragg,cutDir);
-f1=plot(w2);
+plot(w2);
 lz 0 2
 hold on
 % remember the place of the last image and place the impage to proper
 % posision
+w2=fix_magnetic_ffFe(w2);
+f1=plot(w2);
+lz 0 4
+hold on
+
 swPar.result_pic = pic_spread();
 swPar.result_pic = swPar.result_pic.place_pic(f1);
 
@@ -170,51 +175,40 @@ disp([' SW at', cut_id,' reference points \n'])
 disp(ref_points)
 
 % here we fit magnetic form factor.
-[IonBr1,q01,magff1,avrg_MFF1,I12plot,dI12plot,en1] =build_IonQ(fit1,ylimit);
-[IonBr2,q02,magff2,avrg_MFF2,I22plot,dI22plot,en2] =build_IonQ(fit2,ylimit);
+[IonBr1,q01,I12plot,dI12plot,en1] =build_IonQ(fit1,ylimit);
+[IonBr2,q02,I22plot,dI22plot,en2] =build_IonQ(fit2,ylimit);
 
 if numel(fit1.I)+numel(fit2.I)>5
-    avrg_MFF = 0.5*(avrg_MFF1+avrg_MFF2);
-    I12plot   = I12plot*avrg_MFF;
-    dI12plot  = dI12plot*avrg_MFF;
-    I22plot   = I22plot*avrg_MFF;
-    dI22plot  = dI22plot*avrg_MFF;
-    
-    
-    fh2=figure('Name',['Change of Magnetic FF along SW line for: ', cut_id ]);
-    plot(q01,magff1,q02,magff2);
-    swPar.result_pic = swPar.result_pic.place_pic(fh2,'-rize');
-    hold on
     % plot intensity corrected by magnetic form factor
     
-    Ip = [I12plot,I22plot];
-    dIp=[dI12plot,dI22plot];
-    eplot = [en1,en2];
+    %Ip = [I12plot,I22plot];
+    %dIp=[dI12plot,dI22plot];
+    %eplot = [en1,en2];
     
-    [Ip,dIp,en]=swPar.break_heterogeneous(Ip,dIp,eplot);
+    %[Ip,dIp,en]=swPar.break_heterogeneous(Ip,dIp,eplot);
     
     
     figure(fhI);
-    h3= errorbar(en,Ip,dIp,'k');
-    leg3= sprintf('MagFF-corrected intensity multiplied by %4.2f',avrg_MFF);
-    handles=[handles,h3];    
-    caption{end+1}=leg3;
+    %h3= errorbar(en,Ip,dIp,'k');
+    %leg3= sprintf('MagFF-corrected intensity multiplied by %4.2f',avrg_MFF);
+    %handles=[handles,h3];    
+    %caption{end+1}=leg3;
     legend(handles,caption{:});    
        
     pause(5)
 else
-    disp('      q       En      I_qCorr   Error__qCor   magff1');
+    disp('      q       En      I_qCorr   Error__qCor');
     for i=1:numel(magff1)
-        disp([fit1.xx(i),fit1.en(i),fit1.I(i),fit1.dI(i),magff1(i)]);
+        disp([fit1.xx(i),fit1.en(i),fit1.I(i),fit1.dI(i)]);
     end
     for i=1:numel(magff2)
-        disp([fit2.xx(i),fit2.en(i),fit2.I(i),fit2.dI(i),magff2(i)]);
+        disp([fit2.xx(i),fit2.en(i),fit2.I(i),fit2.dI(i)]);
     end
 end
 
 end
 
-function [IOnQ,q0,mag_ff,avrgMFF,I_cor,dI,en]=build_IonQ(fit,Imax)
+function [IOnQ,q0,I_cor,dI,en]=build_IonQ(fit,Imax)
 
 [en,ind]=sort(fit.en);
 I = fit.I(ind);
@@ -223,14 +217,15 @@ q0 = fit.xx(ind);
 
 
 correct = arrayfun(@(x)(x<Imax),I);
-q0 = q0(correct);
-I  = I(correct);
-dI = dI(correct);
-en = en(correct);
+q0     = q0(correct);
+I_cor  = I(correct);
+dI     = dI(correct);
+en     = en(correct);
 
 
-[I_cor,dI,mag_ff]=fix_magnetic_ff(q0,I,dI,fit.uoffset,fit.direction,fit.scale,'j2');
-avrgMFF = sum(mag_ff)/numel(mag_ff);
+%[I_cor,dI,mag_ff]=fix_magnetic_ff(q0,I,dI,fit.uoffset,fit.direction,fit.scale,'j2');
+
+%avrgMFF = sum(mag_ff)/numel(mag_ff);
 
 IOnQ = IXTdataset_1d(en,I_cor,dI);
 
