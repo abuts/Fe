@@ -10,6 +10,7 @@ maskfile='4to1_095.msk'#hard mask out the edges of detectors, which tend to be n
 
 #map file
 mapfile='4to1_095.map' #single crystal mapping file
+mapfile='parker_rings.map'
 mapfile_monovan = '4to1_mid_lowang.map'
 #mapfile='/opt/Mantid/instrument/mapfiles/maps/parker_rings' #powder mapping file
 
@@ -29,21 +30,26 @@ sam_rmm=53.94
 
 psi= range(0,92,2)+range(1,91,2)+range(-2,-48,-2)+range(-1,-27,-2)
 runs = range(15052,15179)
-	
-save_dir = config.getString('defaultsave.directory')
+    
+data_dir = 'd:/Data/Fe/Feb2013/EI400'
+map_dir = 'c:/Users/wkc26243/Documents/work/InstrumentFiles/maps'
+config['defaultsave.directory'] = data_dir 
+#save_dir = config.getString('defaultsave.directory')
+config.appendDataSearchDir('{0};{1}'.format(data_dir,map_dir))
+
 
 
 for i in range(len(runs))  :
 
     runno = runs[i]
     # define resulting file name for this run
-    save_fname=inst+str(runno)+'_ei'+str(ei[0])+'.nxspe'
+    save_fname=inst+str(runno)+'rings_ei'+str(ei[0])+'.nxspe'
     longName = os.path.join(save_dir ,save_fname)    
     if(os.path.isfile(longName)):
         continue
     # load the data to process   
     in_file = getnumor(runno);   
-    LoadRaw(Filename=in_file,OutputWorkspace="run_wksp")
+    Load(Filename=in_file,OutputWorkspace="run_wksp",LoadMonitors='Separate')
         
     w1=iliad_abs(wbvan,"run_wksp",
                 monovan,monovan_wb,
@@ -56,7 +62,5 @@ for i in range(len(runs))  :
    
 
     SaveNXSPE('w1',save_fname,Psi=psi[i])
-
-
 
 
