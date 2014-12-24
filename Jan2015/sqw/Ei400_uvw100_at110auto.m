@@ -37,7 +37,7 @@ end
 % #1
 rp1.cut_direction=[0,1,0];
 rp1.dE = 5;
-rp1.dk = 0.05;
+rp1.dk = 0.1;
 % #2
 rp2 = parWithCorrections(rp1);
 rp2.ref_par_X = repPoints2;
