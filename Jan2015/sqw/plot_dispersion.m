@@ -7,12 +7,12 @@ rlp=[0,0,0; 0,0,1; 0,0,0; 1,0,0; 0,0,0; 1,1,0; 0,0,0; 1,1,1];
 pars=[1,0.05,0.05,35,-5,15,10,0.1];
 ecent=[0,0.5,200];
 fwhh=2;
-disp2sqw_plot(lattice,rlp,@sr122_disp,pars,ecent,fwhh);
+%disp2sqw_plot(lattice,rlp,@sr122_disp,pars,ecent,fwhh);
 
 
 
-rlp = [0,0,0; 0,0,1; 0,1/2,1/2; 0,0,0; 1,0,1; 1,0,0];
-%disp2sqw_plot(rlp,dispreln,pars,ebins,fwhh)
+rlp = [0,0,0; 0,0,1; 0,1/2,1/2; 0,0,0; 1/2,1/2,1/2; 1/2,1/2,0];
+disp2sqw_plot(lattice,rlp,dispreln,pars,ebins,fwhh)
 end
 
 function [wdisp1,s_yy]=sr122_disp(qh,qk,ql,p)
