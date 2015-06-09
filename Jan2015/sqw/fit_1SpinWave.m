@@ -21,7 +21,8 @@ lz 0 2
 hold on
 % remember the place of the last image and place the impage to proper
 % posision
-w2=fix_magnetic_ffFe(w2);
+mff = MagneticIons('Fe0');
+w2=mff.fix_magnetic_ff(w2);
 f1=plot(w2);
 lz 0 4
 hold on

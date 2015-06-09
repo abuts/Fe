@@ -100,7 +100,7 @@ for i=1:numel(xx)
 
     
     keep_figure;
-    
+    drawnow;
     
     sigma=abs(par.p(3));
     I_area_fit(i) = par.p(1); %par.p(1)*sigma*sqrt(2*pi);
