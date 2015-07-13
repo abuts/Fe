@@ -1,6 +1,7 @@
 function Ei200_uvw100_at110auto(varargin)
+source = 'd:\users\abuts\SVN\Fe\Feb2013\sqw';
 
-data_source= fullfile(pwd,'Fe_ei200.sqw');
+data_source= fullfile(source,'Fe_ei200.sqw');
 avrg_par=[0,0,949.35];
 no_chkpnts= 'True';
 Imax = 1;
