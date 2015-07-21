@@ -6,13 +6,13 @@ proj = [spher_proj([-1,-1,0]),...
         spher_proj([1,1,0]),spher_proj([1,0,-1]),spher_proj([1,0,1]),spher_proj([1,-1,0]),spher_proj([2,0,0])];
 proj_h = [spher_proj([1,1,0]),spher_proj([1,-1,0]),spher_proj([2,0,0])];
 dr_h = [0.25,0.45];
-%en = [50,60];
-en = [100,110];
+en = [50,60];
+enh = [100,110];
 dr = [0.15,0.25];
 mf = MagneticIons('Fe0');
 
-proj = proj_h;
-dr = dr_h;
+%proj = proj_h;
+%dr = dr_h;
 
 cut_sum = [];
 for i=1:numel(proj)
@@ -21,15 +21,33 @@ for i=1:numel(proj)
     cut= mf.fix_magnetic_ff(cut);
 
     %cut1 = cut_sqw(data_source,proj,[0,0.01,0.6],[-90,90],[-180,180],2);
-    h=plot(cut,'-noasp');
+    h=plot(cut);
     figure(h)
     keep_figure
     pause(1)
-    if isempty(cut_sum)
-        cut_sum= cut;
-    else
-        cut_sum= combine_sqw(cut_sum,cut);
-    end
+%    if isempty(cut_sum)
+%        cut_sum= cut;
+%    else
+%        cut_sum= combine_sqw(cut_sum,cut);
+%    end
 end
 
+
+cut_sum = [];
+for i=1:numel(proj_h)
+    prj = proj_h(i);
+    cut = cut_sqw(data_source,prj,dr_h,[-90,2,90],4,enh);
+    cut= mf.fix_magnetic_ff(cut);
+
+    %cut1 = cut_sqw(data_source,proj,[0,0.01,0.6],[-90,90],[-180,180],2);
+    h=plot(cut);
+    figure(h)
+    keep_figure
+    pause(1)
+%    if isempty(cut_sum)
+%        cut_sum= cut;
+%    else
+%        cut_sum= combine_sqw(cut_sum,cut);
+%    end
+end
 
