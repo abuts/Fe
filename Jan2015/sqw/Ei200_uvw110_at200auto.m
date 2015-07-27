@@ -1,6 +1,7 @@
 function Ei200_uvw110_at200auto(varargin)
 
-data_source= fullfile(pwd,'Fe_ei200.sqw');
+data_source= fullfile(pwd,'Data','Fe_ei200.sqw');
+
 
 avrg_par=[0,0,1007.2656];
 no_chkpnts= 'True';
