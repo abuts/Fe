@@ -1,6 +1,6 @@
 function Ei400_uvw100_at110auto(varargin)
 
-data_source= fullfile(pwd,'Fe_ei401.sqw');
+data_source= fullfile(pwd,'Data','Fe_ei401.sqw');
 avrg_par=[0,0,1139.482];
 no_chkpnts= 'True';
 Imax = 1; % fitting considered wrong if intensity deviates from average by this range
