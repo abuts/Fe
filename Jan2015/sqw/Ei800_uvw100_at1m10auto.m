@@ -1,6 +1,6 @@
 function Ei800_uvw100_at1m10auto(varargin)
 
-data_source= fullfile(pwd,'Fe_ei787.sqw');
+data_source= fullfile(pwd,'Data','Fe_ei787.sqw');
 avrg_par=[0,0,1139.482];
 
 
