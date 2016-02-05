@@ -1,6 +1,6 @@
 function Ei200_uvw100_at200auto(varargin)
 
-data_source= fullfile(pwd,'Fe_ei200.sqw');
+data_source= fullfile(pwd,'Data','Fe_ei200.sqw');
 avrg_par=[0,0,949.35];
 no_chkpnts= 'True';
 Imax = 1;
@@ -29,7 +29,7 @@ end
 % #1
 rp1.cut_direction=[1,0,0];
 rp1.dE = 5;
-rp1.dk = 0.1;
+rp1.dk = 0.05;
 % #2
 rp2 = parWithCorrections(rp1);
 rp2.ref_par_X = repPoints2;
