@@ -30,3 +30,5 @@
 
 *.zip
 /Feb2013/sqw/*.mat
+*.mat
+*.sqw
