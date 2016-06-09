@@ -5,7 +5,7 @@ function hor200meV_foldSym
 % Give locations of input files
 indir=pwd;     % source directory of spe files
 par_file=''; %parse_path([indir '/../map_4to1_jul09.par']);     % detector parameter file
-sqw_file=fullfile(indir,'fe_E200_8K_symall.sqw');        % output sqw file
+sqw_file=fullfile(indir,'fe_E200_8K_symallFold.sqw');        % output sqw file
 data_source =fullfile(indir,'Data','sources','SPE_EI200');% 
 
 % Set incident energy, lattice parameters etc.
@@ -38,7 +38,7 @@ gen_sqw (spe_file, par_file, sqw_file, efix, emode, alatt, angdeg,...
 
 function win = symmetrisation_fe(win)
 
-wout=symmetrise_sqw(win,[1,0,0],[0,0,-1],[0,0,0]);
-wout=symmetrise_sqw(wout,[0,1,0],[0,0,1],[0,0,0]);
-win=symmetrise_sqw(wout,[1,0,0],[0,1,0],[0,0,0]);
+wout=symmetrise_sqw(win,[1,0,0],[0,0,1],[0,0,0]);
+wout=symmetrise_sqw(wout,[0,1,0],[0,0,-1],[0,0,0]);
+win=symmetrise_sqw(wout,[1,0,0],[0,-1,0],[0,0,0]);
          
