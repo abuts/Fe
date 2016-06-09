@@ -11,7 +11,7 @@ demo_dir=pwd;
 %==================================================================================================
 % Give locations of input files
 indir=pwd;     % source directory of spe files
-par_file=parse_path([indir '/../map_4to1_jul09.par']);     % detector parameter file
+par_file=''%parse_path([indir '/../map_4to1_jul09.par']);     % detector parameter file
 sqw_file=fullfile(indir,'fe_E800_8K.sqw');        % output sqw file
 data_source =sqw_file;
 
@@ -34,8 +34,19 @@ omega=0;dpsi=0;gl=0;gs=0;
 % G4
 [spe_file,psi]=build_fnames(indir,11084:11201,-34,-0.5,-92.5,spe_file,psi);
 
+missing = runno==misrun;
+psi = psi(~missing);
+runno = runno(~missing);
 
 % Create sqw file
 gen_sqw (spe_file, par_file, sqw_file, efix, emode, alatt, angdeg,...
-         u, v, psi, omega, dpsi, gl, gs);
+         u, v, psi, omega, dpsi, gl, gs,...
+         'transform_sqw',@(x)(symmetrisation_fe(x)));
 
+
+function win = symmetrisation_fe(win)
+
+wout=symmetrise_sqw(win,[1,0,0],[0,0,1],[0,0,0]);
+wout=symmetrise_sqw(wout,[0,1,0],[0,0,-1],[0,0,0]);
+win=symmetrise_sqw(wout,[1,0,0],[0,-1,0],[0,0,0]);
+         
