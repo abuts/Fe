@@ -38,7 +38,7 @@ gen_sqw (spe_file, par_file, sqw_file, efix, emode, alatt, angdeg,...
 
 function win = symmetrisation_fe(win)
 
-wout=symmetrise_sqw(win,[1,0,0],[0,0,1],[0,0,0]);
+wout=symmetrise_sqw(win,[1,0,0],[0,0,-1],[0,0,0]);
 wout=symmetrise_sqw(wout,[0,1,0],[0,0,1],[0,0,0]);
 win=symmetrise_sqw(wout,[1,0,0],[0,1,0],[0,0,0]);
          
