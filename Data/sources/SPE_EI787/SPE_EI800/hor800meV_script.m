@@ -11,8 +11,8 @@ demo_dir=pwd;
 %==================================================================================================
 % Give locations of input files
 indir=pwd;     % source directory of spe files
-par_file=''%parse_path([indir '/../map_4to1_jul09.par']);     % detector parameter file
-sqw_file=fullfile(indir,'fe_E800_8K.sqw');        % output sqw file
+par_file=''; %parse_path([indir '/../map_4to1_jul09.par']);     % detector parameter file
+sqw_file=fullfile(indir,'fe_E800_8K_foldAll.sqw');        % output sqw file
 data_source =sqw_file;
 
 % Set incident energy, lattice parameters etc.
@@ -26,17 +26,19 @@ omega=0;dpsi=0;gl=0;gs=0;
 
 % Create the list of file names and orientation angles
 % G1
-[spe_file,psi]=build_fnames(indir,11014:11060,0,-0.5,-23);
+[spe_file,psi]=build_spefilenames([indir,filesep,'MAP*_4to1_065_ei787.nxspe'],11014:11060,0,-0.5,-23);
 % G2
-[spe_file,psi]=build_fnames(indir,11063:11070,-23.5,-0.5,-27,spe_file,psi);
+[spe_file,psi]=build_spefilenames([indir,filesep,'MAP*_4to1_065_ei787.nxspe'],11063:11070,-23.5,-0.5,-27,spe_file,psi);
 % G3
-[spe_file,psi]=build_fnames(indir,11071:11083,-27.5,-0.5,-33.5,spe_file,psi);
+[spe_file,psi]=build_spefilenames([indir,filesep,'MAP*_4to1_065_ei787.nxspe'],11071:11083,-27.5,-0.5,-33.5,spe_file,psi);
 % G4
-[spe_file,psi]=build_fnames(indir,11084:11201,-34,-0.5,-92.5,spe_file,psi);
+[spe_file,psi]=build_spefilenames([indir,filesep,'MAP*_4to1_065_ei787.nxspe'],11084:11201,-34,-0.5,-92.5,spe_file,psi);
 
+runno = [11014:11060,11063:11070,11071:11083,11084:11201];
+misrun = 11187;
 missing = runno==misrun;
 psi = psi(~missing);
-runno = runno(~missing);
+spe_file = spe_file(~missing);
 
 % Create sqw file
 gen_sqw (spe_file, par_file, sqw_file, efix, emode, alatt, angdeg,...
