@@ -2,7 +2,7 @@
 % =====================================================================================================================
 indir   =pwd;                           % source directory of spe files
 outdir  =pwd;                            % source directory of tmp files
-par_file=fullfile(indir,'4to1_065.par'); % detector parameter file
+par_file=fullfile(indir,'map_4to1_jul09.par'); % detector parameter file
 data_dir = fullfile(indir,'SPE_EI800');
 
 efix=787;
@@ -30,4 +30,4 @@ parfor i=1:nfiles
         rd.saveNXSPE(nxspe_file,efix,psi(i));
     end
 end
-
+fprintf('*** Conversion completed');
