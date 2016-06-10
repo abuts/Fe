@@ -6,7 +6,8 @@ function hor400meV_foldSym
 indir=pwd;     % source directory of spe files
 par_file=''; %parse_path([indir '/../map_4to1_jul09.par']);     % detector parameter file
 sqw_file=fullfile(indir,'fe_E400_symallFold.sqw');        % output sqw file
-data_source =fullfile(indir,'Data','sources','SPE_EI401');% 
+%data_source =fullfile(indir,'Data','sources','SPE_EI401');% 
+data_source = indir;
 
 % Set incident energy, lattice parameters etc.
 efix=400;
@@ -19,13 +20,13 @@ omega=0;dpsi=0;gl=0;gs=0;
 
 % Create the list of file names and orientation angles
 % G1
-[spe_file,psi]=build_spefilenames([data_source,filesep,'MAP*_ei400meV.nxspe'],15052:15097,0,2,90);
+[spe_file,psi]=build_spefilenames([data_source,filesep,'map*_ei400meV.nxspe'],15052:15097,0,2,90);
 %% G2
-[spe_file,psi]=build_spefilenames([data_source,filesep,'MAP*_ei400meV.nxspe'],15098:15142,1,2,89,spe_file,psi);
+[spe_file,psi]=build_spefilenames([data_source,filesep,'map*_ei400meV.nxspe'],15098:15142,1,2,89,spe_file,psi);
 %% G3
-[spe_file,psi]=build_spefilenames([data_source,filesep,'MAP*_ei400meV.nxspe'],15143:15165,-2,-2,-46,spe_file,psi);
+[spe_file,psi]=build_spefilenames([data_source,filesep,'map*_ei400meV.nxspe'],15143:15165,-2,-2,-46,spe_file,psi);
 %% G4
-[spe_file,psi]=build_spefilenames([data_source,filesep,'MAP*_ei400meV.nxspe'],15166:15178,-1,-2,-25,spe_file,psi);
+[spe_file,psi]=build_spefilenames([data_source,filesep,'map*_ei400meV.nxspe'],15166:15178,-1,-2,-25,spe_file,psi);
 
 
 % Create sqw file
