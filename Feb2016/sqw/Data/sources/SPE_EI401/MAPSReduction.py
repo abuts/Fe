@@ -19,12 +19,12 @@ class MAPSReduction(ReductionWrapper):
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
        prop['incident_energy'] = [400]
-       prop['energy_bins'] =[-0.1,0.05,0.9]
+       prop['energy_bins'] =[-0.1,0.005,0.9]
 
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
-       prop['sample_run'] =range(15124,15179) #'MAP21968.s01,MAP21968.s02,MAP21968.raw'  # 'MAP0000.raw'# [21384,21385]
+       prop['sample_run'] =range(15135,15179) # [15052 - 15178]
        prop['wb_run'] = 15182
        #
        prop['sum_runs'] = False # set to true to sum everything provided to sample_run
