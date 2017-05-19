@@ -6,18 +6,18 @@ filename_f = @(nzone,nsubsone)(fullfile(dir,sprintf('HoracePartialZoneN%d_file_p
 
 for i=1:n_zones
     files{i}=filename_f(i,0);
-	if exist(files{i},'file')~=2
-		ip=1;
-		subfiles = {};
-		subfile = filename_f(i,ip);
-		while exist(subfile,'file')==2
-			subfiles{ip} = subfile;
-			ip = ip+1;
-			subfile = filename_f(i,ip);
-		end
-		files{i} = subfiles;
-		
-	end
+    if exist(files{i},'file')~=2
+        ip=1;
+        subfiles = {};
+        subfile = filename_f(i,ip);
+        while exist(subfile,'file')==2
+            subfiles{ip} = subfile;
+            ip = ip+1;
+            subfile = filename_f(i,ip);
+        end
+        files{i} = subfiles;
+        
+    end
 end
 files = flatten_cell_array(files);
 outfile = fullfile(dir,'combinedsqw.sqw');

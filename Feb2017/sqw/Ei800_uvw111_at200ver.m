@@ -50,7 +50,7 @@ cut_p =  [ -3.939015e-01, 150;
 1.237915e-02, 26;
 2.398487e-02, 22];
 
-[D0,x00,alpha0,e_sw1,Icr1,dIcr1,all_plots]=calc_sw_intencity_dGauss(data_source,bragg,cut_direction,cut_p,dE,dK);
+[D0,x00,alpha0,e_sw1,Icr1,dIcr1,all_plots]=calc_sw_intensity_dGauss(data_source,bragg,cut_direction,cut_p,dE,dK);
 for i=1:3
     close(all_plots(i));
 end
@@ -92,7 +92,7 @@ cut_p =  [ -3.803427e-01, 150;
 -1.321076e-01, 26;
 -1.153749e-01, 22];
 
-[D1,x01,alpha1,e_sw1,Icr1,dIcr1,all_plots]=calc_sw_intencity_dGauss(data_source,bragg,cut_direction,cut_p,dE,dK);
+[D1,x01,alpha1,e_sw1,Icr1,dIcr1,all_plots]=calc_sw_intensity_dGauss(data_source,bragg,cut_direction,cut_p,dE,dK);
 for i=1:3
     close(all_plots(i));
 end
@@ -173,7 +173,7 @@ NaN, NaN;
 3.308677e-01, 126;
 3.365318e-01, 130];
 
-[D2,x02,alpha2,e_sw1,Icr1,dIcr1,all_plots]=calc_sw_intencity(data_source,bragg,cut_direction,cut_p,dE,dK);
+[D2,x02,alpha2,e_sw1,Icr1,dIcr1,all_plots]=calc_sw_intensity(data_source,bragg,cut_direction,cut_p,dE,dK);
 for i=1:3
     close(all_plots(i));
 end
