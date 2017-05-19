@@ -5,7 +5,7 @@ function [D,x0,alpha,e_sw,Icr,dIcr] = Ei200_uvw100_at200ver()
 %-------------------------------------------------
 % Parameters :
 %
-data_source= fullfile(pwd,'Data','Fe_ei200.sqw');
+data_source= fullfile(pwd,'Data','sqw','Fe_ei200.sqw');
 
 bragg = [2,0,0];  % selected bragg
 %

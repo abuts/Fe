@@ -1,4 +1,4 @@
-function [D,x0,alpha,e_sw,Icr,dIcr] = Ei200_uvw100_at200ver()
+function [D,x0,alpha,e_sw,Icr,dIcr] = Ei200_uvw100_at110ver()
 % simplified verification script, which allows one to check
 % how do sqw cut works
 
@@ -54,7 +54,7 @@ cut_p =   [-0.1095   21.5000;
     0.3445  111.5000;
     0.3516  116.5000];
 
-[D0,x00,alpha0,e_sw1,Icr1,dIcr1,all_plots]=calc_sw_intencity(data_source,bragg,cut_direction,cut_p,dE,dK);
+[D0,x00,alpha0,e_sw1,Icr1,dIcr1,all_plots]=calc_sw_intensity(data_source,bragg,cut_direction,cut_p,dE,dK);
 for i=1:3
     close(all_plots(i));
 end
@@ -98,7 +98,7 @@ cut_p =   [  -0.1132   17.5000;
     0.3249  111.5000;
     0.3321  116.5000];
 
-[D1,x01,alpha1,e_sw1,Icr1,dIcr1,all_plots1]=calc_sw_intencity(data_source,bragg,cut_direction,cut_p,dE,dK);
+[D1,x01,alpha1,e_sw1,Icr1,dIcr1,all_plots1]=calc_sw_intensity(data_source,bragg,cut_direction,cut_p,dE,dK);
 for i=1:3
     close(all_plots1(i));
 end
@@ -137,7 +137,7 @@ cut_p =   [ -0.1445   23.5000;
     0.2446   76.5000;
     0.2529   81.5000];
 
-[D2,x02,alpha2,e_sw2,Icr2,dIcr2,all_plots2]=calc_sw_intencity(data_source,bragg,cut_direction,cut_p,dE,dK);
+[D2,x02,alpha2,e_sw2,Icr2,dIcr2,all_plots2]=calc_sw_intensity(data_source,bragg,cut_direction,cut_p,dE,dK);
 for i=1:3
     close(all_plots2(i));
 end

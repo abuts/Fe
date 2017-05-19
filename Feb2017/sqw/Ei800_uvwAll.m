@@ -78,7 +78,7 @@ n_energy_points=10;
 if(nargin>0)
     n_energy_points = numel(varargin{1});
 end
-[D,x0,alpha,e_sw,Icr,dIcr,all_plots]=calc_sw_intencity(data_source,bragg,cut_direction,cut_p,dE,dK);
+[D,x0,alpha,e_sw,Icr,dIcr,all_plots]=calc_sw_intensity(data_source,bragg,cut_direction,cut_p,dE,dK);
 
 %run_cuts(data_source,no_chkpnts,repP,[2,0,0],Imax,n_energy_points,'Ei800','<1,1,0>')
 

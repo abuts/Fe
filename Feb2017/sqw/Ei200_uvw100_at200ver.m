@@ -42,7 +42,7 @@ cut_p =   [-0.0977   20.0000;
     0.3551  134.0000;
     0.3666  144.0000];
 
-[D,x0,alpha,e_sw,Icr,dIcr,all_plots]=calc_sw_intencity(data_source,bragg,cut_direction,cut_p,dE,dK);
+[D,x0,alpha,e_sw,Icr,dIcr,all_plots]=calc_sw_intensity(data_source,bragg,cut_direction,cut_p,dE,dK);
 for i=1:3
     close(all_plots(i));
 end
