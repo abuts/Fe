@@ -35,10 +35,10 @@ hold on
 % remember the place of the last image and place the impage to proper
 % posision
 mff = MagneticIons('Fe0');
-w2=mff.fix_magnetic_ff(w2);
-pl1=plot(w2);
-lz 0 4
-hold on
+%w2=mff.fix_magnetic_ff(w2);
+% pl1=plot(w2);
+% lz 0 4
+% hold on
 %-------------------------------------------------
 %
 fwhh = 0.2;
@@ -76,7 +76,9 @@ for i=1:size(cut_p,1)
     %[fw1,par]=fit(w1,@gaussIbkgd,[IP,q_sw(i),peak_width,0.01,0],free_params);
     
     kk = tobyfit2(w1);
-    kk = kk.set_fun(@(h,k,l,e,par)gauss_shape(proj,h,k,l,e,par),[amp,q_sw(i),fwhh],[1,1,1]);
+    ff_calc = mff.getFF_calculator(w1);
+    
+    kk = kk.set_fun(@(h,k,l,e,par)gauss_shape(proj,ff_calc,h,k,l,e,par),[amp,q_sw(i),fwhh],[1,1,1]);
     %kk = kk.set_free([1,0,0]);
     kk = kk.set_bfun(@lin_bg,[const,grad]);
     %kk = kk.set_bfree([1,0]);
@@ -157,18 +159,21 @@ fprintf('Av_amplitude: %f +-%f; Full height Half width average: %f +- %f\n',...
     ampl_avrg,sqrt(deltaASq),fwhh_avrg,sqrt(deltaSq));
 
 kk = tobyfit2(w_list);
-%kk = kk.set_local_foreground(true);
-kk = kk.set_fun(@(h,k,l,e,par)sw_disp(proj,h,k,l,e,par),[parR(1),parR(2),parR(3),ampl_avrg,fwhh_avrg]);
-%kk = kk.set_bind(1,1,1);
-%kk = kk.set_bind(2,2,1);
-%kk = kk.set_bind(3,3,1);
+kk = kk.set_local_foreground(true);
+kk = kk.set_fun(@(h,k,l,e,par)sw_disp(proj,ff_calc,h,k,l,e,par),[parR(1),parR(2),parR(3),ampl_avrg,fwhh_avrg]);
+kk = kk.set_bind({1,[1,2],1},{2,[2,2],1},{3,[3,2],1});
 kk = kk.set_bfun(@lin_bg,[const,grad]);
 kk = kk.set_mc_points(10);
 kk = kk.set_options('listing',1);
 [w110arr1_tf,fp110arr1]=kk.fit;
 
-fitpar = reshape([fp110arr1.p{:}],5,numel(fp110arr1.p))';
-fiterr = reshape([fp110arr1.sig{:}],5,numel(fp110arr1.sig))';
+if iscell(fp110arr1.p)
+    fitpar = reshape([fp110arr1.p{:}],5,numel(fp110arr1.p))';
+    fiterr = reshape([fp110arr1.sig{:}],5,numel(fp110arr1.sig))';
+else
+    fitpar = fp110arr1.p;
+    fiterr = fp110arr1.sig;
+end
 %fback = kk.simulate(w110arr1_tf,'back');
 %pl(fback)
 Amp    = fitpar(:,4);
@@ -212,12 +217,13 @@ alpha = par_sw(2);
 % %
 % ly 50 300
 % legend(ple,['SW Intensity, dE: ',num2str(2*dE),' dk: ',num2str(2*dK)]);
-% 
+%
 all_plots = [pl1,pl2,pl3,pl4,pl5];
 
 %
-function y = gauss_shape(proj,qh,qk,ql,en,pars)
+function y = gauss_shape(proj,ff_calc,qh,qk,ql,en,pars)
 
+mag_ff = ff_calc(qh,qk,ql,en,[]);
 ampl=pars(1);
 sig=pars(3)/sqrt(log(256));
 h0 =  proj.uoffset(1)+pars(2)*proj.u(1);
@@ -225,19 +231,19 @@ k0 =  proj.uoffset(2)+pars(2)*proj.u(2);
 l0 =  proj.uoffset(3)+pars(2)*proj.u(3);
 
 x2 = ((qh-h0).^2+(qk-k0).^2+(ql-l0).^2);
-y=exp(-x2/(2*sig*sig))*(ampl/sqrt(2*pi)/sig);
+y=(exp(-x2/(2*sig*sig))*(ampl/sqrt(2*pi)/sig).*mag_ff');
 
 
-function y = sw_disp(proj,qh,qk,ql,en,pars)
+function y = sw_disp(proj,ff_calc,qh,qk,ql,en,pars)
 
-
+mag_ff = ff_calc(qh,qk,ql,en,[]);
 D2 = pars(3);
 E0 = pars(1);
 if(E0<0)
     E0 = -E0;
-    hand = true;
+    handicap = true;
 else
-    hand = false;
+    handicap = false;
 end
 q0 = sqrt((en-E0)/D2);
 
@@ -267,9 +273,9 @@ x2 = (qh2+qk2+ql2);
 
 ampl = pars(4);
 sig=pars(5)/sqrt(log(256));
-y=exp(-x2/(2*sig*sig))*(ampl/sqrt(2*pi)/sig);
-if hand
-    y = y+E0*sum(y)*10;
+y=exp(-x2/(2*sig*sig))*(ampl/sqrt(2*pi)/sig).*mag_ff';
+if handicap
+    y = y+E0*sum(y)*100;
 end
 
 
