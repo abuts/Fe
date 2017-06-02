@@ -1,4 +1,4 @@
-function [result,all_plots]=fit_sw_intensity(data_source,bragg,cut_direction,cut_p,dE,dK)
+function [result,all_plots]=fit_sw2peak_intensity(data_source,bragg,cut_direction,cut_p,dE,dK)
 % Make range of 1D cuts, fits them with gaussian and found gaussian
 % parameters, fit Gaussian maxima positions with parabola
 % and found parameters of this parabola.
@@ -15,7 +15,7 @@ function [result,all_plots]=fit_sw_intensity(data_source,bragg,cut_direction,cut
 % dK          -- half of q-resolution of the cut.
 %
 
-q_sw = cut_p(:,1);
+q_range = cut_p(:,1);
 e_sw = cut_p(:,2);
 result = struct();
 
@@ -50,20 +50,21 @@ w2 = set_sample_and_inst(w2,sample,@maps_instrument_for_tests,'-efix',600,'S');
 
 
 
-D1FitRez = ones(8,numel(q_sw)).*NaN;
+D1FitRez = ones(8,numel(q_range)).*NaN;
 w_list = repmat(sqw,size(cut_p,1),1);
 ws_valid = false(size(cut_p,1),1);
 for i=1:size(cut_p,1)
-    if isnan(q_sw(i)) || isnan(e_sw(i))
+    if isnan(q_range(i)) || isnan(e_sw(i))
         continue
     else
         ws_valid(i) = true;
     end
     
-    [k_min,k_max,dk_cut] = q_range(q_sw(i),e_sw(i),dK);
+    k_min = -1.3*q_range(i);    
+    k_max = 1.3*q_range(i);
     try
-        w1=cut_sqw(w2,proj,[k_min,dk_cut,k_max],[-dK,dK],[-dK,dK],[e_sw(i)-dE,e_sw(i)+dE]);
-        w0=cut_sqw(w2,proj,[q_sw(i)-dK,q_sw(i)+dK],[-dK,dK],[-dK,dK],[e_sw(i)-dE,e_sw(i)+dE]);
+        w1=cut_sqw(w2,proj,[k_min,0.2*dK,k_max],[-dK,dK],[-dK,dK],[e_sw(i)-dE,e_sw(i)+dE]);
+        w0=cut_sqw(w2,proj,[-dK+q_range(i),dK+q_range(i)],[-dK,dK],[-dK,dK],[e_sw(i)-dE,e_sw(i)+dE]);
         w1f = mff.correct_mag_ff(w1);
         w0  = mff.correct_mag_ff(w0);
     catch
@@ -84,9 +85,9 @@ for i=1:size(cut_p,1)
     IP=w0.data.s;
     %dIP = w0.data.e;
     peak_width = fwhh*sqrt(log(256));
-    [w1_tf,fp3]=fit(w1f,@gaussIbkgd,[IP,q_sw(i),peak_width,0.01,0],[1,1,1,1,1]);
+    [w1_tf,fp3]=fit(w1f,@TwoGaussAndBkgd,...
+        [IP,q_range(i),peak_width,const,grad],[1,1,1,1,1],'fit',[1.e-4,40,1.e-6]);
     
-    %[fw1,par]=fit(w1,@gaussIbkgd,[IP,q_sw(i),peak_width,0.01,0],free_params);
     
     %kk = tobyfit2(w1);
     %ff_calc = mff.getFF_calculator(w1);
@@ -101,7 +102,7 @@ for i=1:size(cut_p,1)
     %[w1_tf, fp3] = kk.simulate;
     %[w1_tf,fp3]=kk.fit;
     w_list(i) = w1;
-    if fp3.converged && fp3.chisq < 1.9 && ~any(isnan(fp3.sig))
+    if fp3.converged && fp3.chisq < 4 && ~any(isnan(fp3.sig))
         ig = uint32(I_types.I_gaus_fit);   D1FitRez(ig,i) = fp3.p(1); %par.p(1)*sigma*sqrt(2*pi);
         i0 = uint32(I_types.gaus_sig);     D1FitRez(i0,i) = fp3.p(3);
         ix = uint32(I_types.gaus_x0);      D1FitRez(ix,i) = fp3.p(2);
@@ -159,7 +160,7 @@ hold on
 ind    = find(valid);
 qswm_err_l = ones(numel(valid),1)*NaN;
 qswm_err_l(ind(:))= qswm_err(:);
-errorbar(q_sw,e_sw,qswm_err_l,'r');
+errorbar(q_range,e_sw,qswm_err_l,'r');
 errorbar(qswm,e_sw(valid),D1FitRez(uint32(I_types.gaus_sig),valid),'b');
 lx(min(xxpf),max(xxpf));
 ly(0,1.1*max(yypf));
@@ -346,9 +347,9 @@ if handicap
     y = y+E0*sum(y)*100;
 end
 
-function y = gaussIbkgd(x, p, varargin)
+function y = TwoGaussAndBkgd(x, p, varargin)
 
-y=exp(-0.5*((x-p(2))/p(3)).^2)*(p(1)/sqrt(2*pi)/p(3)) + (p(4)+x*p(5));
+y=(exp(-0.5*((x-p(2))/p(3)).^2)+exp(-0.5*((x+p(2))/p(3)).^2))*(p(1)/sqrt(2*pi)/p(3)) + (p(4)+x*p(5));
 
 
 function bg = lin_bg(x,par)

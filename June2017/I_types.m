@@ -7,5 +7,8 @@ classdef I_types < uint32
         gaus_sig   (5)
         gaus_x0    (6)
         gaus_dx0   (7)
+        bkg_level  (8)
+        bkg_grad   (9)
+        
     end
 end

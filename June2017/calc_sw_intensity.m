@@ -1,9 +1,9 @@
 function [D,x0,alpha,e_sw,Icr,dIcr,all_plots]=calc_sw_intensity(data_source,bragg,cut_direction,cut_p,dE,dK)
 % Make range of 1D cuts, fits them with gaussian and found gaussian
-% parameters, fit Gaussian maxima positions with parabola 
+% parameters, fit Gaussian maxima positions with parabola
 % and found parameters of this parabola.
 % Estimante intensity along parabola from Gaussian fit amplitude and
-% correct this intensity by cut properties, dependent on SW curvature 
+% correct this intensity by cut properties, dependent on SW curvature
 %Inputs:
 % data_source -- full path and name of the sqw file to cut
 % bragg       -- hkl coordinates of bragg peak to cut around
@@ -11,7 +11,7 @@ function [D,x0,alpha,e_sw,Icr,dIcr,all_plots]=calc_sw_intensity(data_source,brag
 %                point of bragg
 % cut_p       -- array of Q-dE points along cut direction to do 1D cuts
 %                around
-% dE          -- half of energy resolution of the cut 
+% dE          -- half of energy resolution of the cut
 % dK          -- half of q-resolution of the cut.
 %
 free_params = [1,1,1,1,1];
@@ -57,20 +57,23 @@ for i=1:size(cut_p,1)
     dIP = w0.data.e;
     [fw1,par]=fit(w1,@gaussIbkgd,[IP,q_sw(i),peak_width,0.01,0],free_params);
     
-    acolor('k')    
+    acolor('k')
     pl2=plot(w1);
     acolor('r')
     pd(fw1);
     drawnow;
     %sigma=abs(par.p(3));
     ig = uint32(I_types.I_gaus_fit);   Intenc(ig,i) = par.p(1); %par.p(1)*sigma*sqrt(2*pi);
-    id = uint32(I_types.dI_gaus_fit);  Intenc(id,i) = par.sig(1);
     i0 = uint32(I_types.gaus_sig);     Intenc(i0,i) = par.p(3);
-    ix = uint32(I_types.gaus_x0);      Intenc(ix,i) = par.p(2);    
-    dix= uint32(I_types.gaus_dx0);     Intenc(dix,i)= par.sig(2);        
+    ix = uint32(I_types.gaus_x0);      Intenc(ix,i) = par.p(2);
+    
+    id = uint32(I_types.dI_gaus_fit);  Intenc(id,i) = par.sig(1);
+    dix= uint32(I_types.gaus_dx0);     Intenc(dix,i)= par.sig(2);
+    
     
     ii = uint32(I_types.I_cut);     Intenc(ii,i)  =IP;
     di = uint32(I_types.dI_cut);    Intenc(di,i)  =dIP;
+    
 end
 %
 I   = Intenc(uint32(I_types.I_cut),:);
@@ -91,7 +94,7 @@ legend(plots,'Integral intensity','Gaussian fitted intensity');
 %---------------------------------------------------------------
 % Fit and plot spin-wave shape
 qswm = Intenc(uint32(I_types.gaus_x0),:);
-qswm_err =Intenc(uint32(I_types.gaus_dx0),:); 
+qswm_err =Intenc(uint32(I_types.gaus_dx0),:);
 
 parab = @(x,par)(par(1)+(par(2)+par(3)*x).*x);
 s.x = qswm;

@@ -1,4 +1,4 @@
-function [D,x0,alpha,result] = Ei200_uvw100_at110mfit()
+function [D,x0,alpha,result] = Ei200_uvw100_at110TPmodel2Peaks()
 % simplified verification script, which allows one to check
 % how do sqw cut works
 
@@ -18,23 +18,7 @@ dK = 0.05;
 %D_Guess = 1000; % E= D*q^2;
 %
 % Points on Q-dE plane to make 1D cuts
-cut_p =   [-0.1095   21.5000;
-    -0.1253   26.5000;
-    -0.1396   31.5000;
-    -0.1527   36.5000;
-    -0.1650   41.5000;
-    -0.1765   46.5000;
-    -0.1874   51.5000;
-    -0.1978   56.5000;
-    -0.2077   61.5000;
-    -0.2172   66.5000;
-    -0.2264   71.5000;
-    -0.2352   76.5000;
-    -0.2438   81.5000;
-    -0.2520   86.5000;
-    -0.2601   91.5000;
-    NaN      NaN;
-    0.1638   21.5000;
+cut_p =   [  0.1638   21.5000;
     0.1796   26.5000;
     0.1938   31.5000;
     0.2070   36.5000;
@@ -48,14 +32,10 @@ cut_p =   [-0.1095   21.5000;
     0.2895   76.5000;
     0.2980   81.5000;
     0.3063   86.5000;
-    0.3144   91.5000;
-    0.3222   96.5000;
-    0.3298  101.5000;
-    0.3373  106.5000;
-    0.3445  111.5000;
-    0.3516  116.5000];
+    0.3144   91.5000];
 
-[result1,all_plots]=fit_sw_intensity(data_source,bragg,cut_direction,cut_p,dE,dK);
+[result1,all_plots]=fit_swTP_model(data_source,bragg,cut_direction,cut_p,dE,dK);
+%[result1,all_plots]=fit_sw_intensity(data_source,bragg,cut_direction,cut_p,dE,dK);
 for i=1:numel(all_plots)
     if i==1
         cut_plot = all_plots(i);
@@ -66,23 +46,7 @@ for i=1:numel(all_plots)
 end
 cut_direction = [0,1,0];
 % Points on Q-dE plane to make 1D cuts
-cut_p =   [  -0.1132   17.5000;
-    -0.1310   22.5000;
-    -0.1468   27.5000;
-    -0.1611   32.5000;
-    -0.1743   37.5000;
-    -0.1866   42.5000;
-    -0.1982   47.5000;
-    -0.2091   52.5000;
-    -0.2195   57.5000;
-    -0.2295   62.5000;
-    -0.2390   67.5000;
-    -0.2482   72.5000;
-    -0.2571   77.5000;
-    -0.2657   82.5000;
-    -0.2740   87.5000;
-    -0.2821   92.5000;
-    NaN      NaN;
+cut_p =   [ 
     0.1416   21.5000;
     0.1578   26.5000;
     0.1723   31.5000;
@@ -97,40 +61,17 @@ cut_p =   [  -0.1132   17.5000;
     0.2693   76.5000;
     0.2780   81.5000;
     0.2863   86.5000;
-    0.2945   91.5000;
-    0.3024   96.5000;
-    0.3101  101.5000;
-    0.3176  106.5000;
-    0.3249  111.5000;
-    0.3321  116.5000];
-
-[result2,all_plots1]=fit_sw_intensity(data_source,bragg,cut_direction,cut_p,dE,dK);
+    0.2945   91.5000];
+[result2,all_plots1]=fit_swTP_model(data_source,bragg,cut_direction,cut_p,dE,dK);
+%[result2,all_plots1]=fit_sw_intensity(data_source,bragg,cut_direction,cut_p,dE,dK);
 for i=1:numel(all_plots1)
-
+    
     close(all_plots1(i));
 end
 
 cut_direction = [0,0,1];
 % Points on Q-dE plane to make 1D cuts
-cut_p =   [ -0.1445   23.5000;
-    -0.1591   28.5000;
-    -0.1725   33.5000;
-    -0.1849   38.5000;
-    -0.1964   43.5000;
-    -0.2073   48.5000;
-    -0.2177   53.5000;
-    -0.2275   58.5000;
-    -0.2369   63.5000;
-    -0.2460   68.5000;
-    -0.2547   73.5000;
-    -0.2631   78.5000;
-    -0.2713   83.5000;
-    -0.2792   88.5000;
-    -0.2869   93.5000;
-    -0.2944   98.5000;
-    -0.3017  103.5000;
-    NaN      NaN;
-    0.1229   21.5000;
+cut_p =   [  0.1229   21.5000;
     0.1382   26.5000;
     0.1521   31.5000;
     0.1648   36.5000;
@@ -143,8 +84,8 @@ cut_p =   [ -0.1445   23.5000;
     0.2361   71.5000;
     0.2446   76.5000;
     0.2529   81.5000];
-
-[result3,all_plots2]=fit_sw_intensity(data_source,bragg,cut_direction,cut_p,dE,dK);
+[result3,all_plots2]=fit_swTP_model(data_source,bragg,cut_direction,cut_p,dE,dK);
+%[result3,all_plots2]=fit_sw_intensity(data_source,bragg,cut_direction,cut_p,dE,dK);
 for i=1:numel(all_plots2)
     close(all_plots2(i));
 end
@@ -187,7 +128,8 @@ figure(cut_plot);
 result = {result1,result2,result3};
 plot(result{1}.fitted_sw(:,1),result{1}.fitted_sw(:,2),['-','g']);
 hold on
-errorbar(result{1}.eval_sw(:,1),result{1}.eval_sw(:,2),result{1}.eval_sw(:,3),colors{1});
+width_scale = max(result{1}.eval_sw(:,3))/(0.4*(max(result{1}.eval_sw(:,1))-min(result{1}.eval_sw(:,1))));
+errorbar(result{1}.eval_sw(:,1),result{1}.eval_sw(:,2),result{1}.eval_sw(:,3)/width_scale,colors{1},'horizontal');
 for i=2:3
-    errorbar(result{i}.eval_sw(:,1),result{i}.eval_sw(:,2),result{i}.eval_sw(:,3),colors{i});            
+    errorbar(result{i}.eval_sw(:,1),result{i}.eval_sw(:,2),result{i}.eval_sw(:,3)/width_scale,colors{i},'horizontal');
 end

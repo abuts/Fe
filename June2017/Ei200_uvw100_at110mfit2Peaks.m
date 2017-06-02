@@ -1,4 +1,4 @@
-function [D,x0,alpha,result] = Ei200_uvw100_at110mfit()
+function [D,x0,alpha,result] = Ei200_uvw100_at110mfit2Peaks()
 % simplified verification script, which allows one to check
 % how do sqw cut works
 
@@ -55,7 +55,8 @@ cut_p =   [-0.1095   21.5000;
     0.3445  111.5000;
     0.3516  116.5000];
 
-[result1,all_plots]=fit_sw_intensity(data_source,bragg,cut_direction,cut_p,dE,dK);
+[result1,all_plots]=fit_sw2peak_intensity(data_source,bragg,cut_direction,cut_p,dE,dK);
+%[result1,all_plots]=fit_sw_intensity(data_source,bragg,cut_direction,cut_p,dE,dK);
 for i=1:numel(all_plots)
     if i==1
         cut_plot = all_plots(i);
@@ -103,8 +104,8 @@ cut_p =   [  -0.1132   17.5000;
     0.3176  106.5000;
     0.3249  111.5000;
     0.3321  116.5000];
-
-[result2,all_plots1]=fit_sw_intensity(data_source,bragg,cut_direction,cut_p,dE,dK);
+[result2,all_plots1]=fit_sw2peak_intensity(data_source,bragg,cut_direction,cut_p,dE,dK);
+%[result2,all_plots1]=fit_sw_intensity(data_source,bragg,cut_direction,cut_p,dE,dK);
 for i=1:numel(all_plots1)
 
     close(all_plots1(i));
@@ -143,8 +144,8 @@ cut_p =   [ -0.1445   23.5000;
     0.2361   71.5000;
     0.2446   76.5000;
     0.2529   81.5000];
-
-[result3,all_plots2]=fit_sw_intensity(data_source,bragg,cut_direction,cut_p,dE,dK);
+[result3,all_plots2]=fit_sw2peak_intensity(data_source,bragg,cut_direction,cut_p,dE,dK);
+%[result3,all_plots2]=fit_sw_intensity(data_source,bragg,cut_direction,cut_p,dE,dK);
 for i=1:numel(all_plots2)
     close(all_plots2(i));
 end
