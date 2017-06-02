@@ -1,4 +1,4 @@
-function [result,all_plots]=fit_sw_intensity(data_source,bragg,cut_direction,cut_p,dE,dK)
+function [result,all_plots]=fit_swTP_model(data_source,bragg,cut_direction,cut_p,dE,dK)
 % Make range of 1D cuts, fits them with gaussian and found gaussian
 % parameters, fit Gaussian maxima positions with parabola
 % and found parameters of this parabola.
@@ -15,7 +15,7 @@ function [result,all_plots]=fit_sw_intensity(data_source,bragg,cut_direction,cut
 % dK          -- half of q-resolution of the cut.
 %
 
-q_sw = cut_p(:,1);
+q_range = cut_p(:,1);
 e_sw = cut_p(:,2);
 result = struct();
 
@@ -43,27 +43,28 @@ mff = MagneticIons('Fe0');
 % hold on
 %-------------------------------------------------
 %
-fwhh = 0.2;
+fwhh = 0.1;
 sample=IX_sample(true,[1,0,0],[0,1,0],'cuboid',[0.04,0.03,0.02]);
 
 w2 = set_sample_and_inst(w2,sample,@maps_instrument_for_tests,'-efix',600,'S');
 
 
 
-D1FitRez = ones(8,numel(q_sw)).*NaN;
-w_list = repmat(sqw,size(cut_p,1),1);
+D1FitRez = ones(8,numel(q_range)).*NaN;
+cut_list = repmat(sqw,size(cut_p,1),1);
 ws_valid = false(size(cut_p,1),1);
 for i=1:size(cut_p,1)
-    if isnan(q_sw(i)) || isnan(e_sw(i))
+    if isnan(q_range(i)) || isnan(e_sw(i))
         continue
     else
         ws_valid(i) = true;
     end
     
-    [k_min,k_max,dk_cut] = q_range(q_sw(i),e_sw(i),dK);
+    k_min = -q_range(i)-5*dK;    
+    k_max =  q_range(i)+5*dK;
     try
-        w1=cut_sqw(w2,proj,[k_min,dk_cut,k_max],[-dK,dK],[-dK,dK],[e_sw(i)-dE,e_sw(i)+dE]);
-        w0=cut_sqw(w2,proj,[q_sw(i)-dK,q_sw(i)+dK],[-dK,dK],[-dK,dK],[e_sw(i)-dE,e_sw(i)+dE]);
+        w1=cut_sqw(w2,proj,[k_min,0.2*dK,k_max],[-dK,dK],[-dK,dK],[e_sw(i)-dE,e_sw(i)+dE]);
+        w0=cut_sqw(w2,proj,[-dK+q_range(i),dK+q_range(i)],[-dK,dK],[-dK,dK],[e_sw(i)-dE,e_sw(i)+dE]);
         w1f = mff.correct_mag_ff(w1);
         w0  = mff.correct_mag_ff(w0);
     catch
@@ -76,17 +77,17 @@ for i=1:size(cut_p,1)
     
     const = w1.data.s(1); % take background as the intencity at leftmost point
     grad  = 0;  % guess background gradient is 0
-    amp=(w0.data.s-const)*(k_max-k_min); % guess gausian amplitude
+    amp=(w0.data.s-const); % guess gausian amplitude
     
     ic = uint32(I_types.I_cut);     D1FitRez(ic,i)  =amp;
     di = uint32(I_types.dI_cut);    D1FitRez(di,i)  =w0.data.e*(k_max-k_min);
     
-    IP=w0.data.s;
+    IP=amp;
     %dIP = w0.data.e;
     peak_width = fwhh*sqrt(log(256));
-    [w1_tf,fp3]=fit(w1f,@gaussIbkgd,[IP,q_sw(i),peak_width,0.01,0],[1,1,1,1,1]);
+    [w1_tf,fp3]=fit(w1f,@TwoGaussAndBkgd,...
+        [IP,q_range(i),peak_width,const,grad],[1,1,1,1,1],'fit',[1.e-4,40,1.e-6]);
     
-    %[fw1,par]=fit(w1,@gaussIbkgd,[IP,q_sw(i),peak_width,0.01,0],free_params);
     
     %kk = tobyfit2(w1);
     %ff_calc = mff.getFF_calculator(w1);
@@ -100,8 +101,8 @@ for i=1:size(cut_p,1)
     %kk = kk.set_options('listing',1);
     %[w1_tf, fp3] = kk.simulate;
     %[w1_tf,fp3]=kk.fit;
-    w_list(i) = w1;
-    if fp3.converged && fp3.chisq < 1.9 && ~any(isnan(fp3.sig))
+    cut_list(i) = w1;
+    if fp3.converged && fp3.chisq < 4 && ~any(isnan(fp3.sig))
         ig = uint32(I_types.I_gaus_fit);   D1FitRez(ig,i) = fp3.p(1); %par.p(1)*sigma*sqrt(2*pi);
         i0 = uint32(I_types.gaus_sig);     D1FitRez(i0,i) = fp3.p(3);
         ix = uint32(I_types.gaus_x0);      D1FitRez(ix,i) = fp3.p(2);
@@ -159,7 +160,7 @@ hold on
 ind    = find(valid);
 qswm_err_l = ones(numel(valid),1)*NaN;
 qswm_err_l(ind(:))= qswm_err(:);
-errorbar(q_sw,e_sw,qswm_err_l,'r');
+errorbar(q_range,e_sw,qswm_err_l,'r');
 errorbar(qswm,e_sw(valid),D1FitRez(uint32(I_types.gaus_sig),valid),'b');
 lx(min(xxpf),max(xxpf));
 ly(0,1.1*max(yypf));
@@ -179,14 +180,25 @@ pause(1)
 ws_valid =  ws_valid & ~isnan(sum(D1FitRez,1)');
 %
 D1Real = D1FitRez(bg1:bg2,ws_valid);
+
+% S(Q,w) model
+ff = 1; % 1
+T = 8;  % 2
+gamma = 10; % 3
+Seff = 2;   % 4
+gap = 0;    % 5
+J1 = 40;    % 6
+par = [ff, T, gamma, Seff, gap, J1, 0 0 0 0];
+
 %
-w_list = w_list(ws_valid);
-kk = tobyfit2(w_list);
-ff_calc = mff.getFF_calculator(w_list(1));
+cut_list = cut_list(ws_valid);
+kk = tobyfit2(cut_list);
+%ff_calc = mff.getFF_calculator(cut_list(1));
 kk = kk.set_local_foreground(true);
-%kk = kk.set_fun(@(h,k,l,e,par)sw_disp(proj,ff_calc,h,k,l,e,par),[0,parR(2),940,ampl_avrg,fwhh_avrg],[0,1,0,1,1]);
-kk = kk.set_fun(@(h,k,l,e,par)sw_disp(proj,ff_calc,h,k,l,e,par),[parR(1),parR(2),parR(3),ampl_avrg,fwhh_avrg],[1,1,1,1,1]);
-kk = kk.set_bind({1,[1,2],1},{2,[2,2],1},{3,[3,2],1});
+kk = kk.set_fun(@sqw_iron,par,[0,0,1,1,0,1,0,0,0,0]);
+%kk = kk.set_fun(@(h,k,l,e,par)sw_disp(proj,ff_calc,h,k,l,e,par),[parR(1),parR(2),parR(3),ampl_avrg,fwhh_avrg],[1,1,1,1,1]);
+%kk = kk.set_bind({1,[1,2],1},{2,[2,2],1},{3,[3,2],1});
+kk = kk.set_bind({6,[6,2],1});
 
 % set up its own initial background value for each background function
 bpin = arrayfun(@(i)(D1Real(:,i)'),1:size(D1Real,2),'UniformOutput',false);
@@ -200,10 +212,21 @@ kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-4;60;1.e-6]);
 [w1D_arr1_tf,fp_arr1]=kk.fit;
 %profile off
 %profile viewer
+for i=1:numel(w1D_arr1_tf)
+    acolor('k');
+    plot(cut_list(i));
+    acolor('r');
+    pd(w1D_arr1_tf(i));
+    pause(1)
+end
+%cut_energies = e_sw(valid);
+res_file = rez_name(data_source,bragg,cut_direction);
+save(res_file,'data_source','bragg','cut_direction','dE','dK',...
+    'cut_list','w1D_arr1_tf','fp_arr1');
 
 if iscell(fp_arr1.p)
-    fitpar = reshape([fp_arr1.p{:}],5,numel(fp_arr1.p))';
-    fiterr = reshape([fp_arr1.sig{:}],5,numel(fp_arr1.sig))';
+    fitpar = reshape([fp_arr1.p{:}],10,numel(fp_arr1.p))';
+    fiterr = reshape([fp_arr1.sig{:}],10,numel(fp_arr1.sig))';
 else
     fitpar = fp_arr1.p;
     fiterr = fp_arr1.sig;
@@ -212,8 +235,8 @@ end
 %pl(fback)
 Amp    = fitpar(:,4);
 Amp_err= fiterr(:,4);
-fhhw   = fitpar(:,5);
-fhhw_err=fiterr(:,5);
+fhhw   = fitpar(:,3);
+fhhw_err=fiterr(:,3);
 ind    = find(ws_valid);
 Amp_pl = ones(numel(ws_valid),1)*NaN;
 Amp_pl_err = Amp_pl;
@@ -231,7 +254,7 @@ ly 0 2
 %legend(li2,'Tobifitted intensity','Tobyfit2 intensity')
 
 xxpf=max(min(qswm),-0.8):0.01:min(max(qswm),0.8);
-par_sw = fp_arr1.p{1}(1:3);
+par_sw = [0,0,4*pi*pi*fp_arr1.p{1}(6)];
 yypf=parab(xxpf,par_sw);
 
 pl5=figure('Name',['Tobyfitted spin wave dispersion for: ', cut_id ]);
@@ -284,71 +307,10 @@ q = sign.*sqrt((en+(0.25*Alpha*Alpha/D2-E0))/D2)- Alpha/(2*D2);
 
 
 %
-function y = gauss_shape(proj,ff_calc,qh,qk,ql,en,pars)
 
-mag_ff = ff_calc(qh,qk,ql,en,[]);
-ampl=pars(1);
-sig=pars(3)/sqrt(log(256));
-h0 =  proj.uoffset(1)+pars(2)*proj.u(1);
-k0 =  proj.uoffset(2)+pars(2)*proj.u(2);
-l0 =  proj.uoffset(3)+pars(2)*proj.u(3);
+function y = TwoGaussAndBkgd(x, p, varargin)
 
-x2 = ((qh-h0).^2+(qk-k0).^2+(ql-l0).^2);
-y=(exp(-x2/(2*sig*sig))*(ampl/sqrt(2*pi)/sig).*mag_ff');
-
-
-function y = sw_disp(proj,ff_calc,qh,qk,ql,en,pars)
-
-%JS = pars(3);
-%D2 = 4*pi*pi*JS;
-D2     = pars(3);
-Alpha  = pars(2);
-E0     = pars(1);
-if(E0<0)
-    E0 = -E0;
-    handicap = true;
-else
-    handicap = false;
-end
-q0 = sqrt((en+(0.25*Alpha*Alpha/D2-E0))/D2);
-dq  = Alpha/(2*D2);
-
-if abs(proj.u(1))>0
-    qhp2 = (qh - proj.uoffset(1)-(dq+q0)*proj.u(1)).^2;
-    qhm2 = (qh - proj.uoffset(1)-(dq-q0)*proj.u(1)).^2;
-    qh2 = min(qhp2,qhm2);
-else
-    qh2 = (qh - proj.uoffset(1)).^2;
-end
-if abs(proj.u(2))>0
-    qkp2 = (qk - proj.uoffset(2)-(dq+q0)*proj.u(2)).^2;
-    qkm2 = (qk - proj.uoffset(2)-(dq-q0)*proj.u(2)).^2;
-    qk2 = min(qkp2,qkm2);
-else
-    qk2 = (qk - proj.uoffset(2)).^2;
-end
-if abs(proj.u(3))>0
-    qlp2 = (ql - proj.uoffset(3)-(dq+q0)*proj.u(3)).^2;
-    qlm2 = (ql - proj.uoffset(3)-(dq-q0)*proj.u(3)).^2;
-    ql2 = min(qlp2,qlm2);
-else
-    ql2 = (ql - proj.uoffset(3)).^2;
-end
-
-x2 = (qh2+qk2+ql2);
-mag_ff = ff_calc(qh,qk,ql,en,[]);
-
-ampl = pars(4);
-sig=pars(5)/sqrt(log(256));
-y=exp(-x2/(2*sig*sig))*(ampl/sqrt(2*pi)/sig).*mag_ff';
-
-if handicap
-    y = y+E0*sum(y)*100;
-end
-
-function y = gaussIbkgd(x, p, varargin)
-
-y=exp(-0.5*((x-p(2))/p(3)).^2)*(p(1)/sqrt(2*pi)/p(3)) + (p(4)+x*p(5));
+y=(exp(-0.5*((x-p(2))/p(3)).^2)+exp(-0.5*((x+p(2))/p(3)).^2))*(p(1)/sqrt(2*pi)/p(3)) + (p(4)+x*p(5));
 
 
 function bg = lin_bg(x,par)
@@ -422,3 +384,11 @@ else
     dk_cut = dk;
 end
 
+
+function name = rez_name(data_file,bragg,direction)
+[~,fname] = fileparts(data_file);
+caption =@(vector)['[' num2str(vector(1)) num2str(vector(2))  num2str(vector(3)) ']'];
+bragg_name = caption(bragg);
+dir_name  = caption(direction);
+
+name = ['TF_',fname,'_bragg_',bragg_name,'_dir_',dir_name];
