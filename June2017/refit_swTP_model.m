@@ -50,7 +50,7 @@ kk = kk.set_mc_points(10);
 kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-2;60;1.e-6]);
 %kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-4;20;1.e-4]);
 %profile on;
-[w1D_arr1_tf,fp_arr1]=kk.fit;
+%[w1D_arr1_tf,fp_arr1]=kk.fit;
 %profile off
 %profile viewer
 for i=1:numel(w1D_arr1_tf)

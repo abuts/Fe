@@ -1,8 +1,7 @@
 function [result,all_plots]=fit_swTP_model(data_source,bragg,cut_direction,cut_p,dE,dK)
-% Make range of 1D cuts, fits them with gaussian and found gaussian
+% Make range of 1D cuts, fits them with TF models and found model
 % parameters, fit Gaussian maxima positions with parabola
-% and found parameters of this parabola.
-% Estimante intensity along parabola from Gaussian fit amplitude and
+% Estimate intensity along sw  from Gaussian fit amplitude and
 % correct this intensity by cut properties, dependent on SW curvature
 %Inputs:
 % data_source -- full path and name of the sqw file to cut
@@ -60,7 +59,7 @@ for i=1:size(cut_p,1)
         ws_valid(i) = true;
     end
     
-    k_min = -q_range(i)-5*dK;    
+    k_min = -q_range(i)-5*dK;
     k_max =  q_range(i)+5*dK;
     try
         w1=cut_sqw(w2,proj,[k_min,0.2*dK,k_max],[-dK,dK],[-dK,dK],[e_sw(i)-dE,e_sw(i)+dE]);
@@ -85,8 +84,14 @@ for i=1:size(cut_p,1)
     IP=amp;
     %dIP = w0.data.e;
     peak_width = fwhh*sqrt(log(256));
-    [w1_tf,fp3]=fit(w1f,@TwoGaussAndBkgd,...
-        [IP,q_range(i),peak_width,const,grad],[1,1,1,1,1],'fit',[1.e-4,40,1.e-6]);
+    try
+        [w1_tf,fp3]=fit(w1f,@TwoGaussAndBkgd,...
+            [IP,q_range(i),peak_width,const,grad],[1,1,1,1,1],'fit',[1.e-4,40,1.e-6]);
+    catch
+        ws_valid(i) = false;
+        continue
+        
+    end
     
     
     %kk = tobyfit2(w1);
@@ -147,10 +152,14 @@ parab = @(x,par)(par(1)+(par(2)+par(3)*x).*x);
 s.x = qswm;
 s.y = e_sw(valid)';
 s.e = qswm_err;
-[~,fit_par] = fit(s,parab,[1,1,1]);
+if numel(s.y) > 3
+    [~,fit_par] = fit(s,parab,[1,1,1]);
+else
+    fit_par.p=[0,0,1100];
+end
 parR  = fit_par.p;
 
-xxpf=max(min(qswm),-0.8):0.01:min(max(qswm),0.8);
+xxpf=max(min(qswm),-0.8)-0.02:0.01:min(max(qswm),0.8)+0.02;
 yypf=parab(xxpf,parR);
 
 cut_id = [caption(bragg),' Direction: ',caption(cut_direction)];
@@ -162,7 +171,7 @@ qswm_err_l = ones(numel(valid),1)*NaN;
 qswm_err_l(ind(:))= qswm_err(:);
 errorbar(q_range,e_sw,qswm_err_l,'r');
 errorbar(qswm,e_sw(valid),D1FitRez(uint32(I_types.gaus_sig),valid),'b');
-lx(min(xxpf),max(xxpf));
+lx(min(xxpf)-0.01,max(xxpf)+0.01);
 ly(0,1.1*max(yypf));
 
 
@@ -198,7 +207,9 @@ kk = kk.set_local_foreground(true);
 kk = kk.set_fun(@sqw_iron,par,[0,0,1,1,0,1,0,0,0,0]);
 %kk = kk.set_fun(@(h,k,l,e,par)sw_disp(proj,ff_calc,h,k,l,e,par),[parR(1),parR(2),parR(3),ampl_avrg,fwhh_avrg],[1,1,1,1,1]);
 %kk = kk.set_bind({1,[1,2],1},{2,[2,2],1},{3,[3,2],1});
-kk = kk.set_bind({6,[6,2],1});
+if numel(cut_list) > 1
+    kk = kk.set_bind({6,[6,2],1});
+end
 
 % set up its own initial background value for each background function
 bpin = arrayfun(@(i)(D1Real(:,i)'),1:size(D1Real,2),'UniformOutput',false);
@@ -221,7 +232,8 @@ for i=1:numel(w1D_arr1_tf)
 end
 %cut_energies = e_sw(valid);
 res_file = rez_name(data_source,bragg,cut_direction);
-save(res_file,'data_source','bragg','cut_direction','dE','dK',...
+es_valid = e_sw(ws_valid);
+save(res_file,'es_valid','data_source','bragg','cut_direction','dE','dK',...
     'cut_list','w1D_arr1_tf','fp_arr1');
 
 if iscell(fp_arr1.p)
@@ -231,6 +243,11 @@ else
     fitpar = fp_arr1.p;
     fiterr = fp_arr1.sig;
 end
+disp('fitpar')
+disp(fitpar);
+disp('fit_err')
+disp(fiterr);
+
 %fback = kk.simulate(w110arr1_tf,'back');
 %pl(fback)
 Amp    = fitpar(:,4);
@@ -254,7 +271,7 @@ ly 0 2
 %legend(li2,'Tobifitted intensity','Tobyfit2 intensity')
 
 xxpf=max(min(qswm),-0.8):0.01:min(max(qswm),0.8);
-par_sw = [0,0,4*pi*pi*fp_arr1.p{1}(6)];
+par_sw = [0,0,4*pi*pi*fitpar(1,6)];
 yypf=parab(xxpf,par_sw);
 
 pl5=figure('Name',['Tobyfitted spin wave dispersion for: ', cut_id ]);
@@ -264,15 +281,17 @@ fhhw_pl(ind(:)) = fhhw(:);
 fhhw_err_pl(ind(:))= fhhw_err(:);
 q_sw_calc = inv_parab(e_sw,par_sw);
 errorbar(q_sw_calc,e_sw,fhhw_pl,'b');
-lx(1.1*min(xxpf),1.1*max(xxpf));
+lx(1.1*min(xxpf)-0.01,1.1*max(xxpf)+0.01);
 
 
 pl6=figure('Name',['Tobyfitted FHHW along spin wave for: ', cut_id ]);
 errorbar(e_sw,fhhw_pl,fhhw_err_pl,'b');
-ly 0 1
+ly 0 80
 %---------------------------------------------------------------
 disp(['Cut: ',cut_id,' fitting param: ',num2str(par_sw)]);
+disp(['Cut: ',cut_id,' J : ',num2str(fitpar(1,6)),' Sig: ',num2str(fiterr(1,6))]);
 result.sw_par = par_sw;
+result.fit_par = fp_arr1;
 result.ampl_vs_e = [e_sw,Amp_pl,Amp_pl_err];
 result.fhhw_vs_e = [e_sw,fhhw_pl,fhhw_err_pl];
 result.fhhw_along_sw = [q_sw_calc,e_sw,fhhw_pl];
