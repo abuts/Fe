@@ -50,7 +50,6 @@ else
     
 end
 
-no_chkpnts= 'True';% Cuts
 % #1
 rp1.cut_direction=[1,1,0];
 rp1.dE = 5;
@@ -143,7 +142,7 @@ for i=2:n_cuts
     %ds = IXTdataset_1d(result{i}.fhhw_vs_e');
     %pd(ds)
 end
-ly 0 0.5;
+ly 0 80;
 lx 20 180;
 
 
@@ -154,7 +153,7 @@ hold on
 width_scale = max(result{1}.eval_sw(:,3))/(0.4*(max(result{1}.eval_sw(:,1))-min(result{1}.eval_sw(:,1))));
 
 errorbar(result{1}.eval_sw(:,1),result{1}.eval_sw(:,2),result{1}.eval_sw(:,3)/width_scale,colors{1},'horizontal');
-for i=2:3
+for i=2:n_cuts
     errorbar(result{i}.eval_sw(:,1),result{i}.eval_sw(:,2),result{i}.eval_sw(:,3)/width_scale,colors{i},'horizontal');
 end
 

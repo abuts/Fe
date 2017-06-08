@@ -104,7 +104,7 @@ li1=errorbar(result1.ampl_vs_e(:,1),result1.ampl_vs_e(:,2),result1.ampl_vs_e(:,3
 hold on
 li2=errorbar(result2.ampl_vs_e(:,1),result2.ampl_vs_e(:,2),result2.ampl_vs_e(:,3),'g');
 li3=errorbar(result3.ampl_vs_e(:,1),result3.ampl_vs_e(:,2),result3.ampl_vs_e(:,3),'b');
-ly 0 1
+ly 0 2
 plots = [li1,li2,li3];
 
 legend(plots,['direction: ',caption([1,0,0])],...
@@ -118,18 +118,22 @@ lf2=errorbar(result2.fhhw_vs_e(:,1),result2.fhhw_vs_e(:,2),result2.fhhw_vs_e(:,3
 lf3=errorbar(result3.fhhw_vs_e(:,1),result3.fhhw_vs_e(:,2),result3.fhhw_vs_e(:,3),'b');
 
 plots = [lf1,lf2,lf3];
-ly 0 1
+ly 0 80
 legend(plots,['direction: ',caption([1,0,0])],...
     ['direction: ',caption([0,1,0])],...
     ['direction: ',caption([0,0,1])]);
 
 %figure('Name',['Tobyfitted spin wave dispersion at: ', BraggName]);
-figure(cut_plot);
 result = {result1,result2,result3};
-plot(result{1}.fitted_sw(:,1),result{1}.fitted_sw(:,2),['-','g']);
+figure(cut_plot);
+plot(result{1}.fitted_sw(:,1),result{1}.fitted_sw(:,2),['o','r']);
 hold on
 width_scale = max(result{1}.eval_sw(:,3))/(0.4*(max(result{1}.eval_sw(:,1))-min(result{1}.eval_sw(:,1))));
+
 errorbar(result{1}.eval_sw(:,1),result{1}.eval_sw(:,2),result{1}.eval_sw(:,3)/width_scale,colors{1},'horizontal');
 for i=2:3
     errorbar(result{i}.eval_sw(:,1),result{i}.eval_sw(:,2),result{i}.eval_sw(:,3)/width_scale,colors{i},'horizontal');
 end
+
+
+

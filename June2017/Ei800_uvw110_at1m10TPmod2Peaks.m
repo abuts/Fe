@@ -2,7 +2,7 @@ function Ei800_uvw110_at1m10TPmod2Peaks(varargin)
 % Does not work -- too few points to fit around [1,-1,0]
 %
 data_source= fullfile(pwd,'sqw','Data','Fe_ei787.sqw');
-bragg = [1,1,0];
+bragg = [1,-1,0];
 colors={'r','g','blue','c','m','k'};
 
 
@@ -77,6 +77,7 @@ rp6.ref_par_X = repPoints6;
 rp6.cut_direction=[0,1,-1];
 
 repP={rp1,rp2,rp3,rp4,rp5,rp6};
+%repP={rp2,rp3,rp4,rp5,rp6};
 
 BraggName = parWithCorrections.getTextFromVector(bragg);
 n_cuts =numel(repP);
@@ -113,7 +114,7 @@ for i=1:n_cuts
 end
 disp(['Max Intensity: ', num2str(I_max),' Max FHHW: ',num2str(FHH_max)]);
 
-figure('Name',['Spin wave intensity along <1,0,0> directions around lattice point ',BraggName]);
+figure('Name',['Spin wave intensity along <1,1,0> directions around lattice point ',BraggName]);
 errorbar(result{1}.ampl_vs_e(:,1),result{1}.ampl_vs_e(:,2),result{1}.ampl_vs_e(:,3),colors{1});
 hold on
 
@@ -123,7 +124,7 @@ for i=2:n_cuts
     errorbar(result{i}.ampl_vs_e(:,1),result{i}.ampl_vs_e(:,2),result{i}.ampl_vs_e(:,3),colors{i});
     %pd(ds)
 end
-ly 0 2.;
+ly 0 2.5;
 lx 20 180;
 
 acolor(colors{1})
@@ -131,7 +132,7 @@ aline('-')
 
 %ds = IXTdataset_1d(result{1}.fhhw_vs_e');
 %ds.title = 'Spin wave FHHW along <1,1,1> directions around lattice point [2,0,0]';
-figure('Name',['Spin wave FHHW along <1,0,0> directions around lattice point ',BraggName]);
+figure('Name',['Spin wave FHHW along <1,1,0> directions around lattice point ',BraggName]);
 errorbar(result{1}.fhhw_vs_e(:,1),result{1}.fhhw_vs_e(:,2),result{1}.fhhw_vs_e(:,3),colors{1});
 hold on
 %figH=dd(ds);
@@ -142,7 +143,7 @@ for i=2:n_cuts
     %ds = IXTdataset_1d(result{i}.fhhw_vs_e');
     %pd(ds)
 end
-ly 0 0.5;
+ly 0 80;
 lx 20 180;
 
 
@@ -153,7 +154,7 @@ hold on
 width_scale = max(result{1}.eval_sw(:,3))/(0.4*(max(result{1}.eval_sw(:,1))-min(result{1}.eval_sw(:,1))));
 
 errorbar(result{1}.eval_sw(:,1),result{1}.eval_sw(:,2),result{1}.eval_sw(:,3)/width_scale,colors{1},'horizontal');
-for i=2:3
+for i=2:n_cuts
     errorbar(result{i}.eval_sw(:,1),result{i}.eval_sw(:,2),result{i}.eval_sw(:,3)/width_scale,colors{i},'horizontal');
 end
 
