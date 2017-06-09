@@ -20,14 +20,14 @@ result = struct();
 
 %-------------------------------------------------
 % Projection
-Kr = [-1,0.5*dK,1];
+Kr = [-1,0.25*dK,1];
 proj.type = 'ppp';
 proj.uoffset = bragg;
 [proj.u,proj.v,proj.w]=make_ortho_set(cut_direction);
 
 %-------------------------------------------------
 % 2D cut to investigate further:
-w2 = cut_sqw(data_source,proj,Kr,[-dK,+dK],[-dK,+dK],dE);
+w2 = cut_sqw(data_source,proj,Kr,[-dK,+dK],[-dK,+dK],0.2*dE);
 %
 %figure;
 pl1=plot(w2);
@@ -196,7 +196,7 @@ T = 8;  % 2
 gamma = 10; % 3
 Seff = 2;   % 4
 gap = 0;    % 5
-J1 = 40;    % 6
+J1 = 30;    % 6
 par = [ff, T, gamma, Seff, gap, J1, 0 0 0 0];
 
 %
@@ -243,10 +243,10 @@ else
     fitpar = fp_arr1.p;
     fiterr = fp_arr1.sig;
 end
-disp('fitpar')
-disp(fitpar);
-disp('fit_err')
-disp(fiterr);
+disp('fitpar:')
+disp(fitpar(:,3:10));
+disp('fit_err:')
+disp(fiterr(:,3:10));
 
 %fback = kk.simulate(w110arr1_tf,'back');
 %pl(fback)
@@ -404,10 +404,3 @@ else
 end
 
 
-function name = rez_name(data_file,bragg,direction)
-[~,fname] = fileparts(data_file);
-caption =@(vector)['[' num2str(vector(1)) num2str(vector(2))  num2str(vector(3)) ']'];
-bragg_name = caption(bragg);
-dir_name  = caption(direction);
-
-name = ['TF_',fname,'_bragg_',bragg_name,'_dir_',dir_name];

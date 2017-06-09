@@ -78,7 +78,8 @@ rp6 = parWithCorrections(rp1);
 rp6.ref_par_X = repPoints6;
 rp6.cut_direction=[0,1,-1];
 
-repP={rp1,rp2,rp3,rp4,rp5,rp6};
-[1,0,1],[1,0,-1],[0,1,1],[0,1,-1];
+
+repP={rp2,rp1,rp3,rp4,rp5,rp6};
+
 do_fits(data_source,bragg,'<1,1,0>',repP)
 
