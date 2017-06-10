@@ -6,18 +6,18 @@ classdef parWithCorrections
     %   Detailed explanation goes here
     
     properties
+        
         A_cor;        % a normalization constant calculated at some point of q
         legend='';    % the legend desctibes the SW position
         % the q-range to do fitting within
         QRange=0.2;
-        % energy limit below wihich spin wave appear
+        % energy limit below wihich clear spin wave appear
         Esw_threshold=40;
         % initial peak width
         peak_width =0.02;
         % minimal number of steps in 1D cut to fit
         num_steps_in_cut=20;
         %
-        cut_direction=[1,0,0];
         dE=2;
         dk=0.05;
         correction = 1;
@@ -35,43 +35,54 @@ classdef parWithCorrections
         p; % The coefficients of the parabola, which describes spit wave in the form E=p(1)+q*p(2)+q^2*p(3)
         ref_par_X; % the X points seelcted manually to plot spin wave through
         ref_par_Y; % the Y points seelcted manually to plot spin wave through
+        
+        % the bragg reflection indexes;
+        bragg
+        % the direction to make cut into
+        cut_direction;
     end
     properties(Access=private)
         p_;
         XY_ref_points_;
+        cut_direction_ = [1,0,0];
+        bragg_  = [1,1,0]
+    end
+    properties(Constant,Access=private)
+        % the property defines the order of the input parameters within the class constructor
+        % with parameters
+        constructorpar_list_ = {'bragg','cut_direction','dE','dk'}
     end
     
     methods
         %---------------------------------------------------------------------------------
-        function self=parWithCorrections(rp)
+        function self=parWithCorrections(rp,varargin)
             if isa(rp,'parWithCorrections')
                 self = rp;
             else
-                self.ref_par_X=rp;
+                self = self.set_refpar(rp);
+            end
+            if nargin>1
+                prop = parWithCorrections.constructorpar_list_;
+                for i=1:numel(varargin)
+                    prop_name = prop{i};
+                    self.(prop_name) = varargin{i};
+                end
             end
         end
-        function en=getEpos(obj,s)
-            emin = floor(obj.emin(s));
-            if emin ~= floor(emin)
-                emin = emin + obj.dE;
-            end
-            emax = obj.emax(s);
-            en = (emin:2*obj.dE:emax)';
-        end
-        
+        %-----------------------------------------------------
         function val=get.ref_par_X(self)
             val = self.XY_ref_points_(1,:);
         end
         function val=get.ref_par_Y(self)
             val = self.XY_ref_points_(2,:);
         end
-        function self=set.ref_par_X(self,rp)
+        %
+        function self = set_refpar(self,rp)
             if size(rp) == [2,5]
                 self.XY_ref_points_ = rp;
-            elseif numel(rp) == 5
-                self.XY_ref_points_(1,:) = rp;
             else
-                error('Invalid number of parameters')
+                error('PAR_WITHCORECTIONS:invalid_argument',...
+                    'set_refpar: Invalid number of parameters')
             end
             x1 = self.XY_ref_points_(1,:);
             y1 = self.XY_ref_points_(2,:);
@@ -87,14 +98,80 @@ classdef parWithCorrections
             self.p_ = p0;
             q0=0.4;
             self.A_cor = p0(1)+q0*(p0(2)+q0*p0(3));
+        end
+        %
+        function self=set.ref_par_X(self,rp)
+            if numel(rp) == 5
+                self.XY_ref_points_(1,:) = rp;
+            else
+                error('PAR_WITHCORRECTIONS:invalid_argument',...
+                    'ref_par_X: Invalid number of parameters')
+                
+            end
             
         end
+        %
         function self=set.ref_par_Y(self,rp)
             if numel(rp) == 5
                 self.XY_ref_points_(2,:)=rp;
             else
                 error('Invalid number of parameters')
             end
+        end
+        %
+        function dir = get.cut_direction(obj)
+            dir = obj.cut_direction_;
+        end
+        function obj = set.cut_direction(obj,val)
+            if numel(val) ~=3
+                error('PAR_WITHCORRECTIONS:invalid_argument',...
+                    'cut direction mast be defined by a 3-vector');
+            end
+            if size(val,1) == 3
+                val = val';
+            end
+            obj.cut_direction_ = val;
+        end
+        %
+        function dir = get.bragg(obj)
+            dir = obj.bragg_;
+        end
+        function obj = set.bragg(obj,val)
+            if numel(val) ~=3
+                error('PAR_WITHCORRECTIONS:invalid_argument',...
+                    'cut direction mast be defined by a 3-vector');
+            end
+            if size(val,1) == 3
+                val = val';
+            end
+            obj.bragg_ = val;
+        end
+        
+        %-----------------------------------------------------
+        function en = getMaxErange(obj)
+            % return maximal range of energies to make the cuts
+            % adjusting to cut resolution.
+            e_cut_valid =  obj.ref_par_Y~=0;
+            e_cut = obj.ref_par_Y(e_cut_valid);
+            emin = min(e_cut);
+            ddE = mod(emin,obj.dE);
+            if ddE >0
+                emin = emin -ddE+obj.dE;
+            end
+            if emin<20
+                emin = 20;
+            end
+            emax = max(obj.ref_par_Y);
+            en   = (emin:obj.dE:emax)';
+        end
+        function en=getEpos(obj,s)
+            
+            emin = floor(obj.emin(s));
+            if emin ~= floor(emin)
+                emin = emin + obj.dE;
+            end
+            emax = obj.emax(s);
+            en = (emin:2*obj.dE:emax)';
         end
         
         %
@@ -212,7 +289,7 @@ classdef parWithCorrections
             % sigma*self.accepted_sig_multiplier value
             
             n_accepted = numel(errors);
-            accepted = logical(ones(n_accepted,1));
+            accepted = true(n_accepted,1);
             mult = self.accepted_sig_multiplier;
             finish = false;
             while(~finish)
@@ -241,7 +318,7 @@ classdef parWithCorrections
             
             this.ref_par_Y = this.dispersion(this.ref_par_X);
         end
-%        
+        %
         function val = get.p(this)
             val = this.p_;
         end
@@ -370,9 +447,7 @@ classdef parWithCorrections
             %
             oldBetta = old_par(3);
             [I,dI]=parWithCorrections.corr_fun(new_par(3),oldBetta,I0,dI0,qs);
-            
         end
-        
         
     end
     

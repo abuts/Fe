@@ -56,26 +56,26 @@ rp1.dE = 5;
 rp1.dk = 0.05;
 % #2
 rp2 = parWithCorrections(rp1);
-rp2.ref_par_X = repPoints2;
+rp2 = rp2.set_refpar(repPoints2);
 rp2.cut_direction=[1,-1,0];
 % #3
 rp3 = parWithCorrections(rp1);
-rp3.ref_par_X = repPoints3;
+rp3 = rp3.set_refpar(repPoints3);
 rp3.cut_direction=[1,0,1];
 
 % #4
 rp4 = parWithCorrections(rp1);
-rp4.ref_par_X = repPoints4;
+rp4 = rp4.set_refpar(repPoints4);
 rp4.cut_direction=[1,0,-1];
 
 % #5
 rp5 = parWithCorrections(rp1);
-rp5.ref_par_X = repPoints5;
+rp5 = rp5.set_refpar(repPoints5);
 rp5.cut_direction=[0,1,1];
 
 % #6
 rp6 = parWithCorrections(rp1);
-rp6.ref_par_X = repPoints6;
+rp6 = rp6.set_refpar(repPoints6);
 rp6.cut_direction=[0,1,-1];
 
 
