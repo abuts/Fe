@@ -35,11 +35,11 @@ rp1.dE = 5;
 rp1.dk = 0.05;
 % #2
 rp2 = parWithCorrections(rp1);
-rp2.ref_par_X = repPoints2;
+rp2 = rp2.set_refpar(repPoints2);
 rp2.cut_direction=[0,1,0];
 % #3
 rp3 = parWithCorrections(rp1);
-rp3.ref_par_X = repPoints3;
+rp3 = rp3.set_refpar(repPoints3);
 rp3.cut_direction=[0,0,1];
 
 repP={rp1,rp2,rp3};

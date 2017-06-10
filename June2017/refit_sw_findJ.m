@@ -1,6 +1,7 @@
-function [result,all_plots]=refit_sw_findJ()
+function refit_sw_findJ()
 
 bragg_list = {[1,1,0],[1,-1,0],[2,0,0]};
+%bragg_list = {[2,0,0]};
 file_list = {'Fe_ei200'};
 cuts_list = containers.Map();
 cuts_list('[110]') = {[1,0,0],[0,1,0],[0,0,1],...
@@ -22,8 +23,8 @@ for i=1:numel(bragg_list)
     cuts = cuts_list(cut_name);
     for j=1:numel(file_list)
         file = file_list{j};
-        for k=1:numel(cuts)
-            direction = cuts{k};
+        for k1=1:numel(cuts)
+            direction = cuts{k1};
             data_file = rez_name(file,bragg,direction);
             if exist([data_file,'.mat'],'file') == 2
                 filenames = [filenames(:);{data_file}];
@@ -114,9 +115,9 @@ fprintf(' Average J over number of cuts: %d, Error: %d\n',J,J_err);
 % fhhw   = fitpar(:,3);
 % fhhw_err=fiterr(:,3);
 disp('fitpar')
-disp(fitpar(3:10,:));
+disp(fitpar(:,3:10));
 disp('fiterr')
-disp(fiterr(3:10,:));
+disp(fiterr(:,3:10));
 
 for i=1:numel(w1D_arr1_tf)
     acolor('k');
@@ -125,7 +126,8 @@ for i=1:numel(w1D_arr1_tf)
     pd(w1D_arr1_tf(i));
     pause(1)
 end
-
+bg_params = fp_arr1.bp;
+save('J_fitting','fitpar','bg_params','bragg_list','file_list','cuts_list');
 
 
 function bg = lin_bg(x,par)
