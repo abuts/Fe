@@ -115,7 +115,9 @@ for i=1:size(cut_p,1)
         dix= uint32(I_types.gaus_dx0);     D1FitRez(dix,i)= fp3.sig(2);
         bg1= uint32(I_types.bkg_level);    D1FitRez(bg1,i)= fp3.p(4);
         bg2= uint32(I_types.bkg_grad);     D1FitRez(bg2,i)= fp3.p(5);
-        
+        cross = false;
+    else
+        cross = true;        
     end
     
     
@@ -123,10 +125,19 @@ for i=1:size(cut_p,1)
     pl2=plot(w1f);
     acolor('r')
     pd(w1_tf);
+    if cross
+        hold on
+        y_min = min( w1.data.s);
+        y_max = max(w1.data.s);
+        line([k_min,k_max],[y_min ,y_max ],'Color','r','LineWidth',2)
+        line([k_min,k_max],[y_max, y_min ],'Color','r','LineWidth',2)
+        hold off
+    end
+    
     drawnow;
 end
 %
-I   = D1FitRez(uint32(I_types.I_cut),:);
+I   = abs(D1FitRez(uint32(I_types.I_cut),:));
 dI  = D1FitRez(uint32(I_types.dI_cut),:);
 Iaf = D1FitRez(uint32(I_types.I_gaus_fit),:);
 dIaf= D1FitRez(uint32(I_types.dI_gaus_fit),:);
@@ -196,7 +207,7 @@ T = 8;  % 2
 gamma = 10; % 3
 Seff = 2;   % 4
 gap = 0;    % 5
-J1 = 30;    % 6
+J1 = 26.8;    % 6
 par = [ff, T, gamma, Seff, gap, J1, 0 0 0 0];
 
 %
@@ -204,7 +215,7 @@ cut_list = cut_list(ws_valid);
 kk = tobyfit2(cut_list);
 %ff_calc = mff.getFF_calculator(cut_list(1));
 kk = kk.set_local_foreground(true);
-kk = kk.set_fun(@sqw_iron,par,[0,0,1,1,0,1,0,0,0,0]);
+kk = kk.set_fun(@sqw_iron,par,[0,0,1,1,0,0,0,0,0,0]);
 %kk = kk.set_fun(@(h,k,l,e,par)sw_disp(proj,ff_calc,h,k,l,e,par),[parR(1),parR(2),parR(3),ampl_avrg,fwhh_avrg],[1,1,1,1,1]);
 %kk = kk.set_bind({1,[1,2],1},{2,[2,2],1},{3,[3,2],1});
 if numel(cut_list) > 1
@@ -232,7 +243,7 @@ for i=1:numel(w1D_arr1_tf)
 end
 %cut_energies = e_sw(valid);
 res_file = rez_name(data_source,bragg,cut_direction);
-es_valid = e_sw(ws_valid);
+es_valid = arrayfun(@(x)(0.5*(x.data.iint(1,3)+x.data.iint(2,3))),cut_list);
 save(res_file,'es_valid','data_source','bragg','cut_direction','dE','dK',...
     'cut_list','w1D_arr1_tf','fp_arr1');
 
@@ -297,6 +308,7 @@ result.fhhw_vs_e = [e_sw,fhhw_pl,fhhw_err_pl];
 result.fhhw_along_sw = [q_sw_calc,e_sw,fhhw_pl];
 result.fitted_sw = [xxpf,yypf];
 result.eval_sw  = [q_sw_calc,e_sw,fhhw_pl];
+result.esw_valid = es_valid;
 
 % % recorrect intensity according to the new parabola params and plot it
 % Icr = Iaf.*(2*D*abs(qswm));

@@ -1,4 +1,13 @@
-function refit_sw_findJ()
+function refit_sw_findJ(varargin)
+% 
+% 
+if nargin>0
+    e_min = varargin{1};
+    e_max = varargin{2};    
+else
+    e_min  = -inf;
+    e_max  = inf;
+end
 
 bragg_list = {[1,1,0],[1,-1,0],[2,0,0]};
 %bragg_list = {[2,0,0]};
@@ -12,11 +21,10 @@ cuts_list('[200]') = {[1,0,0],[0,1,0],[0,0,1]};
 
 br_name = @(bragg)(['[' num2str(bragg(1)) num2str(bragg(2))  num2str(bragg(3)) ']']);
 
-cut_list = {};
+
 bg_params = {};
 fitpar = zeros(1,10);
 filenames = {};
-
 for i=1:numel(bragg_list)
     bragg = bragg_list{i};
     cut_name  = br_name(bragg);
@@ -36,16 +44,20 @@ for i=1:numel(bragg_list)
     end
 end
 n_files = numel(filenames);
+cut_list = {};
 for i=1:n_files 
     data_file = filenames{i};
     fprintf('reloading cut file: %s %d#%d\n',data_file,i,n_files);
     ld = load(data_file);
-    cut_list = [cut_list(:);ld.cut_list(:)];
-    bg_params = {bg_params{:},ld.fp_arr1.bp{:}};
+    cuts_en = arrayfun(@(x)(0.5*(x.data.data.iint(1,3)+x.data.iint(2,3)),ld_cut_list);
+    cuts_used = cuts_en>=e_min &cuts_en<=e_max;
+    
+    cut_list = [cut_list(:);ld.cut_list(cuts_used)];
+    bg_params = {bg_params{:},ld.fp_arr1.bp{cuts_used}};
     
     n_cuts= numel(ld.fp_arr1.sig);
-    cut_fiterr = reshape([ld.fp_arr1.sig{:}],10,n_cuts)';
-    cut_fitpar = reshape([ld.fp_arr1.p{:}],10,n_cuts)';
+    cut_fiterr = reshape([ld.fp_arr1.sig{cuts_used}],10,n_cuts)';
+    cut_fitpar = reshape([ld.fp_arr1.p{cuts_used}],10,n_cuts)';
     not_valid = cut_fiterr>10;
     cut_fitpar(not_valid) = 0;
     n_cuts = sum(~not_valid,1);
@@ -55,7 +67,7 @@ end
 fitpar  = fitpar/n_files;
 
 
-caption =@(vector)['[' num2str(vector(1)) ',' num2str(vector(2)) ',' num2str(vector(3)) ']'];
+%caption =@(vector)['[' num2str(vector(1)) ',' num2str(vector(2)) ',' num2str(vector(3)) ']'];
 %cut_id = [caption(bragg),' Direction: ',caption(cut_direction)];
 
 

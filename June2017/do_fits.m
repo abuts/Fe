@@ -21,9 +21,12 @@ E_min = 1.e+64;
 E_max = -E_min;
 for i=1:n_cuts
     rp1=repP{i};
-    cut_p = rp1.get_cut2peak_points();
-    E_min = min(E_min,rp1.emin(0));
-    E_max = max(E_max,rp1.emax(0));    
+    en_range = rp1.getMaxErange();
+    q_range =  rp1.getQvsE(en_range,1);
+    cut_p  =   [q_range,en_range];
+    %cut_p = rp1.get_cut2peak_points();
+    %E_min = min(E_min,rp1.emin(0));
+    %E_max = max(E_max,rp1.emax(0));
     
     [result1,all_plots] = fit_swTP_model(data_source,bragg,rp1.cut_direction,cut_p,rp1.dE,rp1.dk);
     for j=1:numel(all_plots)
@@ -35,8 +38,8 @@ for i=1:n_cuts
         close(all_plots(j));
     end
     result{i} = result1;
-    
-    
+    E_min = min(E_min,min(result1.esw_valid));
+    E_max = max(E_max,max(result1.esw_valid));
 end
 I_max = -1.e+64;
 FHH_max = -1.e+64;
