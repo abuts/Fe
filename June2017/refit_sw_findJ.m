@@ -1,23 +1,32 @@
 function refit_sw_findJ(varargin)
-% 
-% 
+%
+%
 if nargin>0
     e_min = varargin{1};
-    e_max = varargin{2};    
+    e_max = varargin{2};
 else
     e_min  = -inf;
     e_max  = inf;
 end
 
-bragg_list = {[1,1,0],[1,-1,0],[2,0,0]};
+bragg_list = {[1,1,0],[1,-1,0],[2,0,0],[0,-1,-1],[0,1,-1]};
 %bragg_list = {[2,0,0]};
 file_list = {'Fe_ei200'};
 cuts_list = containers.Map();
 cuts_list('[110]') = {[1,0,0],[0,1,0],[0,0,1],...
     [1,1,0],[1,-1,0],[1,0,1],[1,0,-1],[0,1,1],[0,1,-1],...
     [1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1]};
-cuts_list('[1-10]') = {[1,0,0],[0,1,0],[0,0,1]};
-cuts_list('[200]') = {[1,0,0],[0,1,0],[0,0,1]};
+cuts_list('[1-10]') = {[1,0,0],[0,1,0],[0,0,1],...
+    [1,1,0],[1,-1,0],[1,0,1],[1,0,-1],[0,1,1],[0,1,-1],...
+    [1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1]};
+cuts_list('[200]') = {[1,0,0],[0,1,0],[0,0,1],...
+    [1,1,0],[1,-1,0],[1,0,1],[1,0,-1],[0,1,1],[0,1,-1],...
+    [1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1]};
+cuts_list('[0-1-1]') = {[1,0,0],[0,1,0],[0,0,1],...
+    [1,1,0],[1,-1,0],[1,0,1],[1,0,-1],[0,1,1],[0,1,-1],...
+    [1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1]
+    };
+cuts_list('[01-1]') = {[1,0,0],[0,1,0],[0,0,1]};
 
 br_name = @(bragg)(['[' num2str(bragg(1)) num2str(bragg(2))  num2str(bragg(3)) ']']);
 
@@ -34,7 +43,9 @@ for i=1:numel(bragg_list)
         for k1=1:numel(cuts)
             direction = cuts{k1};
             data_file = rez_name(file,bragg,direction);
-            if exist([data_file,'.mat'],'file') == 2
+            fn = br_folder_name(bragg);
+            data_file = fullfile(pwd,fn,[data_file,'.mat']);
+            if exist(data_file,'file') == 2
                 filenames = [filenames(:);{data_file}];
             else
                 error('file %s does not exist',data_file);
@@ -45,19 +56,19 @@ for i=1:numel(bragg_list)
 end
 n_files = numel(filenames);
 cut_list = {};
-for i=1:n_files 
+for i=1:n_files
     data_file = filenames{i};
     fprintf('reloading cut file: %s %d#%d\n',data_file,i,n_files);
     ld = load(data_file);
-    cuts_en = arrayfun(@(x)(0.5*(x.data.data.iint(1,3)+x.data.iint(2,3)),ld_cut_list);
-    cuts_used = cuts_en>=e_min &cuts_en<=e_max;
+    cuts_en = arrayfun(@(x)(0.5*(x.data.data.iint(1,3)+x.data.iint(2,3))),ld_cut_list);
+    cuts_2_use = cuts_en>=e_min &cuts_en<=e_max;
     
-    cut_list = [cut_list(:);ld.cut_list(cuts_used)];
-    bg_params = {bg_params{:},ld.fp_arr1.bp{cuts_used}};
+    cut_list = [cut_list(:);ld.cut_list(cuts_2_use)];
+    bg_params = {bg_params{:},ld.fp_arr1.bp{cuts_2_use}};
     
     n_cuts= numel(ld.fp_arr1.sig);
-    cut_fiterr = reshape([ld.fp_arr1.sig{cuts_used}],10,n_cuts)';
-    cut_fitpar = reshape([ld.fp_arr1.p{cuts_used}],10,n_cuts)';
+    cut_fiterr = reshape([ld.fp_arr1.sig{cuts_2_use}],10,n_cuts)';
+    cut_fitpar = reshape([ld.fp_arr1.p{cuts_2_use}],10,n_cuts)';
     not_valid = cut_fiterr>10;
     cut_fitpar(not_valid) = 0;
     n_cuts = sum(~not_valid,1);
@@ -146,3 +157,14 @@ function bg = lin_bg(x,par)
 %
 bg  = par(1)+x*par(2);
 
+function folder = br_folder_name(br)
+
+ind = arrayfun(@ind_name,br,'UniformOutput',false);
+folder = ['Br',[ind{:}]];
+    
+
+function in = ind_name(ind)
+if ind<0
+    in = ['m',num2str(abs(ind))];
+else
+end
