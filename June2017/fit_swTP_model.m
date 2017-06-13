@@ -66,7 +66,8 @@ for i=1:size(cut_p,1)
         w0=cut_sqw(w2,proj,[-dK+q_range(i),dK+q_range(i)],[-dK,dK],[-dK,dK],[e_sw(i)-dE,e_sw(i)+dE]);
         w1f = mff.correct_mag_ff(w1);
         w0  = mff.correct_mag_ff(w0);
-    catch
+    catch Err
+        disp([' Cut rejected, ',Err.mess]);
         ws_valid(i) = false;
         continue
     end

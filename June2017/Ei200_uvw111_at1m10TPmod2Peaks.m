@@ -7,7 +7,7 @@ dK =0.05;
 
 pefP1 = [-0.33,-0.08,0,0.08,0.33;
     110,10,0,10,110];
-pefP2 = [-0.3,-0.07,0,0.9,0.33;
+pefP2 = [-0.3,-0.07,0,0.09,0.33;
     110,10,0,10,110];
 pefP3 = [-0.28,-0.04,0,0.3,0.34;
     90,10,0,75,120];
@@ -20,6 +20,6 @@ rp2 = parWithCorrections(pefP2,bragg,[1,1,-1],dE,dK);
 rp3 = parWithCorrections(pefP3,bragg,[1,-1,-1],dE,dK);
 rp4 = parWithCorrections(pefP4,bragg,[1,-1,1],dE,dK);
 
-repP={rp4,rp3,rp2,rp1};
+repP={rp1,rp2,rp3,rp4};
 
 do_fits(data_source,bragg,'<1,1,1>',repP)

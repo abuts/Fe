@@ -14,13 +14,13 @@ pefP3 = [-0.3375,-0.1125,0,0.1375,0.4125;
     130,15,0,15,150];
 pefP4 = [-0.3635,-0.1375,0,0.1125,0.3375;
     15,15,0,15,130];
-    
+
 
 rp1 = parWithCorrections(pefP1,bragg,[1,1,1],dE,dK);
 rp2 = parWithCorrections(pefP2,bragg,[1,1,-1],dE,dK);
 rp3 = parWithCorrections(pefP3,bragg,[1,-1,-1],dE,dK);
 rp4 = parWithCorrections(pefP4,bragg,[1,-1,1],dE,dK);
 
-repP={peP1,peP2,peP3,peP4};
+repP={rp1,rp2,rp3,rp4};
 
 do_fits(data_source,bragg,'<1,1,1>',repP)
