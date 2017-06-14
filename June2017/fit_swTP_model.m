@@ -67,7 +67,7 @@ for i=1:size(cut_p,1)
         w1f = mff.correct_mag_ff(w1);
         w0  = mff.correct_mag_ff(w0);
     catch Err
-        disp([' Cut rejected, ',Err.mess]);
+        disp([' Cut rejected, ',Err.message]);
         ws_valid(i) = false;
         continue
     end
