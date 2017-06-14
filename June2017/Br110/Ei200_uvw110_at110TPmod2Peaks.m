@@ -1,6 +1,7 @@
 function Ei200_uvw110_at110TPmod2Peaks(varargin)
 
-data_source= fullfile(pwd,'sqw','Data','Fe_ei200.sqw');
+root = fileparts(pwd);
+data_source= fullfile(root,'sqw','Data','Fe_ei200.sqw');
 
 avrg_par=[0,0,957.9503];
 bragg = [1,1,0];

@@ -6,7 +6,8 @@ function Ei200_uvw100_at0m1m1TPmod2Peaks()
 %-------------------------------------------------
 % Parameters :
 %
-data_source= fullfile(pwd,'sqw','Data','Fe_ei200.sqw');
+root = fileparts(pwd);
+data_source= fullfile(root ,'sqw','Data','Fe_ei200.sqw');
 
 bragg = [0,-1,-1];  % selected bragg
 dE = 5;

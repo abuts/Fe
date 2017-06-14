@@ -1,4 +1,8 @@
-data_source= fullfile(pwd,'sqw','Data','Fe_ei200.sqw');
+function Ei200_uvw111_at1m10TPmod2Peaks(varargin)
+
+root = fileparts(pwd);
+data_source= fullfile(root,'sqw','Data','Fe_ei200.sqw');
+
 
 bragg = [1,-1,0];
 dE =5;
