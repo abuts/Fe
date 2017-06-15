@@ -208,8 +208,10 @@ T = 8;  % 2
 gamma = 10; % 3
 Seff = 2;   % 4
 gap = 0;    % 5
-J1 = 26.8;    % 6
-par = [ff, T, gamma, Seff, gap, J1, 0 0 0 0];
+J1 = 25.29;    % 6
+J2 = 13.9312;
+J3 = -3.0125;
+par = [ff, T, gamma, Seff, gap, J1, J2, J3, 0, 0];
 
 %
 cut_list = cut_list(ws_valid);
@@ -220,7 +222,7 @@ kk = kk.set_fun(@sqw_iron,par,[0,0,1,1,0,0,0,0,0,0]);
 %kk = kk.set_fun(@(h,k,l,e,par)sw_disp(proj,ff_calc,h,k,l,e,par),[parR(1),parR(2),parR(3),ampl_avrg,fwhh_avrg],[1,1,1,1,1]);
 %kk = kk.set_bind({1,[1,2],1},{2,[2,2],1},{3,[3,2],1});
 if numel(cut_list) > 1
-    kk = kk.set_bind({6,[6,2],1});
+    kk = kk.set_bind({6,[6,2],1},{7,[7,2],1},{8,[8,2],1});
 end
 
 % set up its own initial background value for each background function
