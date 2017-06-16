@@ -37,7 +37,7 @@ rp5 = parWithCorrections(repPoints5,bragg,[0,1,1],dE,dK);
 % #6
 rp6 = parWithCorrections(repPoints6,bragg,[0,1,-1],dE,dK);
 
-repP={rp6,rp5,rp4,rp3,rp2,rp1};
+repP={rp1,rp2,rp6,rp5,rp4,rp3};
 
 do_fits(data_source,bragg,'<1,1,0>',repP)
 
