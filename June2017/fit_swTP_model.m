@@ -208,10 +208,13 @@ T = 8;  % 2
 gamma = 10; % 3
 Seff = 2;   % 4
 gap = 0;    % 5
-J1 = 25.29;    % 6
-J2 = 13.9312;
-J3 = -3.0125;
-par = [ff, T, gamma, Seff, gap, J1, J2, J3, 0, 0];
+              
+J1 = 11.5625;    % 6
+J2 = 40.9508;
+J3 = 3.7300;
+J4 = -4.8408;
+J5 = 1.6475;
+par = [ff, T, gamma, Seff, gap, J1, J2, J3, J4,J5];
 
 %
 cut_list = cut_list(ws_valid);
@@ -285,7 +288,9 @@ ly 0 2
 %legend(li2,'Tobifitted intensity','Tobyfit2 intensity')
 
 xxpf=max(min(qswm),-0.8):0.01:min(max(qswm),0.8);
-par_sw = [0,0,4*pi*pi*fitpar(1,6)];
+%par_sw = [0,0,4*pi*pi*fitpar(1,6)]; %if fitted with 3-component
+%hamiltonian
+par_sw = [0,0,4*pi*pi*26.];
 yypf=parab(xxpf,par_sw);
 
 pl5=figure('Name',['Tobyfitted spin wave dispersion for: ', cut_id ]);

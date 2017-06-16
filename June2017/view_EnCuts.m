@@ -1,4 +1,4 @@
-function  view_EnCuts(cut_fname)
+function  stor=view_EnCuts(cut_fname)
 % View group of cuts, 
 %   Detailed explanation goes here
 
@@ -12,10 +12,10 @@ for j=1:n_cuts
     plot(stor.cut_list(j));
     acolor('r');
     pd(stor.w1D_arr1_tf(j));
-    fprintf(' cut N: %d/%d/%d\n',j,n_cuts);
+    fprintf(' cut N: %d/%d\n',j,n_cuts);
     fprintf(' par: %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f\n',cuts_fitpar.p{j}(3:10));
     fprintf(' err: %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f\n',cuts_fitpar.sig{j}(3:10));
-    pause(1)
+    pause(2)
 end
 
 

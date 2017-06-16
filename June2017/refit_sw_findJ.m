@@ -9,7 +9,7 @@ else
     e_max  = inf;
 end
 cuts_list = containers.Map();
-bragg_list = {[1,1,0],[1,-1,0],[2,0,0],[0,-1,-1],[0,1,-1],[0,-1,1]};
+%bragg_list = {[1,1,0],[1,-1,0],[2,0,0],[0,-1,-1],[0,1,-1],[0,-1,1]};
 %bragg_list = {[0,-1,1]};
 file_list = {'Fe_ei200'};
 
@@ -30,8 +30,8 @@ cuts_list('[01-1]') = {[1,0,0],[0,1,0],[0,0,1],...
     [1,1,0],[1,-1,0],[1,0,1],[1,0,-1],[0,1,1],[0,1,-1],...
     [1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1]};
 cuts_list('[0-11]') = {[1,0,0],[0,1,0],[0,0,1],...
-     [1,1,0],[1,-1,0],[1,0,1],[1,0,-1],[0,1,1],[0,1,-1],...
-     [1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1]};
+    [1,1,0],[1,-1,0],[1,0,1],[1,0,-1],[0,1,1],[0,1,-1],...
+    [1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1]};
 
 
 % build the list of input filenames and verifuy if the files are present.
@@ -46,12 +46,13 @@ fg_params = {};
 fitpar_av = zeros(1,10);
 cut_count = 0;
 av_count = 0;
-J0 = 26.8;
-%J1 = 2.8288;
-%J2 = 0
-J1 = 13.9312;
-J2 = -3.0125;
-par_pattern = [1,8,80,2.5,0,J0,J1,J2,0,0];
+      
+J0 = 8.0092;
+J1 = 39.8558;
+J2 = 3.2676 ;
+J3 =-4.3366;
+J4 = 2.5852;
+par_pattern = [1,8,80,2.5,0,J0,J1,J2,J3,J4];
 cut_en_f = @(x)(0.5*(x.data.iint(1,3)+x.data.iint(2,3)));
 for i=1:n_files
     data_file = filenames{i};
@@ -103,6 +104,10 @@ for i=1:n_files
     cut_fitpar(:,6) = J0;
     cut_fitpar(:,7) = J1;
     cut_fitpar(:,8) = J2;
+    cut_fitpar(:,9) = J3;
+    cut_fitpar(:,10) = J4;
+    
+    
     
     
     not_valid = cut_fiterr>10 |cut_fitpar> par_pattern | isnan(cut_fiterr) | isnan(cut_fitpar) ;
@@ -143,11 +148,10 @@ for i=1:numel(keys)
         loc_binds = cell(2*(numel(binding)-1),1);
         n_func = binding{1};
         for j=1:numel(binding)-1
-            loc_binds{2*j-1} = {[3,n_func],[3,binding{j+1}],1};
-            loc_binds{2*j} = {[4,n_func],[4,binding{j+1}],1};
+            loc_binds{2*j-1} = {[3,binding{j+1}],[3,n_func],1};
+            loc_binds{2*j} = {[4,binding{j+1}],[4,n_func],1};
         end
         add_binds = {add_binds{:},loc_binds{:}};
-        
         
     end
 end
@@ -171,7 +175,7 @@ par = [ff, T, gamma, Seff, gap, J0, J1, J2, 0, 0];
 kk = tobyfit2(cut_list);
 %ff_calc = mff.getFF_calculator(cut_list(1));
 kk = kk.set_local_foreground(true);
-kk = kk.set_fun(@sqw_iron,fg_params,[0,0,1,1,0,0,1,1,1,1]);
+kk = kk.set_fun(@sqw_iron,fg_params,[0,0,1,1,0,1,1,1,1,1]);
 %kk = kk.set_fun(@(h,k,l,e,par)sw_disp(proj,ff_calc,h,k,l,e,par),[parR(1),parR(2),parR(3),ampl_avrg,fwhh_avrg],[1,1,1,1,1]);
 %kk = kk.set_bind({1,[1,2],1},{2,[2,2],1},{3,[3,2],1});
 global_binds = {{6,[6,2],1},{7,[7,2],1},{8,[8,2],1},{9,[9,2],1},{10,[10,2],1}};
@@ -191,6 +195,7 @@ kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-2;60;1.e-6]);
 %profile off
 %profile viewer
 
+
 if iscell(fp_arr1.p)
     fitpar = reshape([fp_arr1.p{:}],10,numel(fp_arr1.p))';
     fiterr = reshape([fp_arr1.sig{:}],10,numel(fp_arr1.sig))';
@@ -209,8 +214,12 @@ J1_err = fiterr(1,7);
 J2_err = fiterr(1,8);
 J3_err = fiterr(1,9);
 J4_err = fiterr(1,10);
+save('J_fit_E200_All_J0-4','fitpar','bg_params','bragg_list',...
+    'file_list','bind_map','fp_arr1');
 
-fprintf([' J over number of cuts: J0: %6.3f +/-%6.3f; J1: %6.3f +/-%6.3f;\n',...
+
+
+fprintf([' J over number of cuts:\n J0: %6.3f +/-%6.3f; J1: %6.3f +/-%6.3f;',...
     ' J2: %6.3f +/-%6.3f  J3: %6.3f +/-%6.3f  J4: %6.3f +/-%6.3f\n'],...
     J0,J0_err,J1,J1_err,J2,J2_err,J3,J3_err,J4,J4_err);
 
@@ -246,7 +255,7 @@ for i=1:numel(keys)
         plot(stor.cut_list(j));
         acolor('r');
         pd(stor.w1D_arr1_tf(j));
-        fprintf(' cut N: %d/%d/%d\n',ind(j),numel(ind),n_cuts);
+        fprintf(' cut E=%d; Key N:%d/%d EnN%d/%d; Ncuts: %d\n',stor.es_valid(j),i,numel(keys),j,numel(ind),n_cuts);
         fprintf(' par: %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f\n',cuts_fitpar.p{j}(3:10));
         fprintf(' err: %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f\n',cuts_fitpar.sig{j}(3:10));
         pause(1)
@@ -268,7 +277,9 @@ end
 [en110,S110,S110_err,G110,G110_err] = extract_fitpar(10:5:180,[1,1,0],bind_map,fp_arr1);
 [en111,S111,S111_err,G111,G111_err] = extract_fitpar(10:5:180,[1,1,1],bind_map,fp_arr1);
 %-------------------------------------------------------------
-figure('Name','SW ampliture along dE;');
+brn = cellfun(@(br)(['[',num2str(br(1)),num2str(br(2)),num2str(br(3)),'];']),bragg_list,'UniformOutput',false);
+name = [brn{:}];
+figure('Name',['Intensity scale for peaks: ',name]);
 li1=errorbar(en100,S100,S100_err,'r');
 hold on
 li2=errorbar(en110,S110,S110_err,'g');
@@ -278,7 +289,7 @@ plots = [li1, li2, li3];
 ly 0 2.5
 legend(plots,'<100>','<110>','<111>');
 %-------------------------------------------------------------
-figure('Name','SW inverse decay along dE;');
+figure('Name',['Inverse lifetime (meV) for peaks: ',name]);
 li1=errorbar(en100,G100,G100_err,'r');
 hold on
 li2=errorbar(en110,G110,G110_err,'g');
@@ -289,8 +300,7 @@ ly 0 80
 legend(plots,'<100>','<110>','<111>');
 
 
-save('J_fit_E200_All_J0-4','fitpar','bg_params','bragg_list',...
-    'file_list','bind_map','fp_arr1');
+
 
 
 function bg = lin_bg(x,par)
