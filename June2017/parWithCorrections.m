@@ -162,7 +162,7 @@ classdef parWithCorrections
                 emin = 20;
             end
             emax = max(obj.ref_par_Y);
-            en   = (emin:obj.dE:emax)';
+            en   = (emin:5:emax)';
         end
         function en=getEpos(obj,s)
             
