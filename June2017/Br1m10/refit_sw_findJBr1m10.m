@@ -1,4 +1,4 @@
-function refit_sw_findJ(varargin)
+function refit_sw_findJBr1m10(varargin)
 %
 %
 if nargin>0
@@ -10,8 +10,10 @@ else
 end
 cuts_list = containers.Map();
 %bragg_list = {[1,1,0],[1,-1,0],[2,0,0],[0,-1,-1],[0,1,-1],[0,-1,1]};
-%bragg_list = {[0,-1,1]};
+bragg_list = {[1,-1,0]};
 file_list = {'Fe_ei200'};
+
+%cuts_list('[1-10]') = {[1,0,0],[0,1,0],[0,0,1]};
 
 cuts_list('[0-11]') = {[1,0,0],[0,1,0],[0,0,1]};
 cuts_list('[110]') = {[1,0,0],[0,1,0],[0,0,1],...
@@ -195,7 +197,6 @@ kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-2;60;1.e-6]);
 %profile off
 %profile viewer
 
-
 if iscell(fp_arr1.p)
     fitpar = reshape([fp_arr1.p{:}],10,numel(fp_arr1.p))';
     fiterr = reshape([fp_arr1.sig{:}],10,numel(fp_arr1.sig))';
@@ -214,10 +215,6 @@ J1_err = fiterr(1,7);
 J2_err = fiterr(1,8);
 J3_err = fiterr(1,9);
 J4_err = fiterr(1,10);
-save('J_fit_E200_All_J0-4','fitpar','bg_params','bragg_list',...
-    'file_list','bind_map','fp_arr1');
-
-
 
 fprintf([' J over number of cuts:\n J0: %6.3f +/-%6.3f; J1: %6.3f +/-%6.3f;',...
     ' J2: %6.3f +/-%6.3f  J3: %6.3f +/-%6.3f  J4: %6.3f +/-%6.3f\n'],...
@@ -300,7 +297,8 @@ ly 0 80
 legend(plots,'<100>','<110>','<111>');
 
 
-
+save('J_fit_E200_All_J0-4','fitpar','bg_params','bragg_list',...
+    'file_list','bind_map','fp_arr1');
 
 
 function bg = lin_bg(x,par)
@@ -339,9 +337,9 @@ for i=1:numel(bragg_list)
         for k1=1:numel(cuts)
             direction = cuts{k1};
             data_file = rez_name(file,bragg,direction);
-            fn = br_folder(bragg);
+            %fn = br_folder(bragg);
             scr_folder = fileparts(mfilename('fullpath'));
-            data_file = fullfile(scr_folder,fn,[data_file,'.mat']);
+            data_file = fullfile(scr_folder,[data_file,'.mat']);
             if exist(data_file,'file') == 2
                 filenames = [filenames(:);{data_file}];
                 file_directions = [file_directions(:);direction];
