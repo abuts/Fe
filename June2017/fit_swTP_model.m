@@ -20,7 +20,7 @@ result = struct();
 
 %-------------------------------------------------
 % Projection
-Kr = [-1,0.25*dK,1];
+Kr = [-1,0.5*dK,1];
 proj.type = 'ppp';
 proj.uoffset = bragg;
 [proj.u,proj.v,proj.w]=make_ortho_set(cut_direction);
