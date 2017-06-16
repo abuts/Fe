@@ -8,11 +8,12 @@ else
     e_min  = -inf;
     e_max  = inf;
 end
-
-%bragg_list = {[1,1,0],[1,-1,0],[2,0,0],[0,-1,-1],[0,1,-1]};
-bragg_list = {[1,1,0]};
-file_list = {'Fe_ei200'};
 cuts_list = containers.Map();
+bragg_list = {[1,1,0],[1,-1,0],[2,0,0],[0,-1,-1],[0,1,-1],[0,-1,1]};
+%bragg_list = {[0,-1,1]};
+file_list = {'Fe_ei200'};
+
+cuts_list('[0-11]') = {[1,0,0],[0,1,0],[0,0,1]};
 cuts_list('[110]') = {[1,0,0],[0,1,0],[0,0,1],...
     [1,1,0],[1,-1,0],[1,0,1],[1,0,-1],[0,1,1],[0,1,-1],...
     [1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1]};
@@ -27,9 +28,13 @@ cuts_list('[0-1-1]') = {[1,0,0],[0,1,0],[0,0,1],...
     [1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1]};
 cuts_list('[01-1]') = {[1,0,0],[0,1,0],[0,0,1],...
     [1,1,0],[1,-1,0],[1,0,1],[1,0,-1],[0,1,1],[0,1,-1],...
-    };
+    [1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1]};
+cuts_list('[0-11]') = {[1,0,0],[0,1,0],[0,0,1],...
+     [1,1,0],[1,-1,0],[1,0,1],[1,0,-1],[0,1,1],[0,1,-1],...
+     [1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1]};
 
-% build the list of input filenames and verifuy if the files are present. 
+
+% build the list of input filenames and verifuy if the files are present.
 [filenames,file_directions] = check_input_files_present(bragg_list,cuts_list,file_list);
 
 bind_map = containers.Map();
@@ -41,7 +46,7 @@ fg_params = {};
 fitpar_av = zeros(1,10);
 cut_count = 0;
 av_count = 0;
-J0 = 25.29;
+J0 = 26.8;
 %J1 = 2.8288;
 %J2 = 0
 J1 = 13.9312;
@@ -131,6 +136,10 @@ for i=1:numel(keys)
     theKey = keys{i};
     binding = bind_map(theKey);
     if numel(binding) > 1
+        [ok,mess] = check_correct_binding(cut_list,bind_map,theKey);
+        if ~ok
+            error('REFIT_SW:runtime_error',mess);
+        end
         loc_binds = cell(2*(numel(binding)-1),1);
         n_func = binding{1};
         for j=1:numel(binding)-1
@@ -138,6 +147,8 @@ for i=1:numel(keys)
             loc_binds{2*j} = {[4,n_func],[4,binding{j+1}],1};
         end
         add_binds = {add_binds{:},loc_binds{:}};
+        
+        
     end
 end
 
@@ -160,10 +171,10 @@ par = [ff, T, gamma, Seff, gap, J0, J1, J2, 0, 0];
 kk = tobyfit2(cut_list);
 %ff_calc = mff.getFF_calculator(cut_list(1));
 kk = kk.set_local_foreground(true);
-kk = kk.set_fun(@sqw_iron,fg_params,[0,0,1,1,0,1,1,1,0,0]);
+kk = kk.set_fun(@sqw_iron,fg_params,[0,0,1,1,0,0,1,1,1,1]);
 %kk = kk.set_fun(@(h,k,l,e,par)sw_disp(proj,ff_calc,h,k,l,e,par),[parR(1),parR(2),parR(3),ampl_avrg,fwhh_avrg],[1,1,1,1,1]);
 %kk = kk.set_bind({1,[1,2],1},{2,[2,2],1},{3,[3,2],1});
-global_binds = {{6,[6,2],1},{7,[7,2],1},{8,[8,2],1}};
+global_binds = {{6,[6,2],1},{7,[7,2],1},{8,[8,2],1},{9,[9,2],1},{10,[10,2],1}};
 all_binds = {global_binds{:},add_binds{:}};
 kk = kk.set_bind(all_binds{:});
 
@@ -190,11 +201,18 @@ end
 J0 = fitpar(1,6);
 J1 = fitpar(1,7);
 J2 = fitpar(1,8);
+J3 = fitpar(1,9);
+J4 = fitpar(1,10);
+
 J0_err = fiterr(1,6);
 J1_err = fiterr(1,7);
 J2_err = fiterr(1,8);
-fprintf(' J over number of cuts: j0: %d +/- %d; j1: %d +/- %d; j2: %d +/- %d\n',...
-    J0,J0_err,J1,J1_err,J2,J2_err);
+J3_err = fiterr(1,9);
+J4_err = fiterr(1,10);
+
+fprintf([' J over number of cuts: J0: %6.3f +/-%6.3f; J1: %6.3f +/-%6.3f;\n',...
+    ' J2: %6.3f +/-%6.3f  J3: %6.3f +/-%6.3f  J4: %6.3f +/-%6.3f\n'],...
+    J0,J0_err,J1,J1_err,J2,J2_err,J3,J3_err,J4,J4_err);
 
 % %fback = kk.simulate(w110arr1_tf,'back');
 % %pl(fback)
@@ -202,17 +220,49 @@ fprintf(' J over number of cuts: j0: %d +/- %d; j1: %d +/- %d; j2: %d +/- %d\n',
 % Amp_err= fiterr(:,4);
 % fhhw   = fitpar(:,3);
 % fhhw_err=fiterr(:,3);
-
-for i=1:numel(w1D_arr1_tf)
-    acolor('k');
-    plot(cut_list(i));
-    acolor('r');
-    pd(w1D_arr1_tf(i));
-    fprintf(' cut N: %d/%d\n',i,n_cuts);
-    disp(fitpar(i,3:8));   
-    disp(fiterr(i,3:8));    
-    pause(1)
+f_en =@(x)(0.5*(x.data.iint(2,3)+x.data.iint(1,3)));
+for i=1:numel(keys)
+    theKey = keys{i};
+    binding = bind_map(theKey);
+    ind = [binding{:}];
+    stor = struct();
+    cuts_fitpar=struct();
+    stor.cut_list = cut_list(ind);
+    stor.w1D_arr1_tf = w1D_arr1_tf(ind);
+    cuts_fitpar.p = fp_arr1.p(ind);
+    cuts_fitpar.sig = fp_arr1.sig(ind);
+    cuts_fitpar.bp  = fp_arr1.bp(ind);
+    cuts_fitpar.bsig =fp_arr1.bsig(ind);
+    stor.fp_arr1 = cuts_fitpar;
+    stor.es_valid = arrayfun(f_en,stor.cut_list);
+    dir_ind = regexp(theKey,'[<>]');
+    dir_id = theKey(dir_ind(1)+1:dir_ind(2)-1);
+    fn = sprintf('EnCuts_%s_dE%d_dir_!%s!',file_list{1},stor.es_valid(1),dir_id);
+    
+    fld_names = fieldnames(stor);
+    save(fn,'-struct','stor',fld_names{:});
+    for j=1:numel(ind)
+        acolor('k');
+        plot(stor.cut_list(j));
+        acolor('r');
+        pd(stor.w1D_arr1_tf(j));
+        fprintf(' cut N: %d/%d/%d\n',ind(j),numel(ind),n_cuts);
+        fprintf(' par: %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f\n',cuts_fitpar.p{j}(3:10));
+        fprintf(' err: %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f\n',cuts_fitpar.sig{j}(3:10));
+        pause(1)
+    end
+    
 end
+% for i=1:numel(w1D_arr1_tf)
+%     acolor('k');
+%     plot(cut_list(i));
+%     acolor('r');
+%     pd(w1D_arr1_tf(i));
+%     fprintf(' cut N: %d/%d\n',i,n_cuts);
+%     fprintf(' par: %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f \n',fitpar(i,3:8));
+%     fprintf(' err: %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f \n',fiterr(i,3:8));
+%     pause(1)
+% end
 %bg_params = fp_arr1.bp;
 [en100,S100,S100_err,G100,G100_err] = extract_fitpar(10:5:180,[1,0,0],bind_map,fp_arr1);
 [en110,S110,S110_err,G110,G110_err] = extract_fitpar(10:5:180,[1,1,0],bind_map,fp_arr1);
@@ -239,7 +289,8 @@ ly 0 80
 legend(plots,'<100>','<110>','<111>');
 
 
-save('J_fitting','fitpar','bg_params','bragg_list','file_list','cuts_list','bind_map','fp_arr1');
+save('J_fit_E200_All_J0-4','fitpar','bg_params','bragg_list',...
+    'file_list','bind_map','fp_arr1');
 
 
 function bg = lin_bg(x,par)
