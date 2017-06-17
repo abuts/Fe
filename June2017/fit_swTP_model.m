@@ -118,7 +118,7 @@ for i=1:size(cut_p,1)
         bg2= uint32(I_types.bkg_grad);     D1FitRez(bg2,i)= fp3.p(5);
         cross = false;
     else
-        cross = true;        
+        cross = true;
     end
     
     
@@ -208,12 +208,18 @@ T = 8;  % 2
 gamma = 10; % 3
 Seff = 2;   % 4
 gap = 0;    % 5
-              
-J1 = 11.5625;    % 6
-J2 = 40.9508;
-J3 = 3.7300;
-J4 = -4.8408;
-J5 = 1.6475;
+
+%J1 = 11.5625;    % 6
+%J2 = 40.9508;
+%J3 = 3.7300;
+%J4 = -4.8408;
+%J5 = 1.6475;
+J1 = 24.915;
+J2 = 13.760 ;
+J3 =  -3.236;
+J4  = 0;
+J5 = 0;
+
 par = [ff, T, gamma, Seff, gap, J1, J2, J3, J4,J5];
 
 %

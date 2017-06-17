@@ -1,37 +1,9 @@
-function refit_sw_findJ(varargin)
+function [fitpar,bg_params,bragg_list,file_list,bind_map,fp_arr1]= refit_sw_findJfun(bragg_list,cuts_list,file_list,e_min,e_max)
+% Load sequence of cuts, corresponding to different brilluen zones and 
+% different reciprocal lattice directions and fit these peaks with the
+% scattering function defined by the spin-wave hamiltonian specified.
 %
 %
-if nargin>0
-    e_min = varargin{1};
-    e_max = varargin{2};
-else
-    e_min  = -inf;
-    e_max  = inf;
-end
-cuts_list = containers.Map();
-%bragg_list = {[1,1,0],[1,-1,0],[2,0,0],[0,-1,-1],[0,1,-1],[0,-1,1]};
-%bragg_list = {[0,-1,1]};
-file_list = {'Fe_ei200'};
-
-cuts_list('[0-11]') = {[1,0,0],[0,1,0],[0,0,1]};
-cuts_list('[110]') = {[1,0,0],[0,1,0],[0,0,1],...
-    [1,1,0],[1,-1,0],[1,0,1],[1,0,-1],[0,1,1],[0,1,-1],...
-    [1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1]};
-cuts_list('[1-10]') = {[1,0,0],[0,1,0],[0,0,1],...
-    [1,1,0],[1,-1,0],[1,0,1],[1,0,-1],[0,1,1],[0,1,-1],...
-    [1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1]};
-cuts_list('[200]') = {[1,0,0],[0,1,0],[0,0,1],...
-    [1,1,0],[1,-1,0],[1,0,1],[1,0,-1],[0,1,1],[0,1,-1],...
-    [1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1]};
-cuts_list('[0-1-1]') = {[1,0,0],[0,1,0],[0,0,1],...
-    [1,1,0],[1,-1,0],[1,0,1],[1,0,-1],[0,1,1],[0,1,-1],...
-    [1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1]};
-cuts_list('[01-1]') = {[1,0,0],[0,1,0],[0,0,1],...
-    [1,1,0],[1,-1,0],[1,0,1],[1,0,-1],[0,1,1],[0,1,-1],...
-    [1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1]};
-cuts_list('[0-11]') = {[1,0,0],[0,1,0],[0,0,1],...
-    [1,1,0],[1,-1,0],[1,0,1],[1,0,-1],[0,1,1],[0,1,-1],...
-    [1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1]};
 
 
 % build the list of input filenames and verifuy if the files are present.
@@ -54,6 +26,8 @@ J3 =-4.3366;
 J4 = 2.5852;
 par_pattern = [1,8,80,2.5,0,J0,J1,J2,J3,J4];
 cut_en_f = @(x)(0.5*(x.data.iint(1,3)+x.data.iint(2,3)));
+emin_real  = inf;
+emax_real  = -inf;
 for i=1:n_files
     data_file = filenames{i};
     
@@ -66,6 +40,9 @@ for i=1:n_files
     if n_cuts == 0
         continue
     end
+    cuts_en = cuts_en(cuts_2_use);
+    emin_real = min(min(cuts_en),emin_real);
+    emax_real = max(max(cuts_en),emax_real);    
     
     % Build binds between equivalent cuts:
     used_cuts = ld.cut_list(cuts_2_use);
@@ -214,9 +191,6 @@ J1_err = fiterr(1,7);
 J2_err = fiterr(1,8);
 J3_err = fiterr(1,9);
 J4_err = fiterr(1,10);
-save('J_fit_E200_All_J0-4','fitpar','bg_params','bragg_list',...
-    'file_list','bind_map','fp_arr1');
-
 
 
 fprintf([' J over number of cuts:\n J0: %6.3f +/-%6.3f; J1: %6.3f +/-%6.3f;',...
@@ -262,20 +236,10 @@ for i=1:numel(keys)
     end
     
 end
-% for i=1:numel(w1D_arr1_tf)
-%     acolor('k');
-%     plot(cut_list(i));
-%     acolor('r');
-%     pd(w1D_arr1_tf(i));
-%     fprintf(' cut N: %d/%d\n',i,n_cuts);
-%     fprintf(' par: %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f \n',fitpar(i,3:8));
-%     fprintf(' err: %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f \n',fiterr(i,3:8));
-%     pause(1)
-% end
-%bg_params = fp_arr1.bp;
-[en100,S100,S100_err,G100,G100_err] = extract_fitpar(10:5:180,[1,0,0],bind_map,fp_arr1);
-[en110,S110,S110_err,G110,G110_err] = extract_fitpar(10:5:180,[1,1,0],bind_map,fp_arr1);
-[en111,S111,S111_err,G111,G111_err] = extract_fitpar(10:5:180,[1,1,1],bind_map,fp_arr1);
+
+[en100,S100,S100_err,G100,G100_err] = extract_fitpar(emin_real:5:emax_real,[1,0,0],bind_map,fp_arr1);
+[en110,S110,S110_err,G110,G110_err] = extract_fitpar(emin_real:5:emax_real,[1,1,0],bind_map,fp_arr1);
+[en111,S111,S111_err,G111,G111_err] = extract_fitpar(emin_real:5:emax_real,[1,1,1],bind_map,fp_arr1);
 %-------------------------------------------------------------
 brn = cellfun(@(br)(['[',num2str(br(1)),num2str(br(2)),num2str(br(3)),'];']),bragg_list,'UniformOutput',false);
 name = [brn{:}];
@@ -352,3 +316,4 @@ for i=1:numel(bragg_list)
         
     end
 end
+

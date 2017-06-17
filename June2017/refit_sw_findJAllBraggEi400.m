@@ -1,4 +1,4 @@
-function refit_sw_findJBr1m10(varargin)
+function refit_sw_findJAllBraggEi400(varargin)
 %
 %
 if nargin>0
@@ -10,12 +10,10 @@ else
 end
 cuts_list = containers.Map();
 %bragg_list = {[1,1,0],[1,-1,0],[2,0,0],[0,-1,-1],[0,1,-1],[0,-1,1]};
-bragg_list = {[1,-1,0]};
+bragg_list = {[1,-1,0],[1,1,0],[2,0,0]};
 file_list = {'Fe_ei401'};
 
-%cuts_list('[1-10]') = {[1,0,0],[0,1,0],[0,0,1]};
-
-cuts_list('[0-11]') = {[1,0,0],[0,1,0],[0,0,1]};
+%cuts_list('[0-11]') = {[1,0,0],[0,1,0],[0,0,1]};
 cuts_list('[110]') = {[1,0,0],[0,1,0],[0,0,1],...
     [1,1,0],[1,-1,0],[1,0,1],[1,0,-1],[0,1,1],[0,1,-1],...
     [1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1]};
@@ -35,4 +33,9 @@ cuts_list('[0-11]') = {[1,0,0],[0,1,0],[0,0,1],...
     [1,1,0],[1,-1,0],[1,0,1],[1,0,-1],[0,1,1],[0,1,-1],...
     [1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1]};
 
-refit_sw_findJfun(bragg_list,cuts_list,file_list,e_min,e_max);
+
+[fitpar,bg_params,bragg_list,file_list,bind_map,fp_arr1]=refit_sw_findJfun(bragg_list,cuts_list,file_list,e_min,e_max);
+
+save('J_fit_E400_All_J0-4','fitpar','bg_params','bragg_list',...
+    'file_list','bind_map','fp_arr1');
+
