@@ -1,27 +1,27 @@
-function Ei400_uvw110_at110TPmod2Peaks(varargin)
+function Ei400_uvw110_at01m1TPmod2Peaks(varargin)
 
 root = fileparts(pwd);
 data_source= fullfile(root ,'sqw','Data','Fe_ei401.sqw');
 
-bragg = [1,1,0];
+bragg = [0,1,-1];
 dE = 10;
 dK = 0.05;
 
-avrg_par=[0,0,1042.5304];
 
 
-repPoints1= [-0.3375,-0.1625,0,0.1625,0.4625;
-    120,25,0,30,195];
-repPoints2 = [-0.3625,-0.0875,0,0.2125,0.4125;
-    160,20,0,30,165];
-repPoints3 = [-0.3125,-0.1375,0,0.1625,0.4375;
-    140,25,0,25,185];
-repPoints4 = [-0.3625,-0.1625,0,0.1375,0.3875;
-    140,20,0,25,180];
-repPoints5 = [-0.3375,-0.1125,0,0.1625,0.4375;
-    145,25,0,25,180];
-repPoints6 = [-0.3625,-0.1625,0,0.1375,0.3875;
-    145,40,0,20,180];
+
+repPoints1= [-0.22,-0.06,0,0.16,0.28;
+    50,15,0,25,100];
+repPoints2 = [-0.23,-0.06,0,0.13,0.23;
+    75,15,0,15,80];
+repPoints3 = [-0.24,-0.03,0,0.13,0.29;
+    60,15,0,20,90];
+repPoints4 = [-0.24,-0.11,0,0.13,0.29;
+    65,15,0,20,85];
+repPoints5 = [-0.24,-0.08,0,0.11,0.29;
+    45,15,0,15,95];
+repPoints6 = [-0.23,-0.11,0,0.13,0.26;
+    50,20,0,15,90];
 
 
 % #1
@@ -42,6 +42,6 @@ rp5 = parWithCorrections(repPoints5,bragg,[0,1,1],dE,dK);
 rp6 = parWithCorrections(repPoints6,bragg,[0,1,-1],dE,dK);
 
 
-repP={rp1,rp2,rp3,rp4,rp5,rp6};
+repP={rp6,rp5,rp4,rp3,rp2,rp1};
 
 do_fits(data_source,bragg,'<1,1,0>',repP)
