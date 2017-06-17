@@ -1,27 +1,22 @@
-function Ei400_uvw100_at110TPmod2Peaks(varargin)
+function Ei400_uvw100_at0m1m1TPmod2Peaks(varargin)
 
 root = fileparts(pwd);
 data_source= fullfile(root ,'sqw','Data','Fe_ei401.sqw');
 
-bragg = [1,1,0];
+bragg = [0,-1,-1];
 dE = 10;
 dK = 0.05;
 
 
-repPoints1= [-0.32,-0.18,0,0.17,0.37;
-    140,20,0,30,185];
+repPoints1= [-0.26,-0.09,0,0.23,0.31;
+    110,15,0,30,120];
 
-repPoints2 = [-0.325,-0.125,0,0.175,0.425;
-    130,30,0,30,190];
-repPoints3 = [-0.375,-0.125,0,0.125,0.375;
-    170,20,0,20,170];
+repPoints2 = [-0.36,-0.11,0,0.11,0.26;
+    140,20,0,15,80];
+repPoints3 = [-0.36,-0.13,0,0.09,0.31;
+    120,20,0,15,105];
 
 
-% Cuts
-% #1
-
-% Cuts
-% #1
 rp1 = parWithCorrections(repPoints1,bragg,[1,0,0],dE,dK);
 % #2
 rp2 = parWithCorrections(repPoints2,bragg,[0,1,0],dE,dK);
