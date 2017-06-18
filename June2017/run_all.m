@@ -32,10 +32,10 @@ cd(rootpath);
 p_br101 = fullfile(rootpath,'Br101');
 cd(p_br101)
 pwd
-Ei200_uvw100_at101Tpmod2P();
-Ei200_uvw110_at101Tpmod2P();
-Ei200_uvw111_at101Tpmod2P();
-Ei400_uvw100_at101Tpmod2P();
-Ei400_uvw110_at101Tpmod2P();
-Ei400_uvw111_at101Tpmod2P();
+Ei200_uvw100_at101TpMod2P();
+Ei200_uvw110_at101TpMod2P();
+Ei200_uvw111_at101TpMod2P();
+Ei400_uvw100_at101TpMod2P();
+Ei400_uvw110_at101TpMod2P();
+Ei400_uvw111_at101TpMod2P();
 cd(rootpath);
