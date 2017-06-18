@@ -1,4 +1,4 @@
-function refit_sw_findJBr1m10(varargin)
+function refit_sw_findJBr200(varargin)
 %
 %
 if nargin>0
@@ -10,7 +10,7 @@ else
 end
 cuts_list = containers.Map();
 %bragg_list = {[1,1,0],[1,-1,0],[2,0,0],[0,-1,-1],[0,1,-1],[0,-1,1]};
-bragg_list = {[1,-1,0]};
+bragg_list = {[2,0,0]};
 file_list = {'Fe_ei401'};
 
 %cuts_list('[1-10]') = {[1,0,0],[0,1,0],[0,0,1]};
