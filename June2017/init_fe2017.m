@@ -1,5 +1,5 @@
 hor_path = fileparts(which('horace_init.m'));
-this_path = mfilename('fullpath');
+this_path = fileparts(mfilename('fullpath'));
 tf_path = fullfile(hor_path,'_work','TGP_work');
 cd(tf_path);
 test_tobyfit_init(2);
