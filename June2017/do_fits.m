@@ -85,14 +85,14 @@ ly(0, 80);
 
 
 %figure('Name',['Tobyfitted spin wave dispersion at: ', BraggName]);
-figure(cut_plot);
-plot(result{1}.fitted_sw(:,1),result{1}.fitted_sw(:,2),['o','r']);
-hold on
-width_scale = max(result{1}.eval_sw(:,3))/(0.4*(max(result{1}.eval_sw(:,1))-min(result{1}.eval_sw(:,1))));
-
-errorbar(result{1}.eval_sw(:,1),result{1}.eval_sw(:,2),result{1}.eval_sw(:,3)/width_scale,colors{1},'horizontal');
-for i=2:n_cuts
-    errorbar(result{i}.eval_sw(:,1),result{i}.eval_sw(:,2),result{i}.eval_sw(:,3)/width_scale,colors{i},'horizontal');
-end
-lx(-0.8, 0.8)
-ly(0, E_max+50);
+% figure(cut_plot);
+% plot(result{1}.fitted_sw(:,1),result{1}.fitted_sw(:,2),['o','r']);
+% hold on
+% width_scale = max(result{1}.eval_sw(:,3))/(0.4*(max(result{1}.eval_sw(:,1))-min(result{1}.eval_sw(:,1))));
+% 
+% errorbar(result{1}.eval_sw(:,1),result{1}.eval_sw(:,2),result{1}.eval_sw(:,3)/width_scale,colors{1},'horizontal');
+% for i=2:n_cuts
+%     errorbar(result{i}.eval_sw(:,1),result{i}.eval_sw(:,2),result{i}.eval_sw(:,3)/width_scale,colors{i},'horizontal');
+% end
+% lx(-0.8, 0.8)
+% ly(0, E_max+50);
