@@ -1,15 +1,14 @@
 function [fitpar,bg_params,bragg_list,file_list,bind_map,fp_arr1]= refit_sw_findJfun(bragg_list,cuts_list,file_list,e_min,e_max)
-% Load sequence of cuts, corresponding to different brilluen zones and 
+% Load sequence of cuts, corresponding to different Brillouin zones and 
 % different reciprocal lattice directions and fit these peaks with the
-% scattering function defined by the spin-wave hamiltonian specified.
+% scattering function defined by the spin-wave Hamiltonian specified.
 %
 %
 
 
-% build the list of input filenames and verifuy if the files are present.
+% build the list of input filenames and verify if the files are present.
 [filenames,file_directions] = check_input_files_present(bragg_list,cuts_list,file_list);
 
-bind_map = containers.Map();
 
 n_files = numel(filenames);
 cut_list = {};
@@ -274,47 +273,6 @@ bg  = par(1)+x*par(2);
 
 
 
-function in = ind_name(ind)
-if ind<0
-    in = ['m',num2str(abs(ind))];
-else
-    in = num2str(ind);
-end
 %
 
-function [filenames,file_directions] = check_input_files_present(bragg_list,cuts_list,file_list)
-% build input files names and check if the files with appropriate names are present
-%
-%Return:
-% list of existign files to read data from.
-% list of 3D vectors, defining the direction of a cut.
-
-br_name = @(bragg)(['[' num2str(bragg(1)) num2str(bragg(2))  num2str(bragg(3)) ']']);
-br_folder = @(bragg)(['Br',ind_name(bragg(1)),ind_name(bragg(2)),ind_name(bragg(3))]);
-
-
-filenames = {};
-file_directions = {};
-for i=1:numel(bragg_list)
-    bragg = bragg_list{i};
-    cut_name  = br_name(bragg);
-    cuts = cuts_list(cut_name);
-    for j=1:numel(file_list)
-        file = file_list{j};
-        for k1=1:numel(cuts)
-            direction = cuts{k1};
-            data_file = rez_name(file,bragg,direction);
-            fn = br_folder(bragg);
-            scr_folder = fileparts(mfilename('fullpath'));
-            data_file = fullfile(scr_folder,fn,[data_file,'.mat']);
-            if exist(data_file,'file') == 2
-                filenames = [filenames(:);{data_file}];
-                file_directions = [file_directions(:);direction];
-            else
-                error('file %s does not exist',data_file);
-            end
-        end
-        
-    end
-end
 
