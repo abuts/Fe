@@ -344,7 +344,9 @@ split_point = find(isnan(en),1);
 ind = 1:numel(en);
 
 sign = ones(size(en));
-sign(ind<=split_point) = -1;
+if ~isempty(split_point)
+    sign(ind<=split_point) = -1;
+end
 
 D2     = par_coeff(3);
 Alpha  = par_coeff(2);

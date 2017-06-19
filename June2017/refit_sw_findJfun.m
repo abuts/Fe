@@ -83,11 +83,12 @@ for i=1:n_files
     cut_fitpar(:,8) = J2;
     cut_fitpar(:,9) = J3;
     cut_fitpar(:,10) = J4;
+    par_pattern_md = repmat(par_pattern,size(cut_fitpar,1),1);
     
     
     
     
-    not_valid = cut_fiterr>10 |cut_fitpar> par_pattern | isnan(cut_fiterr) | isnan(cut_fitpar) ;
+    not_valid = cut_fiterr>10 |cut_fitpar> par_pattern_md | isnan(cut_fiterr) | isnan(cut_fitpar) ;
     if any(reshape(not_valid,1,numel(not_valid)))
         if av_count>0
             ffa = fitpar_av/av_count;
