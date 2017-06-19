@@ -1,4 +1,4 @@
-function [en_list,S,S_err,gamma,gamma_err] = extract_fitpar(en_list,direction,cut_equiv_map,fitpar_struc)
+function [en_list,S,S_err,gamma,gamma_err] = extract_fitpar(obj,en_list,direction)
 % Extract appropriate spin wave parameters from the fitted data and
 % input metadata
 
@@ -12,11 +12,11 @@ cut_dir_id = direction_id(direction);
 for i=1:n_en
     en = en_list(i);
     bind_id = [num2str(en),cut_dir_id];
-    if cut_equiv_map.isKey(bind_id)
-        binds = cut_equiv_map(bind_id);
+    if obj.equal_cuts_map.isKey(bind_id)
+        binds = obj.equal_cuts_map(bind_id);
         n_par = binds{1};
-        fitpar_array = fitpar_struc.p{n_par};
-        fitpar_err   = fitpar_struc.sig{n_par};
+        fitpar_array = obj.fitpar.p{n_par};
+        fitpar_err   = obj.fitpar.sig{n_par};
         S(i) = fitpar_array(4);
         S_err(i) = fitpar_err(4);
         gamma(i) = abs(fitpar_array(3));
