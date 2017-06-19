@@ -32,7 +32,7 @@ w2 = cut_sqw(data_source,proj,Kr,[-dK,+dK],[-dK,+dK],0.2*dE);
 %figure;
 pl1=plot(w2);
 lz 0 2
-ly 0 150
+ly 0 180
 hold on
 % remember the place of the last image and place the impage to proper
 % posision
@@ -215,9 +215,9 @@ gap = 0;    % 5
 %J3 = 3.7300;
 %J4 = -4.8408;
 %J5 = 1.6475;
-J1 = 24.915;
-J2 = 13.760 ;
-J3 =  -3.236;
+J1 = 25.29;
+J2 = 13.930 ;
+J3 =  -3.01;
 J4  = 0;
 J5 = 0;
 
@@ -288,7 +288,7 @@ Amp_pl(ind(:)) = Amp(:);
 Amp_pl_err(ind(:)) = Amp_err(:);
 
 
-figure('Name',['Tobyfitted SW intensity along dE; peak: ',caption(bragg),' Direction: ',caption(cut_direction)]);
+pl01=figure('Name',['Tobyfitted SW intensity along dE; peak: ',caption(bragg),' Direction: ',caption(cut_direction)]);
 errorbar(e_sw,Amp_pl,Amp_pl_err,'r');
 %
 ly 0 2
@@ -334,7 +334,7 @@ result.esw_valid = es_valid;
 % ly 50 300
 % legend(ple,['SW Intensity, dE: ',num2str(2*dE),' dk: ',num2str(2*dK)]);
 %
-all_plots = [pl1,pl2,pl3,pl4,pl5,pl6];
+all_plots = [pl1,pl2,pl3,pl4,pl5,pl6,pl01];
 %
 function q = inv_parab(en,par_coeff)
 % Caclulate q-values using known energy values and parabolic spin-wave
