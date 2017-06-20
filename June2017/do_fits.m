@@ -23,6 +23,10 @@ for i=1:n_cuts
     rp1=repP{i};
     en_range = rp1.getMaxErange();
     q_range =  rp1.getQvsE(en_range,1);
+    if ~isreal(q_range)
+        error('DO_FIRS:invalid_arguments',...
+            ' initial fit points are incorrect as quadratic equation has complex roots');
+    end
     cut_p  =   [q_range,en_range];
     %cut_p = rp1.get_cut2peak_points();
     %E_min = min(E_min,rp1.emin(0));
