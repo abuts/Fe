@@ -41,7 +41,7 @@ amp=p(1);
 qsig=2*p(2)/sqrt(log(256));
 RblobSq =p(3);
 
-% Conversion matrix to turn h,k,l into correponding values for the lattice defined by parameters
+% Conversion matrix to turn h,k,l into corresponding values for the lattice defined by parameters
 % -------------------------------------------------------------------------------------
 % b0 is the matrix to convert rlu in the reference lattice to crystal Cartesian coords
 [b0,arlu,angrlu,mess] = bmatrix(lattice0(1:3),lattice0(4:6));

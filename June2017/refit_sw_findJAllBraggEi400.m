@@ -1,4 +1,4 @@
-function refit_sw_findJAllBraggEi400(varargin)
+function cp = refit_sw_findJAllBraggEi400(varargin)
 %
 %
 if nargin>0
@@ -8,14 +8,8 @@ else
     e_min  = -inf;
     e_max  = inf;
 end
-cuts_list = containers.Map();
 bragg_list = {[1,1,0],[1,-1,0],[2,0,0],[0,-1,-1],[0,1,-1],[0,-1,1],[1,0,1]};
-%bragg_list = {[1,-1,0],[1,1,0],[2,0,0]};
-file_list = {'Fe_ei401'};
+%bragg_list = {[0,-1,1]};
 
-
-[fitpar,bg_params,bragg_list,file_list,bind_map,fp_arr1]=refit_sw_findJfun(bragg_list,cuts_list,file_list,e_min,e_max);
-
-save('J_fit_E400_All_J0-4','fitpar','bg_params','bragg_list',...
-    'file_list','bind_map','fp_arr1');
-
+cp = process_cuts();
+cp = cp.refit_sw_findJ(bragg_list,'Fe_ei401',e_min,e_max);

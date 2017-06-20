@@ -15,6 +15,7 @@ cuts_fitpar.p = obj.fitpar.p(ind);
 cuts_fitpar.sig =obj.fitpar.sig(ind);
 cuts_fitpar.bp  = obj.fitpar.bp(ind);
 cuts_fitpar.bsig =obj.fitpar.bsig(ind);
+cuts_fitpar.chisq = obj.fitpar.chisq;
 
 stor.fp_arr1 = cuts_fitpar;
 
