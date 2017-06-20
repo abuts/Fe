@@ -5,3 +5,4 @@ cd(tf_path);
 test_tobyfit_init(2);
 cd(this_path);
 addpath(this_path);
+addpath(fullfile(this_path,'Utilities'));

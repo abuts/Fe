@@ -1,6 +1,10 @@
-function [en_list,S,S_err,gamma,gamma_err] = extract_fitpar(obj,en_list,direction)
+function [en_list,S,S_err,gamma,gamma_err] = extract_fitpar(obj,direction,en_list)
 % Extract appropriate spin wave parameters from the fitted data and
 % input metadata
+if ~exist('en_list','var')
+    range = obj.e_range;
+    en_list = range(1):5:range(2);
+end
 
 n_en = numel(en_list);
 S = zeros(n_en,1)*nan;
