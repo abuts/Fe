@@ -62,7 +62,7 @@ classdef process_cuts
         % build cuts binding using cut bind map;
         bind_map = build_cuts_binding(obj);
         %
-        obj = extract_j(obj,fp_arr1);
+        obj = setup_j(obj,fp_arr1);
         %
         obj= refit_sw_findJ(obj,bragg_list,file_list,e_min,e_max)        
         %
