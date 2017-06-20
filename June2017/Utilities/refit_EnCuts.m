@@ -15,8 +15,9 @@ else
 end
 init_fg_param = stor.fp_arr1.p;
 init_bg_param  = stor.fp_arr1.bp;
-
-init_fg_param = init_fg_param{1};
+if iscell(init_fg_param)
+    init_fg_param = init_fg_param{1};
+end
 kk = tobyfit2(stor.cut_list);
 %kk = kk.set_local_foreground(true);
 kk = kk.set_fun(@sqw_iron,init_fg_param,[0,0,1,1,0,0,0,0,0,0]);

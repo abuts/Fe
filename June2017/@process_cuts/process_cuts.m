@@ -23,13 +23,20 @@ classdef process_cuts
         %
         bragg_list;
         file_list;
-        fitted_par_id ='J0-2';
+        % 10x1 array defines what fit parameters to fix where fit
+        % parameters have a form:
+        % [ff, T, gamma, Seff, gap, J0, J1, J2, J3, J4];
+        fit_par_range = [0,0,1,1,0,1,1,1,0,0,0]
+
         e_range =[-inf,inf];
     end
     
     properties(Dependent)
         % Map of various directions, corresponding to various bragg peaks
         cuts_dir_list
+        % string, used in resulting file name to specify how many free
+        % parameters were used
+        fitted_par_id;        
     end
     properties(Access=private)
         cuts_dir_list_
@@ -74,6 +81,10 @@ classdef process_cuts
         %
         function map = get.cuts_dir_list(obj)
             map = obj.cuts_dir_list_;
+        end
+        function id = get.fitted_par_id(obj)
+            n_fits = sum(obj.fit_par_range);
+            id = sprintf('J1-%d',n_fits-2);
         end
         
         
