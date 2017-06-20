@@ -2,7 +2,7 @@ function  stor=view_EnCuts(cut_fname)
 % View group of cuts, 
 %   Detailed explanation goes here
 if isstruct(cut_fname)
-    stor = fut_fname;
+    stor = cut_fname;
 else
     stor = load(cut_fname);
 end

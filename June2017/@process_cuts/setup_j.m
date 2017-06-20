@@ -1,4 +1,4 @@
-function  [obj,fitpar,fiterr] = extract_j(obj,fp_arr1)
+function  [obj,fitpar,fiterr] = setup_j(obj,fp_arr1)
 % extract and display exchange interaction energies using fitted data as
 % input
 %

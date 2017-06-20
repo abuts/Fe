@@ -54,7 +54,7 @@ kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-2;60;1.e-6]);
 %profile viewer
 obj.fitpar = fp_arr1;
 obj.fits_list = w1D_arr1_tf;
-obj = obj.extract_j(fp_arr1,file_list{1});
+obj = obj.setup_j();
 
 
 obj = obj.save_en_cuts();
