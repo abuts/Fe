@@ -14,7 +14,7 @@ end
 
 bragg_list = obj.bragg_list;
 if numel(bragg_list) > 1
-    bragg_id = '_All_';
+    bragg_id = sprintf('_%dBraggs_',numel(bragg_list));
 else    
     bragg = bragg_list{1};
     bragg_id = ['br_[',obj.ind_name(bragg (1)),obj.ind_name(bragg(2)),obj.ind_name(bragg (3)),']'];
@@ -31,21 +31,11 @@ save(filename ,'fitpar','bg_params','bragg_list',...
 
 %   Detailed explanation goes here
 keys = obj.equal_cuts_map.keys;
-f_en =@(x)(0.5*(x.data.iint(2,3)+x.data.iint(1,3)));
+
 for i=1:numel(keys)
     theKey = keys{i};
-    binding = obj.equal_cuts_map(theKey);
-    ind = [binding{:}];
-    stor = struct();
-    cuts_fitpar=struct();
-    stor.cut_list = obj.cuts_list(ind);
-    stor.w1D_arr1_tf = obj.fits_list(ind);
-    cuts_fitpar.p = obj.fitpar.p(ind);
-    cuts_fitpar.sig =obj.fitpar.sig(ind);
-    cuts_fitpar.bp  = obj.fitpar.bp(ind);
-    cuts_fitpar.bsig =obj.fitpar.bsig(ind);
-    stor.fp_arr1 = cuts_fitpar;
-    stor.es_valid = arrayfun(f_en,stor.cut_list);
+    stor = obj.build_stor_structure_(theKey);
+    
     direction_id = regexp(theKey,'[<>]');
     dir_id = theKey(direction_id(1)+1:direction_id(2)-1);
     fn = sprintf('EnCuts_%s_dE%d_dir_!%s!',FileSourceID,stor.es_valid(1),dir_id);

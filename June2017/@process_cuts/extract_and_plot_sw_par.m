@@ -1,14 +1,15 @@
 function  [res100,res110,re111]=extract_and_plot_sw_par(obj,emin_real,emax_real)
-%UNTITLED8 Summary of this function goes here
-%   Detailed explanation goes here
+% Method to view the life time and intensity of fitted sw
+% 
+% 
 if ~exist('emin_real','var')    
     emin_real = obj.e_range(1);
     emax_real = obj.e_range(2);
 end
     
-[en100,S100,S100_err,G100,G100_err] = obj.extract_fitpar(emin_real:5:emax_real,[1,0,0]);
-[en110,S110,S110_err,G110,G110_err] = obj.extract_fitpar(emin_real:5:emax_real,[1,1,0]);
-[en111,S111,S111_err,G111,G111_err] = obj.extract_fitpar(emin_real:5:emax_real,[1,1,1]);
+[en100,S100,S100_err,G100,G100_err] = obj.extract_fitpar([1,0,0],emin_real:5:emax_real);
+[en110,S110,S110_err,G110,G110_err] = obj.extract_fitpar([1,1,0],emin_real:5:emax_real);
+[en111,S111,S111_err,G111,G111_err] = obj.extract_fitpar([1,1,1],emin_real:5:emax_real);
 %-------------------------------------------------------------
 brn = cellfun(@(br)(['[',num2str(br(1)),num2str(br(2)),num2str(br(3)),'];']),obj.bragg_list,'UniformOutput',false);
 name = [brn{:}];

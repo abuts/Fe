@@ -12,6 +12,6 @@ cut_prod1= process_cuts();
 cut_prod1 = cut_prod1.refit_sw_findJ([1,1,0],'Fe_ei200',e_min,e_max);
 
 cut_prod2 = process_cuts();
-cut_prod2 = cut_prod2.refit_sw_findJ([1,1,0],'Fe_ei401',e_min,e_max);
+%cut_prod2 = cut_prod2.refit_sw_findJ([1,1,0],'Fe_ei401',e_min,e_max);
 
 
