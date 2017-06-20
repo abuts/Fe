@@ -2,6 +2,7 @@ function obj = init_from_en_cuts(obj,fit_summary_file)
 %
 ld = load(fit_summary_file);
 obj.fitpar = ld.fp_arr1;
+obj = obj.setup_j();
 obj.bragg_list = ld.bragg_list;
 obj.file_list = ld.file_list;
 obj.cuts_list = [];
