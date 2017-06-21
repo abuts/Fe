@@ -12,7 +12,7 @@ end
 
 bragg_list = {[2,0,0]};
 
-cl  = process_cuts();
+cl  = cuts_processor();
 cl = cl.refit_sw_findJ(bragg_list,'Fe_ei401',e_min,e_max);
 
 %cut_prod.extract_and_plot_sw_par(10,150);

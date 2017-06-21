@@ -13,6 +13,8 @@ end
 [en110,S110,S110_err,G110,G110_err] = obj.extract_fitpar([1,1,0],emin:5:emax);
 [en111,S111,S111_err,G111,G111_err] = obj.extract_fitpar([1,1,1],emin:5:emax);
 %-------------------------------------------------------------
+s_max = max([S100;S110;S111]);
+g_max = max([G100;G110;G111]);
 
 brn = cellfun(@(br)(['[',num2str(br(1)),num2str(br(2)),num2str(br(3)),'];']),...
     obj.bragg_list,'UniformOutput',false);
@@ -26,6 +28,7 @@ ixg = repmat(IX_dataset_1d,3,1);
 [ixs(2),ixg(2)] = build_ds(en110,S110,S110_err,G110,G110_err,name);
 [ixs(3),ixg(3)] = build_ds(en111,S111,S111_err,G111,G111_err,name);
 
+
 colors = {'r','g','b','k'};
 acolor(colors{1});
 aline('-')
@@ -36,7 +39,8 @@ for i=2:3
     [~,~,li1]=pd(ixs(i));
     plots(i) = li1(1);
 end
-ly 0 2.5
+ymax = max(2.5,s_max);
+ly(0,ymax)
 legend(plots,'<100>','<110>','<111>');
 keep_figure
 
@@ -50,7 +54,9 @@ for i=2:3
     [~,~,li1]=pd(ixg(i));
     plots(i) = li1(1);
 end
-ly 0 80
+ymax = max(80,g_max);
+ly(0,ymax)
+
 legend(plots,'<100>','<110>','<111>');
 keep_figure
 

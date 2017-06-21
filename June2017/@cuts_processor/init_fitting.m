@@ -113,7 +113,7 @@ end
 
 % build bind map in a form multifit would accept
 obj.equal_cuts_map = cut_binds_map;
-obj.cuts_list = cuts_list;
+obj.cuts_list_ = cuts_list;
 
 param_binds = obj.build_cuts_binding();
 

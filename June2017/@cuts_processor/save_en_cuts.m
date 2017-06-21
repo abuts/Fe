@@ -4,7 +4,7 @@ function obj = save_en_cuts(obj,FileSourceID)
 % 
 % 
 if isempty(obj.fits_list) || isempty(obj.fitpar)
-    error('PROCESS_CUTS:runtime_error','nothing to save, fit has not been done');
+    error('CUTS_PROCESSOR:runtime_error','nothing to save, fit has not been done');
 end
 file_list = obj.file_list;
 used_files = [file_list{:}];
