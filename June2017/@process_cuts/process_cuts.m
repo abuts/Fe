@@ -68,8 +68,9 @@ classdef process_cuts
         obj= init_from_en_cuts(obj,fit_summary_file)
         % build cuts binding using cut bind map;
         bind_map = build_cuts_binding(obj);
-        %
-        obj = setup_j(obj,fp_arr1);
+        % extract J from fitpars and set them up as J in class
+        % extract other fitting parameters for convenient processing
+        [obj,fitpar,fiterr,capt] = setup_j(obj,fp_arr1);
         %
         obj= refit_sw_findJ(obj,bragg_list,file_list,e_min,e_max)
         %

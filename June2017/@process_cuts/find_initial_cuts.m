@@ -52,7 +52,7 @@ for i=1:numel(bragg_list)
                 filenames = [filenames(:);{file_0}];
                 file_directions = [file_directions(:);direction];
             else
-                missing_files = [missing_files(:),{data_file}];
+                missing_files = [missing_files(:);{data_file}];
                 missing_dir   = [missing_dir(:);direction];
                 %error('file %s does not exist',data_file);
             end

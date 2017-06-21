@@ -5,6 +5,8 @@ function  cut_struct = plot_Cuts(obj,energy,direction,varargin)
 % options = {'-keep_fig'};
 %
 
+
+
 CutID = [num2str(energy),direction_id(direction)];
 
 cut_struct = obj.build_stor_structure_(CutID);
