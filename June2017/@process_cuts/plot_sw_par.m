@@ -1,52 +1,55 @@
-function  [res100,res110,res111]=...
-    plot_sw_par(obj,emin_real,emax_real)
-% Method to view the life time and intensity of fitted sw
-% 
-% 
-if ~exist('emin_real','var')    
-    emin_real = obj.e_range(1);
-    emax_real = obj.e_range(2);
+function  [ixs,ixg]= plot_sw_par(obj,emin,emax)
+% Method to plot the life time and intensity of fitted sw
+%
+% returns 2 of 3-element arrays of IX_dataset_1d objects containing
+% lifetimes and intensities.
+%
+if ~exist('emin_real','var')
+    emin = obj.e_range(1);
+    emax = obj.e_range(2);
 end
-    
-[en100,S100,S100_err,G100,G100_err] = obj.extract_fitpar([1,0,0],emin_real:5:emax_real);
-[en110,S110,S110_err,G110,G110_err] = obj.extract_fitpar([1,1,0],emin_real:5:emax_real);
-[en111,S111,S111_err,G111,G111_err] = obj.extract_fitpar([1,1,1],emin_real:5:emax_real);
+
+[en100,S100,S100_err,G100,G100_err] = obj.extract_fitpar([1,0,0],emin:5:emax);
+[en110,S110,S110_err,G110,G110_err] = obj.extract_fitpar([1,1,0],emin:5:emax);
+[en111,S111,S111_err,G111,G111_err] = obj.extract_fitpar([1,1,1],emin:5:emax);
 %-------------------------------------------------------------
 
-brn = cellfun(@(br)(['[',num2str(br(1)),num2str(br(2)),num2str(br(3)),'];']),obj.bragg_list,'UniformOutput',false);
+brn = cellfun(@(br)(['[',num2str(br(1)),num2str(br(2)),num2str(br(3)),'];']),...
+    obj.bragg_list,'UniformOutput',false);
 name = [brn{:}];
-[ixS100,ixG100] = build_ds(en100,S100,S100_err,G100,G100_err,name);
-[ixS110,ixG110] = build_ds(en110,S110,S110_err,G110,G110_err,name);
-[ixS111,ixG111] = build_ds(en111,S111,S111_err,G111,G111_err,name);
+[~,~,~,capt] = obj.setup_j(obj);
+file_n = [obj.file_list{:}];
+name = sprintf('%s\n, Data: %s\n %s',name,file_n,capt);
+ixs = replicate(IX_dataset_1d,3,1);
+ixg = replicate(IX_dataset_1d,3,1);
+[ixs(1),ixg(1)] = build_ds(en100,S100,S100_err,G100,G100_err,name);
+[ixs(2),ixg(2)] = build_ds(en110,S110,S110_err,G110,G110_err,name);
+[ixs(3),ixg(3)] = build_ds(en111,S111,S111_err,G111,G111_err,name);
 
-acolor('r');
-li1=plot(ixS100);
-acolor('g');
-li2=pd(ixS110);
-acolor('b');
-li3=pd(ixS111);
+colors = {'r','g','b','k'};
+plots = zeros(3,1);
+acolor(colors{1});
+plots(1) = plot(ixs(1));
+for i=2:3
+    acolor(colors{i});
+    plots(i)=pd(ixs(i));
+end
 ly 0 2.5
-plots = [li1, li2, li3];
 legend(plots,'<100>','<110>','<111>');
 %
 %-------------------------------------------------------------
-acolor('r');
-li1=plot(ixG100);
-acolor('g');
-li2=pd(ixG110);
-acolor('b');
-li3=pd(ixG111);
-ly 0 2.5
-plots = [li1, li2, li3];
-legend(plots,'<100>','<110>','<111>');
-%
-plots = [li1, li2, li3];
+acolor(colors{1});
+plots(1) = plot(ixg(1));
+for i=2:3
+    acolor(colors{i});
+    plots(i)=pd(ixg(i));
+end
 ly 0 80
 legend(plots,'<100>','<110>','<111>');
-
-res100 = [en100',S100,S100_err,G100,G100_err];
-res110 = [en110',S110,S110_err,G110,G110_err];
-res111 = [en111',S111,S111_err,G111,G111_err];
+%
+% res100 = [en100',S100,S100_err,G100,G100_err];
+% res110 = [en110',S110,S110_err,G110,G110_err];
+% res111 = [en111',S111,S111_err,G111,G111_err];
 
 function [ixd_s,ixd_g]=build_ds(en,s,s_err,g,g_err,name)
 valid = ~isnan(en);

@@ -8,7 +8,5 @@ function  cut_struct = plot_Cuts(obj,energy,direction,varargin)
 CutID = [num2str(energy),direction_id(direction)];
 
 cut_struct = obj.build_stor_structure_(CutID);
-view_EnCuts(cut_struct,varargin{:});
-
-
+plot_EnCuts(cut_struct,varargin{:});
 

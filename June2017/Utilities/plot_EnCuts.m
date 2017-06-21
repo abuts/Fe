@@ -6,7 +6,7 @@ function  stor=plot_EnCuts(cut_fname,varargin)
 options = {'-keep_fig'};
 [ok,mess,keep_fig] = parse_char_options(varargin,options);
 if~ok
-    error('view_EnCuts:invalid_argument',mess);
+    error('plot_EnCuts:invalid_argument',mess);
 end
 
 
