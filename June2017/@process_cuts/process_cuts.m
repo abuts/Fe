@@ -32,6 +32,8 @@ classdef process_cuts
     end
     
     properties(Dependent)
+        % file used as source of cut data
+        source_file
         % Map of various directions, corresponding to various bragg peaks
         cuts_dir_list
         % string, used in resulting file name to specify how many free
@@ -42,6 +44,7 @@ classdef process_cuts
         cuts_dir_list_
         rood_data_folder_ = fileparts(which('init_fe2017.m'));
         source_cuts_fname_ = @rez_name;
+        source_file_ = [];
     end
     methods(Static)
         name= ind_name(ind);
@@ -85,7 +88,10 @@ classdef process_cuts
         end
         function id = get.fitted_par_id(obj)
             n_fits = sum(obj.fit_par_range);
-            id = sprintf('J1-%d',n_fits-2);
+            id = sprintf('J0-%d',n_fits-3);
+        end
+        function fn = get.source_file(obj)
+            fn = obj.source_file_;
         end
         
         

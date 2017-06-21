@@ -19,6 +19,7 @@ end
 if ~iscell(file_list)
     file_list = {file_list};
 end
+obj.source_file_ = [file_list{:}];
 obj.bragg_list = bragg_list;
 obj.file_list = file_list;
 
