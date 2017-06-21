@@ -12,7 +12,8 @@ end
 
 bragg_list = {[2,0,0]};
 
-cl  = cuts_processor();
+cl  = process_cuts();
+cl.fit_par_range = [0 0 1 1 0 1 1 1 1 1];
 cl = cl.refit_sw_findJ(bragg_list,'Fe_ei200',e_min,e_max);
 
 
