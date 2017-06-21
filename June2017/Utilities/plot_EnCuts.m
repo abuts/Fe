@@ -1,6 +1,8 @@
-function  stor=view_EnCuts(cut_fname,varargin)
+function  stor=plot_EnCuts(cut_fname,varargin)
 % View group of cuts,
-%   Detailed explanation goes here
+%
+%Load the group from hdd if this option is specified
+%
 options = {'-keep_fig'};
 [ok,mess,keep_fig] = parse_char_options(varargin,options);
 if~ok
