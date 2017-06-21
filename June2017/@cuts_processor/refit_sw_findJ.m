@@ -68,7 +68,7 @@ obj.fitpar = fp_arr1;
 obj.fits_list = w1D_arr1_tf;
 obj = obj.setup_j();
 % be ready to refit
-obj.init_fg_params_ = obj.fits.p;
-obj.init_bg_params_ = obj.fits.bp;
+obj.init_fg_params_ = obj.fitpar.p;
+obj.init_bg_params_ = obj.fitpar.bp;
 
 obj = obj.save_en_cuts();
