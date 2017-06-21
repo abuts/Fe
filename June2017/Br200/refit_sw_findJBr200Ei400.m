@@ -1,4 +1,4 @@
-function cl = refit_sw_findJBr200(varargin)
+function cl = refit_sw_findJBr200Ei400(varargin)
 %
 %
 if nargin>0

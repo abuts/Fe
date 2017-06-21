@@ -17,35 +17,43 @@ end
 brn = cellfun(@(br)(['[',num2str(br(1)),num2str(br(2)),num2str(br(3)),'];']),...
     obj.bragg_list,'UniformOutput',false);
 name = [brn{:}];
-[~,~,~,capt] = obj.setup_j(obj);
+[~,~,~,capt] = obj.setup_j;
 file_n = [obj.file_list{:}];
-name = sprintf('%s\n, Data: %s\n %s',name,file_n,capt);
-ixs = replicate(IX_dataset_1d,3,1);
-ixg = replicate(IX_dataset_1d,3,1);
+name = sprintf('%s %s\n %s',name,file_n(4:end),capt);
+ixs = repmat(IX_dataset_1d,3,1);
+ixg = repmat(IX_dataset_1d,3,1);
 [ixs(1),ixg(1)] = build_ds(en100,S100,S100_err,G100,G100_err,name);
 [ixs(2),ixg(2)] = build_ds(en110,S110,S110_err,G110,G110_err,name);
 [ixs(3),ixg(3)] = build_ds(en111,S111,S111_err,G111,G111_err,name);
 
 colors = {'r','g','b','k'};
-plots = zeros(3,1);
 acolor(colors{1});
-plots(1) = plot(ixs(1));
+aline('-')
+[~,~,li1] = plot(ixs(1));
+plots = repmat(li1(1),3,1);
 for i=2:3
     acolor(colors{i});
-    plots(i)=pd(ixs(i));
+    [~,~,li1]=pd(ixs(i));
+    plots(i) = li1(1);
 end
 ly 0 2.5
 legend(plots,'<100>','<110>','<111>');
+keep_figure
+
 %
 %-------------------------------------------------------------
 acolor(colors{1});
-plots(1) = plot(ixg(1));
+[~,~,li1]  = plot(ixg(1));
+plots(1) = li1(1);
 for i=2:3
     acolor(colors{i});
-    plots(i)=pd(ixg(i));
+    [~,~,li1]=pd(ixg(i));
+    plots(i) = li1(1);
 end
 ly 0 80
 legend(plots,'<100>','<110>','<111>');
+keep_figure
+
 %
 % res100 = [en100',S100,S100_err,G100,G100_err];
 % res110 = [en110',S110,S110_err,G110,G110_err];
@@ -54,12 +62,12 @@ legend(plots,'<100>','<110>','<111>');
 function [ixd_s,ixd_g]=build_ds(en,s,s_err,g,g_err,name)
 valid = ~isnan(en);
 ixd_s = IX_dataset_1d(en(valid),s(valid),s_err(valid),...
-    ['Intensity scale for peaks',name],IX_axis('Energy transfer','mEv'),...
-    IX_axis('intensity',''));
+    ['Intensity scale for peak(s) ',name],IX_axis('Energy transfer','mEv'),...
+    IX_axis('intensity',''),false);
 
 ixd_g = IX_dataset_1d(en(valid),g(valid),g_err(valid),...
     ['Inverse lifetime for peaks: ',name],IX_axis('Energy transfer','mEv'),...
-    IX_axis('Decay','mEv'));
+    IX_axis('Decay','mEv'),false);
 
 
 
