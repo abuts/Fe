@@ -4,7 +4,7 @@ function  stor=refit_EnCuts(cut_fname,varargin)
 %options = {'-keep_fig'};
 %[ok,mess,keep_fig] = parse_char_options(varargin,options);
 %if~ok
-%    error('view_EnCuts:invalid_argument',mess);
+%    error('plot_EnCuts:invalid_argument',mess);
 %end
 
 
@@ -32,7 +32,7 @@ kk = kk.set_bfun(@(x,par)(par(1)+x*par(2)),init_bg_param);
 
 kk = kk.set_mc_points(10);
 %profile on;
-kk = kk.set_options('listing',2,'fit_control_parameters',[1.e-2;60;1.e-6]);
+kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-2;60;1.e-6]);
 %kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-4;20;1.e-4]);
 %profile on;
 [w1D_arr1_tf,fp_arr1]=kk.fit;
@@ -42,8 +42,3 @@ kk = kk.set_options('listing',2,'fit_control_parameters',[1.e-2;60;1.e-6]);
 stor.fp_arr1 = fp_arr1;
 stor.w1D_arr1_tf = w1D_arr1_tf;
 
-
-
-
-
-%view_

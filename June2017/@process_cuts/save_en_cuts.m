@@ -44,7 +44,7 @@ for i=1:numel(keys)
     fld_names = fieldnames(stor);
     save(fn,'-struct','stor',fld_names{:});
     fprintf(' En=%d; Cuts Group N:%d/%d  Consisting of %d Cuts\n',stor.es_valid(1),i,numel(keys),n_cuts);    
-    %view_EnCuts(stor);    
+    %plot_EnCuts(stor);    
 end
 
 

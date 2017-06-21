@@ -1,4 +1,4 @@
-function  [obj,fitpar,fiterr] = setup_j(obj,fp_arr1)
+function  [obj,fitpar,fiterr,capt] = setup_j(obj,fp_arr1)
 % extract and display exchange interaction energies using fitted data as
 % input
 %
@@ -36,9 +36,10 @@ else
     fiterr = [];
 end
 
-fprintf([' J over number of cuts:\n J0: %6.3f +/-%6.3f; J1: %6.3f +/-%6.3f;',...
+capt = sprintf([' J over number of cuts:\n J0: %6.3f +/-%6.3f; J1: %6.3f +/-%6.3f;',...
     ' J2: %6.3f +/-%6.3f  J3: %6.3f +/-%6.3f  J4: %6.3f +/-%6.3f\n'],...
     obj.J0,obj.J0_err,obj.J1,obj.J1_err,obj.J2,obj.J2_err,obj.J3,obj.J3_err,obj.J4,obj.J4_err);
+disp(capt);
 
 
 
