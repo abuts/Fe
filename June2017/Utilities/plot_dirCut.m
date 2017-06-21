@@ -1,16 +1,26 @@
-function [cuts_list,fits_list,fit_par] = view_dirCut(dir_cut,varargin)
-%   Detailed explanation goes here
+function [cuts_list,fits_list,fit_par] = plot_dirCut(file_base,varargin)
+% load from hdd and plot group of cuts corresponding to a particular bragg
+% peak and cut direction
+%
+% The file can be specified directly by its name or by cut' parameters e.g. 
+% file_base,Bragg indexes and cut direction where
+% file_base -- the file with cuts or the base name of the sqw file 
+%              the cuts were made
+% Bragg     -- the cuts initial Bragg position
+% cut_dir   -- the direction the cut was made (e.g. [1,0,0], [0,-1,0], 111, 1-11
+%              [1,1,1], [1,-1,1] etc...)
+% 
 
 if nargin == 1
-    [~,~,fe]=fileparts(dir_cut);
+    [~,~,fe]=fileparts(file_base);
     if isempty(fe)
-        in_files = {[dir_cut,'.mat']};
+        in_files = {[file_base,'.mat']};
     else
-        in_files = {dir_cut};        
+        in_files = {file_base};
     end
     
 elseif nargin == 2
-    f_base = dir_cut;
+    f_base = file_base;
     bragg = varargin{1};
     dir   = {[1,0,0],[0,1,0],[0,0,1],...
         [1,1,0],[1,-1,0],[1,0,1],[1,0,-1],[0,1,1],[0,1,-1],...
@@ -20,7 +30,7 @@ elseif nargin == 2
         in_files{i} = rez_name(f_base,bragg,dir{i},'TF_');
     end
 elseif nargin == 3
-    f_base = dir_cut;
+    f_base = file_base;
     bragg = varargin{1};
     dir   = varargin{2};
     in_files{1} = rez_name(f_base,bragg,dir,'TF_');

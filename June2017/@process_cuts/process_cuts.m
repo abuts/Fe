@@ -73,11 +73,11 @@ classdef process_cuts
         %
         obj= refit_sw_findJ(obj,bragg_list,file_list,e_min,e_max)
         %
-        [res100,res110,re111]=extract_and_plot_sw_par(obj,emin_real,emax_real)
+        [res100,res110,re111]=plot_sw_par(obj,emin_real,emax_real)
         %
         % View sequence of cuts correspondent to energy transfer and direction provided
         % as input and return the structure, usually stored with cut sequence        
-        cut_struct = view_Cuts(obj,energy,direction,varargin)
+        cut_struct = plot_Cuts(obj,energy,direction,varargin)
         %
         function map = get.cuts_dir_list(obj)
             map = obj.cuts_dir_list_;
