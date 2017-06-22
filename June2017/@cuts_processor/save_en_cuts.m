@@ -38,11 +38,11 @@ for i=1:numel(keys)
     
     direction_id = regexp(theKey,'[<>]');
     dir_id = theKey(direction_id(1)+1:direction_id(2)-1);
-    fn = sprintf('EnCuts_%s_dE%d_dir_!%s!',FileSourceID,stor.es_valid(1),dir_id);
-    n_cuts = numel(stor.cut_list);
     
-    fld_names = fieldnames(stor);
-    save(fn,'-struct','stor',fld_names{:});
+    fn = sprintf('EnCuts_%s_dE%d_dir_!%s!',FileSourceID,stor.es_valid(1),dir_id);    
+    stor.save(fn);
+    
+    n_cuts = numel(stor.cut_list);    
     fprintf(' En=%d; Cuts Group N:%d/%d  Consisting of %d Cuts\n',stor.es_valid(1),i,numel(keys),n_cuts);    
     %plot_EnCuts(stor);    
 end

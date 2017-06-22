@@ -11,22 +11,24 @@ end
 
 
 if isstruct(cut_fname)
+    stor = EnCutBlock(cut_fname);
+elseif isa(cut_fname,'EnCutBlock')
     stor = cut_fname;
 else
-    stor = load(cut_fname);
+    stor = EnCutBlock.load(cut_fname);
 end
 
 ps = pic_spread();
 
-n_cuts = numel(stor.cut_list);
+n_cuts = numel(stor.cuts_list);
 disp('energies:')
-disp(stor.es_valid');
-cuts_fitpar = stor.fp_arr1;
+disp(stor.cut_energies);
+cuts_fitpar = stor.fit_param;
 for j=1:n_cuts
     acolor('k');
-    fh=plot(stor.cut_list(j));
+    fh=plot(stor.cuts_list(j));
     acolor('r');
-    pl(stor.w1D_arr1_tf(j));
+    pl(stor.fits_list(j));
     fprintf(' cut N: %d/%d\n',j,n_cuts);
     if iscell(cuts_fitpar.p)
         fitpar = cuts_fitpar.p{j};
@@ -35,8 +37,10 @@ for j=1:n_cuts
         fitpar = cuts_fitpar.p;
         fiterr = cuts_fitpar.sig;
     end
-    fprintf(' par: %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f\n',fitpar(3:10));
-    fprintf(' err: %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f\n',fiterr(3:10));
+    if numel(fitpar)==10
+        fprintf(' par: %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f\n',fitpar(3:10));
+        fprintf(' err: %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f\n',fiterr(3:10));
+    end
     if keep_fig
         ps = ps.place_pic(fh);
         keep_figure();

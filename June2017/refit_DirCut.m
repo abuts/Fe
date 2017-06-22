@@ -1,4 +1,4 @@
-function [result,all_plots]=refit_swTP_model(saved_cuts_file)
+function [result,all_plots]=refit_DirCut(saved_cuts_file)
 
 
 load(saved_cuts_file);
@@ -39,7 +39,7 @@ kk = kk.set_local_foreground(true);
 kk = kk.set_fun(@sqw_iron,par,[0,0,1,1,0,1,0,0,0,0]);
 %kk = kk.set_fun(@(h,k,l,e,par)sw_disp(proj,ff_calc,h,k,l,e,par),[parR(1),parR(2),parR(3),ampl_avrg,fwhh_avrg],[1,1,1,1,1]);
 %kk = kk.set_bind({1,[1,2],1},{2,[2,2],1},{3,[3,2],1});
-kk = kk.set_bind({6,[6,2],1});
+kk = kk.set_bind({{6,[6,2],1},{7,[7,2],1},{8,[8,2],1},{9,[9,2],1},{10,[10,2],1}});
 
 % set up its own initial background value for each background function
 bpin = fp_arr1.bp;
