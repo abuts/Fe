@@ -1,4 +1,4 @@
-function weight = make_bragg_blobs_and_mag_ff(mag_ff,qh,qk,ql,en,p,lattice0,lattice,rotvec)
+function weight = bragg_sphere_and_mag_ff(mag_ff,qh,qk,ql,en,p,lattice0,lattice,rotvec)
 % Blobs at Bragg positions on a lattice rotated and scaled w.r.t. input lattice
 %
 %   >> weight = make_bragg_blobs (qh,qk,ql,en,p,lattice0)
@@ -44,7 +44,7 @@ RblobSq =p(3);
 % Conversion matrix to turn h,k,l into corresponding values for the lattice defined by parameters
 % -------------------------------------------------------------------------------------
 % b0 is the matrix to convert rlu in the reference lattice to crystal Cartesian coords
-[b0,arlu,angrlu,mess] = bmatrix(lattice0(1:3),lattice0(4:6));
+[b0,~,~,mess] = bmatrix(lattice0(1:3),lattice0(4:6));
 if ~isempty(mess), error(mess), end
 
 % b is the matrix to convert rlu in the true lattice to crystal Cartesian coords
@@ -61,7 +61,7 @@ else
     R=eye(3);
 end
 rlu_corr=b\(R*b0);
-ff = mag_ff(qh,qk,ql,en,[]);
+ff = mag_ff(qh,qk,ql,[],b0);
 
 % Get h,k,l in new lattice and get weight
 qrlu=rlu_corr*[qh,qk,ql]';
