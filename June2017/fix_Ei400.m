@@ -3,7 +3,7 @@ if nargin>1
     dat = EnCutBlock.load(varagin{1});
     
 else
-    simulate = false;
+    simulate = true;
     w_source = repmat(sqw,1,19);
     
     data_file = fullfile(pwd,'sqw','Data','Fe_ei401.sqw');
@@ -66,7 +66,7 @@ else
     prj1.uoffset = [1, 1,0];
     w_source(17)= cut_sqw(data_file,prj1,[-0.1,0.1],[-0.8,0.025,0.8],[-0.1,0.1],[80,90]);
     
-
+    
     prj1.uoffset = [0,-1,1];
     w_source(18)= cut_sqw(data_file,prj1,[-0.8,0.025,0.8],[-0.1,0.1],[-0.1,0.1],[80,90]);
     prj1.uoffset = [0, -1,1];
@@ -82,7 +82,7 @@ end
 % w10m1=cut_sqw(data_file,proj,[0.9,1.1],[-0.8,0.01,0.8],[-1.1,-0.9],[80,90]);
 % w0m1m1=cut_sqw(data_file,proj,[-0.2,0.01,0.8],[-1.1,-0.9],[-1.1,-0.9],[80,90]);
 % w101=cut_sqw(data_file,proj,[-0.1,0.1],[-1.8,0.01,-0.2],[0.9,1.1],[80,90]);   %6
-% 
+%
 %
 % w0m11=cut_sqw(data_file,proj,[0.2,0.01,1.8],[-0.1,0.1],[0.9,1.1],[80,90]);
 % % % Toby's set
@@ -139,8 +139,10 @@ w_tf_a = reshape(w_tf_a,1,numel(w_tf_a));
 w_source = reshape(w_source,1,numel(w_source));
 
 res = EnCutBlock(w_source,w_tf_a,fitpar_tf_a);
-res = plot_EnCuts(res,'-keep');
-res.save('FixEi400_enCuts19');
+res = plot_EnCuts(res,'-keep','-tight');
+if ~simulate
+    res.save('FixEi400_enCuts19');
+end
 
 
 
