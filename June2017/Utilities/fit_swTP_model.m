@@ -59,9 +59,14 @@ for i=1:size(cut_p,1)
     else
         ws_valid(i) = true;
     end
+    if e_sw(i) <= 40
+        width = 5;
+    else
+        width = 8;        
+    end
     
-    k_min = -q_range(i)-5*dK;
-    k_max =  q_range(i)+5*dK;
+    k_min = -q_range(i)-width*dK;
+    k_max =  q_range(i)+width*dK;
     try
         w1=cut_sqw(w2,proj,[k_min,0.2*dK,k_max],[-dK,dK],[-dK,dK],[e_sw(i)-dE,e_sw(i)+dE]);
         w0=cut_sqw(w2,proj,[-dK+q_range(i),dK+q_range(i)],[-dK,dK],[-dK,dK],[e_sw(i)-dE,e_sw(i)+dE]);
