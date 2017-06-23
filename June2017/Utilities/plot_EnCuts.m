@@ -3,8 +3,8 @@ function  stor=plot_EnCuts(cut_fname,varargin)
 %
 %Load the group from hdd if this option is specified
 %
-options = {'-keep_fig'};
-[ok,mess,keep_fig] = parse_char_options(varargin,options);
+options = {'-keep_fig','-tight'};
+[ok,mess,keep_fig,tight] = parse_char_options(varargin,options);
 if~ok
     error('plot_EnCuts:invalid_argument',mess);
 end
@@ -18,7 +18,11 @@ else
     stor = EnCutBlock.load(cut_fname);
 end
 
-ps = pic_spread();
+if tight
+    ps = pic_spread('-tight');
+else
+    ps = pic_spread();
+end
 
 n_cuts = numel(stor.cuts_list);
 disp('energies:')
