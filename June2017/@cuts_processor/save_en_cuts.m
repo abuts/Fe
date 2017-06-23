@@ -39,7 +39,7 @@ for i=1:numel(keys)
     direction_id = regexp(theKey,'[<>]');
     dir_id = theKey(direction_id(1)+1:direction_id(2)-1);
     
-    fn = sprintf('EnCuts_%s_dE%d_dir_!%s!',FileSourceID,stor.es_valid(1),dir_id);    
+    fn = sprintf('EnCuts_%s_dE%d_dir_!%s!',FileSourceID,stor.cut_energies(1),dir_id);    
     stor.save(fn);
     
     n_cuts = numel(stor.cut_list);    

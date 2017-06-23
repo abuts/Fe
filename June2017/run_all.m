@@ -1,33 +1,33 @@
 rootpath = fileparts(mfilename('fullpath'));
 
 p_br110 = fullfile(rootpath,'Br110');
-cd(p_br110);
-pwd
-%Ei200_uvw100_at110TPmod2Peaks();
-%Ei200_uvw110_at110TPmod2Peaks();
-%Ei200_uvw111_at110TPmod2Peaks();
-Ei400_uvw100_at110TPmod2Peaks();
-Ei400_uvw110_at110TPmod2Peaks();
-Ei400_uvw111_at110TPmod2Peaks();
-cd(rootpath);
-p_br1m10 = fullfile(rootpath,'Br1m10');
-cd(p_br1m10);
-pwd
-%Ei200_uvw100_at1m10TPmod2Peaks();
-%Ei200_uvw110_at1m10TPmod2Peaks();
-%Ei200_uvw111_at1m10TPmod2Peaks();
-Ei400_uvw100_at1m10TPmod2Peaks();
-Ei400_uvw110_at1m10TPmod2Peaks();
-Ei400_uvw111_at1m10TPmod2Peaks();
-cd(rootpath);
-
+% cd(p_br110);
+% pwd
+% %Ei200_uvw100_at110TPmod2Peaks();
+% %Ei200_uvw110_at110TPmod2Peaks();
+% %Ei200_uvw111_at110TPmod2Peaks();
+% Ei400_uvw100_at110TPmod2Peaks();
+% Ei400_uvw110_at110TPmod2Peaks();
+% Ei400_uvw111_at110TPmod2Peaks();
+% cd(rootpath);
+% p_br1m10 = fullfile(rootpath,'Br1m10');
+% cd(p_br1m10);
+% pwd
+% %Ei200_uvw100_at1m10TPmod2Peaks();
+% %Ei200_uvw110_at1m10TPmod2Peaks();
+% %Ei200_uvw111_at1m10TPmod2Peaks();
+% Ei400_uvw100_at1m10TPmod2Peaks();
+% Ei400_uvw110_at1m10TPmod2Peaks();
+% Ei400_uvw111_at1m10TPmod2Peaks();
+% cd(rootpath);
+% 
 p_br200 = fullfile(rootpath,'Br200');
 cd(p_br200);
 pwd
-%Ei200_uvw100_at200TPmod2Peaks
-%Ei200_uvw110_at200TPmod2Peaks
-%Ei200_uvw111_at200TPmod2Peaks
-Ei400_uvw100_at200TPmod2Peaks
+% %Ei200_uvw100_at200TPmod2Peaks
+% %Ei200_uvw110_at200TPmod2Peaks
+% %Ei200_uvw111_at200TPmod2Peaks
+% Ei400_uvw100_at200TPmod2Peaks
 Ei400_uvw110_at200TPmod2Peaks
 Ei400_uvw111_at200TPmod2Peaks
 %--------------------------------------------------------------------------
