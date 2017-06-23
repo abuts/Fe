@@ -1,5 +1,5 @@
 classdef pic_spread
-    %Class respronsible for spreading number of pictures around the
+    %Class responsible for spreading number of pictures around the
     %screen
     
     properties
@@ -8,7 +8,7 @@ classdef pic_spread
         pic_size = [800,600];
         pic_count=0;
         % size of the left border in pictures to start from (e.g. if you have
-        % windows toolbad on the left side of the screen)
+        % windows toolbar on the left side of the screen)
         left_border=40;
         top_border =60;
     end
@@ -24,16 +24,16 @@ classdef pic_spread
     
     methods
         function obj=pic_spread(varargin)
-            % constructor initates the class and defines the picture size
+            % constructor imitates the class and defines the picture size
             %
             % Usage:
             % >>obj=pic_spread(['-tight']) % -- prepares to put default image spread of 4x3
-            %                         picture per creen
+            %                         picture per screen
             % >>obj=pic_spread([3,2],['-tight']) % -- prepares to put 6 pictures on the screen as
             %                              in the table of 3x2 cells
             %
             % if '-tight' parameter is present, then picture placed on the
-            % screen tight, namely overalling picture borders and resizing
+            % screen tight, namely ov picture borders and resizing
             % them to fit on the screen requested number.
             
             keywords={'-tight','rize'};
@@ -61,13 +61,13 @@ classdef pic_spread
         end
         
         function self=place_pic(self,fig_handle,varargin)
-            % method sets the size and the postition of the picture,
+            % method sets the size and the position of the picture,
             % defined by the picture handle provided as argument, to current size and
-            % postion.
-            % if '-rize' option is specified, after adding the last pictures 
-            %  method also rized all previous pictures
+            % position.
+            % if '-rise' option is specified, after adding the last pictures 
+            %  method also rises all previous pictures
             
-            keywords={'-rize'};
+            keywords={'-rise'};
             [ok,mess,rize_fig]=parse_char_options(varargin,keywords);
             if ~ok
                 error('PIC_SPREAD:invalid_argument',mess);
@@ -119,7 +119,7 @@ classdef pic_spread
             
         end
         function self=close_pics_all(self)
-            % method closes all related picutres
+            % method closes all related pictures
             
             close(self.pic_list{1:end});
             self.pic_list={};

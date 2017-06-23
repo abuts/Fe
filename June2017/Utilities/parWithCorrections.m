@@ -164,6 +164,13 @@ classdef parWithCorrections
             emax = max(obj.ref_par_Y);
             en   = (emin:5:emax)';
         end
+        function en = getMinErange(obj)
+            % return maximal range of energies to make the cuts
+            % adjusting to cut resolution.   
+            emin = 40+obj.dE; 
+            emax = obj.emax(0);
+            en   = (emin:5:emax)';
+        end
         function en=getEpos(obj,s)
             
             emin = floor(obj.emin(s));

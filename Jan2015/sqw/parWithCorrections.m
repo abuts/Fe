@@ -1,16 +1,16 @@
 classdef parWithCorrections
     % class defines parabolic spin wave and
     % methods used to calculate changes of intensity caused by the shape of
-    % this parabold
+    % this paraboloid
     
     %   Detailed explanation goes here
     
     properties
         A_cor;        % a normalization constant calculated at some point of q
-        legend='';    % the legend desctibes the SW position
+        legend='';    % the legend describes the SW position
         % the q-range to do fitting within
         QRange=0.2;
-        % energy limit below wihich spin wave appear
+        % energy limit below which spin wave appear
         Esw_threshold=40;
         % initial peak width
         peak_width =0.02;
@@ -25,16 +25,16 @@ classdef parWithCorrections
         fix_x_coordinate = true;
         cut_at_e_points  = false; % specify energy points to cut rather them q-points
         energies;
-        % the value used in error filtering so the error, exeeding 
-        % sigma*accepted_sig_multiplier asumed unacceptable and filtred;
+        % the value used in error filtering so the error, exceeding 
+        % sigma*accepted_sig_multiplier assumed unacceptable and filtered;
         accepted_sig_multiplier=3;
         
         result_pic;
     end
     properties(Dependent)
         p; % The coefficients of the parabola, which describes spit wave in the form E=p(1)+q*p(2)+q^2*p(3)
-        ref_par_X; % the X points seelcted manually to plot spin wave through
-        ref_par_Y; % the Y points seelcted manually to plot spin wave through      
+        ref_par_X; % the X points selected manually to plot spin wave through
+        ref_par_Y; % the Y points selected manually to plot spin wave through      
     end
     properties(Access=private)
         p_;
@@ -46,11 +46,11 @@ classdef parWithCorrections
         function self=parWithCorrections(rp)
             if isa(rp,'parWithCorrections')
                 self.A_cor=rp.A_cor;        % a normalization constant calculated at some point of q
-                self.legend=rp.legend;      % the legend desctibes the SW position
-                self.XY_ref_points_=rp.XY_ref_points_; % the X points seelcted manually to plot spin wave through
-                %self.ref_par_Y=rp.ref_par_Y; % the Y points seelcted manually to plot spin wave through
+                self.legend=rp.legend;      % the legend describes the SW position
+                self.XY_ref_points_=rp.XY_ref_points_; % the X points selected manually to plot spin wave through
+                %self.ref_par_Y=rp.ref_par_Y; % the Y points selected manually to plot spin wave through
                 self.QRange=rp.QRange;  % the q-range to do fitting within
-                self.Esw_threshold=rp.Esw_threshold;   % energy limit above wihich spin wave can be separated from phonons
+                self.Esw_threshold=rp.Esw_threshold;   % energy limit above which spin wave can be separated from phonons
                 self.peak_width =rp.peak_width;       % initial peak width
                 self.num_steps_in_cut=rp.num_steps_in_cut; % minimal number of steps in 1D cut to fit
                 %

@@ -3,7 +3,7 @@ if nargin>1
     dat = EnCutBlock.load(varagin{1});
     
 else
-    simulate = true;
+    simulate = false;
     w_source = repmat(sqw,1,19);
     
     data_file = fullfile(pwd,'sqw','Data','Fe_ei401.sqw');

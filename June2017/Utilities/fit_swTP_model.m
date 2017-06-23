@@ -62,7 +62,7 @@ for i=1:size(cut_p,1)
     if e_sw(i) <= 40
         width = 5;
     else
-        width = 8;        
+        width = 10;        
     end
     
     k_min = -q_range(i)-width*dK;
