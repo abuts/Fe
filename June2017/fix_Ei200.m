@@ -1,3 +1,8 @@
+function res = fix_Ei200(varargin)
+simulate = false;
+    w_source = repmat(sqw,1,19);
+    
+
 data_file = fullfile(pwd,'sqw','Data','Fe_ei200.sqw');
 
 proj.u=[1,0,0];

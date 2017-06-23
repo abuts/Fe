@@ -11,31 +11,7 @@ function [cuts_list,fits_list,fit_par] = plot_dirCut(file_base,varargin)
 %              [1,1,1], [1,-1,1] etc...)
 % 
 
-if nargin == 1
-    [~,~,fe]=fileparts(file_base);
-    if isempty(fe)
-        in_files = {[file_base,'.mat']};
-    else
-        in_files = {file_base};
-    end
-    
-elseif nargin == 2
-    f_base = file_base;
-    bragg = varargin{1};
-    dir   = {[1,0,0],[0,1,0],[0,0,1],...
-        [1,1,0],[1,-1,0],[1,0,1],[1,0,-1],[0,1,1],[0,1,-1],...
-        [1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1]};
-    in_files = cell(numel(dir),1);
-    for i=1:numel(in_files)
-        in_files{i} = rez_name(f_base,bragg,dir{i},'TF_');
-    end
-elseif nargin == 3
-    f_base = file_base;
-    bragg = varargin{1};
-    dir   = varargin{2};
-    in_files{1} = rez_name(f_base,bragg,dir,'TF_');
-end
-
+in_files = build_filename_s( file_base,varargin{:});
 for i=1:numel(in_files)
     in_file = in_files{i};
     stor = load(in_file);
