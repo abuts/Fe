@@ -42,8 +42,8 @@ for i=1:numel(keys)
     fn = sprintf('EnCuts_%s_dE%d_dir_!%s!',FileSourceID,stor.cut_energies(1),dir_id);    
     stor.save(fn);
     
-    n_cuts = numel(stor.cut_list);    
-    fprintf(' En=%d; Cuts Group N:%d/%d  Consisting of %d Cuts\n',stor.es_valid(1),i,numel(keys),n_cuts);    
+    n_cuts = numel(stor.cuts_list);    
+    fprintf(' En=%d; Cuts Group N:%d/%d  Consisting of %d Cuts\n',stor.cut_energies(1),i,numel(keys),n_cuts);    
     %plot_EnCuts(stor);    
 end
 
