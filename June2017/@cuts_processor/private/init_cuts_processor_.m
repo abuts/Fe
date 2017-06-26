@@ -25,12 +25,11 @@ else % initialize from bragg name and data file id
         e_max  = inf;
     end
     
-    obj = obj.find_initial_cuts(bragg_list,file_list);
     
     [obj,filenames,file_directions,missing_files] = obj.find_initial_cuts(bragg_list,file_list);
     if ~isempty(missing_files)
         disp(missing_files);
-        error('CUTS_PROCESSOR:invalid_arguments','some initial direction-cut files are missing')
+        warning('CUTS_PROCESSOR:invalid_arguments','some initial direction-cut files are missing')
     end
     
     [obj,obj.init_fg_params_,obj.init_bg_params_,obj.param_binds_,emin_real,emax_real] = ...

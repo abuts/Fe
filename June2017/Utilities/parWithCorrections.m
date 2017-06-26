@@ -168,7 +168,7 @@ classdef parWithCorrections
             % return maximal range of energies to make the cuts
             % adjusting to cut resolution.   
             emin = 40+obj.dE; 
-            emax = obj.emax(0);
+            emax = obj.emax(0)-10;
             en   = (emin:5:emax)';
         end
         function en=getEpos(obj,s)
