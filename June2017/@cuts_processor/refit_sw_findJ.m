@@ -48,9 +48,9 @@ kk = kk.set_local_foreground(true);
 kk = kk.set_fun(@sqw_iron,obj.init_fg_params_,obj.fit_par_range);
 %kk = kk.set_fun(@(h,k,l,e,par)sw_disp(proj,ff_calc,h,k,l,e,par),[parR(1),parR(2),parR(3),ampl_avrg,fwhh_avrg],[1,1,1,1,1]);
 %kk = kk.set_bind({1,[1,2],1},{2,[2,2],1},{3,[3,2],1});
-global_binds = {{6,[6,2],1},{7,[7,2],1},{8,[8,2],1},{9,[9,2],1},{10,[10,2],1}};
-all_binds = {global_binds{:},obj.param_binds_{:}};
-kk = kk.set_bind(all_binds{:});
+%global_binds = {{6,[6,2],1},{7,[7,2],1},{8,[8,2],1},{9,[9,2],1},{10,[10,2],1}};
+%all_binds = {global_binds{:},obj.param_binds_{:}};
+kk = kk.set_bind(obj.param_binds_{:});
 
 % set up its own initial background value for each background function
 kk = kk.set_bfun(@(x,par)(par(1)+x*par(2)),obj.init_bg_params_);
