@@ -1,4 +1,5 @@
 function id = direction_id(direction)
+% convert specified direction
 
 persistent dir_map;
 if isempty(dir_map)
@@ -19,6 +20,11 @@ if isempty(dir_map)
     dir_map('1-1-1') = '<111>';
     dir_map('1-11') = '<111>';
 end
-
-dir_id = [num2str(direction(1)),num2str(direction(2)),num2str(direction(3))];
+if numel(direction)==3
+    dir_id = [num2str(direction(1)),num2str(direction(2)),num2str(direction(3))];
+elseif numel(direction) == 1
+    dir_id = num2str(direction);
+else   
+    error('DIRECTION_ID:invalid_argument','unrecognized direction format');
+end
 id = dir_map(dir_id);

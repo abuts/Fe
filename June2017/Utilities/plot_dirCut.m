@@ -5,11 +5,14 @@ function [cuts_list,fits_list,fit_par] = plot_dirCut(file_base,varargin)
 % The file can be specified directly by its name or by cut' parameters e.g. 
 % file_base,Bragg indexes and cut direction where
 % file_base -- the file with cuts or the base name of the sqw file 
-%              the cuts were made
+%              the cuts were made or incident energy of this cut
 % Bragg     -- the cuts initial Bragg position
 % cut_dir   -- the direction the cut was made (e.g. [1,0,0], [0,-1,0], 111, 1-11
 %              [1,1,1], [1,-1,1] etc...)
 % 
+if isnumeric(file_base)
+    file_base = ['Fe_ei',num2str(file_base)];
+end
 
 in_files = build_filename_s( file_base,varargin{:});
 for i=1:numel(in_files)

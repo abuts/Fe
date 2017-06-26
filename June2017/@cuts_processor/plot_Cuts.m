@@ -1,6 +1,7 @@
 function  cut_struct = plot_Cuts(obj,energy,direction,varargin)
 % View sequence of cuts correspondent to energy transfer and direction provided
 % as input and return the structure, usually stored with cut sequence
+% inputs: 
 %
 % options = {'-keep_fig'};
 %
