@@ -27,7 +27,7 @@ proj.uoffset = bragg;
 
 %-------------------------------------------------
 % 2D cut to investigate further:
-w2 = cut_sqw(data_source,proj,Kr,[-dK,+dK],[-dK,+dK],0.2*dE);
+w2 = cut_sqw(data_source,proj,Kr,[-dK,+dK],[-dK,+dK],[]);
 %
 %figure;
 pl1=plot(w2);
@@ -60,15 +60,22 @@ for i=1:size(cut_p,1)
         ws_valid(i) = true;
     end
     if e_sw(i) <= 40
+        
         width = 5;
+        k_min = -q_range(i)-width*dK;
+        k_max =  q_range(i)+width*dK;
+        
     else
-        width = 10;        
+        %         width = 10;
+        %         k_min = -q_range(i)-width*dK;
+        %         k_max =  q_range(i)+width*dK;
+        k_min = -1;
+        k_max = 1;
+        
     end
     
-    k_min = -q_range(i)-width*dK;
-    k_max =  q_range(i)+width*dK;
     try
-        w1=cut_sqw(w2,proj,[k_min,0.2*dK,k_max],[-dK,dK],[-dK,dK],[e_sw(i)-dE,e_sw(i)+dE]);
+        w1=cut_sqw(w2,proj,[k_min,0.5*dK,k_max],[-dK,dK],[-dK,dK],[e_sw(i)-dE,e_sw(i)+dE]);
         w0=cut_sqw(w2,proj,[-dK+q_range(i),dK+q_range(i)],[-dK,dK],[-dK,dK],[e_sw(i)-dE,e_sw(i)+dE]);
         w1f = mff.correct_mag_ff(w1);
         w0  = mff.correct_mag_ff(w0);
@@ -220,9 +227,9 @@ gap = 0;    % 5
 %J3 = 3.7300;
 %J4 = -4.8408;
 %J5 = 1.6475;
-J1 = 25.29;
-J2 = 13.930 ;
-J3 =  -3.01;
+J1 = 34;
+J2 = 0 ;
+J3 =  0;
 J4  = 0;
 J5 = 0;
 

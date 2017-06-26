@@ -43,10 +43,13 @@ classdef cuts_processor
         fitted_par_id;
         %  if all data ready for running the fit
         fit_initated;
+        % folder + one level down Br subfolder where to look for input data
+        % and store results
+        working_dir;
     end
     properties(Access=private)
         cuts_dir_list_
-        rood_data_folder_ = fileparts(which('init_fe2017.m'));
+        rood_data_folder_ = pwd;
         source_cuts_fname_ = @rez_name;
         source_file_ = [];
         cuts_list_ = [];
@@ -66,6 +69,8 @@ classdef cuts_processor
     methods
         function obj=cuts_processor(varargin)
             obj = build_cuts_map_(obj);
+            obj.rood_data_folder_ = pwd;
+            
             obj.equal_cuts_map = containers.Map();
             if nargin>0
                 obj = init_cuts_processor_(obj,varargin{:});
@@ -146,6 +151,9 @@ classdef cuts_processor
         end
         function obj = set.J4(obj,val)
             obj = set_input_j_(obj,val,10);
-        end       
+        end      
+        function dir = get.working_dir(obj)
+            dir = obj.rood_data_folder_;
+        end
     end
 end

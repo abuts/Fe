@@ -39,9 +39,7 @@ for i=1:numel(bragg_list)
             file_0 = fullfile(obj.rood_data_folder_,[data_file,'.mat']);
             f_exist = false;
             if exist(file_0,'file') == 2
-                filenames = [filenames(:);{file_0}];
                 f_exist = true;
-                file_directions = [file_directions(:);direction];
             else
                 brf = br_folder(bragg);
                 file_0 = fullfile(obj.rood_data_folder_,brf,[data_file,'.mat']);
