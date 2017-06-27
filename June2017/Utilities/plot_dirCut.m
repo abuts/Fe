@@ -67,7 +67,7 @@ for i=1:numel(in_files)
     
     leg = sprintf(['dE=%3f; dK=%3.2f;\n J0: %6.3f +/-%6.3f; J1: %6.3f +/-%6.3f;',...
         ' J2: %6.3f+/-%6.3f\n J3: %6.3f +/-%6.3f  J4: %6.3f +/-%6.3f\n'],...
-        stor.dK,stor.dK,J0,dJ0,J1,dJ1,J2,dJ2,J3,dJ3,J4,dJ4);
+        stor.dE,stor.dK,J0,dJ0,J1,dJ1,J2,dJ2,J3,dJ3,J4,dJ4);
     
     legend(li1,leg);
     figure('Name',['Inverse lifetime (meV) for peaks: ',br_name,' direction: ',dir_name]);
