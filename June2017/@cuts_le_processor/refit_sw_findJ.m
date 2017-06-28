@@ -25,8 +25,7 @@ if exist('bragg_list','var')
     obj.param_binds_ = param_binds;
 end
 
-keys = obj.equal_cuts_map.keys;
-n_keys = numel(keys);
+
 n_cuts = numel(obj.cuts_list);
 obj.fits_list = repmat(obj.cuts_list(1),n_cuts,1);
 obj.fitpar = struct('p',[],'sig',[],'bp',[],'bsig',[]);
@@ -35,17 +34,47 @@ obj.fitpar.sig = cell(n_cuts,1);
 obj.fitpar.bp = cell(n_cuts,1);
 obj.fitpar.bsig = cell(n_cuts,1);
 
+file_directions = {[1,0,0],[1,1,0],[1,1,1]};
 equal_cuts_map = obj.equal_cuts_map;
 cuts_list = obj.cuts_list;
 fixed_par = obj.fit_par_range;
 all_fg_params = obj.init_fg_params_;
 all_bg_params = obj.init_bg_params_;
-fit_rez = cell(n_keys,1);
-parfor i=1:n_keys
-    theKey = keys{i};
-    equal_cuts = equal_cuts_map(theKey);
+cut_en_f = @(x)(0.5*(x.data.iint(1,3)+x.data.iint(2,3)));
+cut_en = arrayfun(cut_en_f ,cuts_list);
+cut_en = unique(cut_en);
+n_en = numel(cut_en);
+fit_rez = cell(n_en,1);
+for i=1:n_en
+    equal_cuts = {};
+    for ii = 1:numel(file_directions)
+        direction = file_directions{ii};
+        cut_dir_id = direction_id(direction);
+        theKey  = [num2str(cut_en(i)),cut_dir_id];
+        
+        dir_cuts = equal_cuts_map(theKey);
+        equal_cuts = { equal_cuts{:},dir_cuts{:}};
+    end
     eq_indexes = [equal_cuts{:}];
     eq_cuts = cuts_list(eq_indexes);
+    loc_binds={};
+    n_cut = 1;
+    for ii = 1:numel(file_directions)
+        direction = file_directions{ii};
+        cut_dir_id = direction_id(direction);
+        theKey  = [num2str(cut_en(i)),cut_dir_id];
+        
+        dir_cuts = equal_cuts_map(theKey);
+        dir_binds = cell(2*(numel(dir_cuts)-1),1);
+        binding = n_cut:n_cut+numel(dir_cuts)-1;
+        n_func = binding(1);
+        for j=1:numel(binding)-1
+            dir_binds {2*j-1} = {[3,binding(j+1)],[3,n_func],1};
+            dir_binds {2*j} = {[4,binding(j+1)],[4,n_func],1};
+        end
+        n_cut = n_cut+ numel(dir_cuts);
+        loc_binds = {loc_binds{:},dir_binds{:}};
+    end
     % % S(Q,w) model
     %   ff = 1; % 1
     %   T = 8;  % 2
@@ -59,17 +88,17 @@ parfor i=1:n_keys
     %   par = [ff, T, gamma, Seff, gap, J0, J1, J2, 0, 0];
     %
     %
-    init_fg_params = all_fg_params{eq_indexes(1)};
-    init_bg_params = all_bg_params{eq_indexes};
+    init_fg_params = all_fg_params(eq_indexes);
+    init_bg_params = all_bg_params(eq_indexes);
     kk = tobyfit2(eq_cuts );
-    %ff_calc = mff.getFF_calculator(cut_list(1));
-    %kk = kk.set_local_foreground(true);
+    
+    kk = kk.set_local_foreground(true);
     kk = kk.set_fun(@sqw_iron,init_fg_params,fixed_par);
     %kk = kk.set_fun(@(h,k,l,e,par)sw_disp(proj,ff_calc,h,k,l,e,par),[parR(1),parR(2),parR(3),ampl_avrg,fwhh_avrg],[1,1,1,1,1]);
-    %kk = kk.set_bind({1,[1,2],1},{2,[2,2],1},{3,[3,2],1});
     %global_binds = {{6,[6,2],1},{7,[7,2],1},{8,[8,2],1},{9,[9,2],1},{10,[10,2],1}};
-    %all_binds = {global_binds{:},obj.param_binds_{:}};
-    %kk = kk.set_bind(obj.param_binds_{:});
+    global_binds = {{6,[6,2],1},{7,[7,2],1}};
+    all_binds = {global_binds{:},loc_binds{:}};
+    kk = kk.set_bind(all_binds);
     
     % set up its own initial background value for each background function
     kk = kk.set_bfun(@(x,par)(par(1)+x*par(2)),init_bg_params);
@@ -83,22 +112,19 @@ parfor i=1:n_keys
     %[w1D_arr1_tf,fp_arr1]=kk.simulate;
     %profile off
     %profile viewer
-    fit_rez{i} = {w1D_arr1_tf,fp_arr1};
+    fit_rez{i} = {w1D_arr1_tf,fp_arr1,eq_indexes};
     %
 end
 
-for  i= 1:numel(n_keys)
-    theKey = keys{i};
-    equal_cuts = equal_cuts_map(theKey);
-    eq_indexes = [equal_cuts{:}];
-    [w1D_arr1_tf,fp_arr1] = fit_rez{i}{:};
+for  i= 1:numel(nen)
+    [w1D_arr1_tf,fp_arr1,eq_cuts_indexes] = fit_rez{i}{:};
     
-    for jj=1:numel(eq_indexes)
-        ind = eq_indexes(jj);
-        obj.fitpar.p{ind} = fp_arr1.p;
-        obj.fitpar.sig{ind} = fp_arr1.sig;
-        obj.fitpar.bp{ind} = fp_arr1.bp;
-        obj.fitpar.bsig{ind} = fp_arr1.bsig;
+    for jj = 1:numel(eq_cuts_indexes)
+        ind = eq_cuts_indexes(jj);
+        obj.fitpar.p{ind} = fp_arr1.p{jj};
+        obj.fitpar.sig{ind} = fp_arr1.sig{jj};
+        obj.fitpar.bp{ind} = fp_arr1.bp{jj};
+        obj.fitpar.bsig{ind} = fp_arr1.bsig{jj};
         
         obj.fits_list(ind) = w1D_arr1_tf(jj);
     end
@@ -107,9 +133,8 @@ end
 obj.fitpar = fitpar;
 obj.fits_list = fits_list;
 obj = obj.setup_j();
-be ready to refit
+%be ready to refit
 obj.init_fg_params_ = obj.fitpar.p;
 obj.init_bg_params_ = obj.fitpar.bp;
 
 obj = obj.save_en_cuts();
-
