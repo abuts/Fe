@@ -57,7 +57,7 @@ kk = kk.set_bfun(@(x,par)(par(1)+x*par(2)),obj.init_bg_params_);
 
 kk = kk.set_mc_points(10);
 %profile on;
-kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-2;60;1.e-6]);
+kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-2;60;1.e-3]);
 %kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-4;20;1.e-4]);
 %profile on;
 [w1D_arr1_tf,fp_arr1]=kk.fit;
