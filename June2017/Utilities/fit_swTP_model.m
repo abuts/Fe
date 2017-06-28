@@ -32,7 +32,7 @@ w2 = cut_sqw(data_source,proj,Kr,[-dK,+dK],[-dK,+dK],[]);
 %figure;
 pl1=plot(w2);
 lz 0 2
-ly 0 180
+ly 0 140
 hold on
 % remember the place of the last image and place the impage to proper
 % posision

@@ -28,6 +28,7 @@ else % initialize from bragg name and data file id
     
     [obj,filenames,file_directions,missing_files] = obj.find_initial_cuts(bragg_list,file_list);
     if ~isempty(missing_files)
+        disp('**** Missing files: ');
         disp(missing_files);
         warning('CUTS_PROCESSOR:invalid_arguments','some initial direction-cut files are missing')
     end
