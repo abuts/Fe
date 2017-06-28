@@ -1,4 +1,4 @@
-classdef cuts_processor
+classdef cuts_le_processor
     %
     properties
         % the initial (guess) exchange parameters to start fitting
@@ -67,7 +67,7 @@ classdef cuts_processor
     end
     
     methods
-        function obj=cuts_processor(varargin)
+        function obj=cuts_le_processor(varargin)
             obj = build_cuts_map_(obj);
             obj.rood_data_folder_ = pwd;
             
