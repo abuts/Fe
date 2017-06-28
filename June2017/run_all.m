@@ -2,13 +2,13 @@ function run_all
 
 rootpath = fileparts(mfilename('fullpath'));
 
-fun_list = [@proc_bragg_0m1m1,...
+fun_list = {@proc_bragg_0m1m1,...
     @proc_bragg_0m11,...
     @proc_bragg_01m1,...
     @proc_bragg_1m10,...    
     @proc_bragg_10m1,... % checkit
     @proc_bragg_101,...
-    @proc_bragg_110,@proc_bragg_1m10,@proc_bragg_200];
+    @proc_bragg_110,@proc_bragg_1m10,@proc_bragg_200};
     
 parfor i=1:numel(fun_list)
     f = fun_list{i};
@@ -119,11 +119,11 @@ function proc_bragg_10m1(rootpath)
 p_br0m11 = fullfile(rootpath,'Br10m1');
 cd(p_br0m11)
 pwd
-Ei200_uvw100_at10m1TPmod2Peaks();
-Ei200_uvw110_at10m1TPmod2Peaks();
-Ei200_uvw111_at10m1TPmod2Peaks();
+Ei200_uvw100_at10m1TpMod2P();
+Ei200_uvw110_at10m1TpMod2P();
+Ei200_uvw111_at10m1TpMod2P();
 
-Ei400_uvw100_at10m1TPmod2Peaks();
-Ei400_uvw110_at10m1TPmod2Peaks();
-Ei400_uvw111_at10m1TPmod2Peaks();
+Ei400_uvw100_at10m1TpMod2P();
+Ei400_uvw110_at10m1TpMod2P();
+Ei400_uvw111_at10m1TpMod2P();
 cd(rootpath);

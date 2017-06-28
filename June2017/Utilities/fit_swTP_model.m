@@ -29,11 +29,11 @@ proj.uoffset = bragg;
 % 2D cut to investigate further:
 w2 = cut_sqw(data_source,proj,Kr,[-dK,+dK],[-dK,+dK],[]);
 %
-%figure;
-pl1=plot(w2);
-lz 0 2
-ly 0 140
-hold on
+% %figure;
+% pl1=plot(w2);
+% lz 0 2
+% ly 0 140
+% hold on
 % remember the place of the last image and place the impage to proper
 % posision
 mff = MagneticIons('Fe0');
@@ -60,7 +60,6 @@ for i=1:size(cut_p,1)
         ws_valid(i) = true;
     end
     if e_sw(i) <= 40
-        
         width = 5;
         k_min = -q_range(i)-width*dK;
         k_max =  q_range(i)+width*dK;
@@ -135,20 +134,20 @@ for i=1:size(cut_p,1)
     end
     
     
-    acolor('k')
-    pl2=plot(w1f);
-    acolor('r')
-    pd(w1_tf);
-    if cross
-        hold on
-        y_min = min( w1.data.s);
-        y_max = max(w1.data.s);
-        line([k_min,k_max],[y_min ,y_max ],'Color','r','LineWidth',2)
-        line([k_min,k_max],[y_max, y_min ],'Color','r','LineWidth',2)
-        hold off
-    end
-    
-    drawnow;
+%     acolor('k')
+%     pl2=plot(w1f);
+%     acolor('r')
+%     pd(w1_tf);
+%     if cross
+%         hold on
+%         y_min = min( w1.data.s);
+%         y_max = max(w1.data.s);
+%         line([k_min,k_max],[y_min ,y_max ],'Color','r','LineWidth',2)
+%         line([k_min,k_max],[y_max, y_min ],'Color','r','LineWidth',2)
+%         hold off
+%     end
+%     
+%     drawnow;
 end
 %
 I   = abs(D1FitRez(uint32(I_types.I_cut),:));
@@ -259,13 +258,13 @@ kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-4;60;1.e-6]);
 [w1D_arr1_tf,fp_arr1]=kk.fit;
 %profile off
 %profile viewer
-for i=1:numel(w1D_arr1_tf)
-    acolor('k');
-    plot(cut_list(i));
-    acolor('r');
-    pd(w1D_arr1_tf(i));
-    pause(1)
-end
+% for i=1:numel(w1D_arr1_tf)
+%     acolor('k');
+%     plot(cut_list(i));
+%     acolor('r');
+%     pd(w1D_arr1_tf(i));
+%     pause(1)
+% end
 %cut_energies = e_sw(valid);
 res_file = rez_name(data_source,bragg,cut_direction);
 es_valid = arrayfun(@(x)(0.5*(x.data.iint(1,3)+x.data.iint(2,3))),cut_list);
@@ -346,7 +345,8 @@ result.esw_valid = es_valid;
 % ly 50 300
 % legend(ple,['SW Intensity, dE: ',num2str(2*dE),' dk: ',num2str(2*dK)]);
 %
-all_plots = [pl1,pl2,pl3,pl4,pl5,pl6,pl01];
+%all_plots = [pl1,pl2,pl3,pl4,pl5,pl6,pl01];
+all_plots = [pl3,pl4,pl5,pl6,pl01];
 %
 function q = inv_parab(en,par_coeff)
 % Caclulate q-values using known energy values and parabolic spin-wave
