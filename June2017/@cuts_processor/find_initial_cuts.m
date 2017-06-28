@@ -12,7 +12,8 @@ function [obj,filenames,file_directions,missing_files,missing_dir] = find_initia
 %
 
 br_key = @(bragg)(['[' num2str(bragg(1)) num2str(bragg(2))  num2str(bragg(3)) ']']);
-br_folder = @(bragg)(['Br',obj.ind_name(bragg(1)),obj.ind_name(bragg(2)),obj.ind_name(bragg(3))]);
+br_folder = @(bragg)(['Br',cuts_processor.ind_name(bragg(1)),...
+    cuts_processor.ind_name(bragg(2)),cuts_processor.ind_name(bragg(3))]);
 if ~iscell(bragg_list)
     bragg_list = {bragg_list};
 end

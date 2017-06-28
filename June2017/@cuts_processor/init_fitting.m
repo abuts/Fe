@@ -1,4 +1,4 @@
-function [obj,init_fg_params,init_bg_params,emin_real,emax_real] = ...
+function [obj,init_fg_params,init_bg_params,param_binds,emin_real,emax_real] = ...
     init_fitting(obj,filenames,file_directions,e_min,e_max)
 % load initial cut files and extract initial parameters for multifit
 %
@@ -115,7 +115,7 @@ end
 obj.equal_cuts_map = cut_binds_map;
 obj.cuts_list_ = cuts_list;
 
-%param_binds = obj.build_cuts_binding();
+param_binds = obj.build_cuts_binding();
 
 
 
