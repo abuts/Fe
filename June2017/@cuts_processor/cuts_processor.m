@@ -98,6 +98,9 @@ classdef cuts_processor
         % View sequence of cuts correspondent to energy transfer and direction provided
         % as input and return the structure, usually stored with cut sequence
         cut_struct = plot_Cuts(obj,energy,direction,varargin)
+        % get selected fitting parameter dependence on energy
+        fp_data = get_fitpar_vs_en(obj,n_fitpar,direction,en_list)
+        
         %
         function map = get.cuts_dir_list(obj)
             map = obj.cuts_dir_list_;
@@ -151,7 +154,7 @@ classdef cuts_processor
         end
         function obj = set.J4(obj,val)
             obj = set_input_j_(obj,val,10);
-        end      
+        end
         function dir = get.working_dir(obj)
             dir = obj.rood_data_folder_;
         end
