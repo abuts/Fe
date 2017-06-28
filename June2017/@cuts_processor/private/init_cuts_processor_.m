@@ -32,7 +32,7 @@ else % initialize from bragg name and data file id
         warning('CUTS_PROCESSOR:invalid_arguments','some initial direction-cut files are missing')
     end
     
-    [obj,obj.init_fg_params_,obj.init_bg_params_,obj.param_binds_,emin_real,emax_real] = ...
+    [obj,obj.init_fg_params_,obj.init_bg_params_,emin_real,emax_real] = ...
         obj.init_fitting(filenames,file_directions,e_min,e_max);
     obj.e_range = [emin_real,emax_real];
     
