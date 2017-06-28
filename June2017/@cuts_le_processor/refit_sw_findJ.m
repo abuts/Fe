@@ -33,6 +33,7 @@ obj.fitpar.p = cell(n_cuts,1);
 obj.fitpar.sig = cell(n_cuts,1);
 obj.fitpar.bp = cell(n_cuts,1);
 obj.fitpar.bsig = cell(n_cuts,1);
+obj.fitpar.chisq = 0;
 
 file_directions = {[1,0,0],[1,1,0],[1,1,1]};
 equal_cuts_map = obj.equal_cuts_map;
@@ -45,15 +46,21 @@ cut_en = arrayfun(cut_en_f ,cuts_list);
 cut_en = unique(cut_en);
 n_en = numel(cut_en);
 fit_rez = cell(n_en,1);
-for i=1:n_en
+parfor i=1:n_en
     equal_cuts = {};
     for ii = 1:numel(file_directions)
         direction = file_directions{ii};
         cut_dir_id = direction_id(direction);
         theKey  = [num2str(cut_en(i)),cut_dir_id];
-        
-        dir_cuts = equal_cuts_map(theKey);
+        try
+            dir_cuts = equal_cuts_map(theKey);
+        catch
+            continue;
+        end
         equal_cuts = { equal_cuts{:},dir_cuts{:}};
+    end
+    if isempty(equal_cuts)
+        continue
     end
     eq_indexes = [equal_cuts{:}];
     eq_cuts = cuts_list(eq_indexes);
@@ -64,7 +71,12 @@ for i=1:n_en
         cut_dir_id = direction_id(direction);
         theKey  = [num2str(cut_en(i)),cut_dir_id];
         
-        dir_cuts = equal_cuts_map(theKey);
+        try
+            dir_cuts = equal_cuts_map(theKey);
+        catch
+            continue;
+        end
+        
         dir_binds = cell(2*(numel(dir_cuts)-1),1);
         binding = n_cut:n_cut+numel(dir_cuts)-1;
         n_func = binding(1);
@@ -88,24 +100,31 @@ for i=1:n_en
     %   par = [ff, T, gamma, Seff, gap, J0, J1, J2, 0, 0];
     %
     %
+    disp('****************************************************************');
+    fprintf('**** Processing %d cuts for energy: %d\n',numel(eq_cuts),cut_en(i));
+    disp('****************************************************************');
     init_fg_params = all_fg_params(eq_indexes);
     init_bg_params = all_bg_params(eq_indexes);
+    %
     kk = tobyfit2(eq_cuts );
-    
-    kk = kk.set_local_foreground(true);
-    kk = kk.set_fun(@sqw_iron,init_fg_params,fixed_par);
-    %kk = kk.set_fun(@(h,k,l,e,par)sw_disp(proj,ff_calc,h,k,l,e,par),[parR(1),parR(2),parR(3),ampl_avrg,fwhh_avrg],[1,1,1,1,1]);
-    %global_binds = {{6,[6,2],1},{7,[7,2],1},{8,[8,2],1},{9,[9,2],1},{10,[10,2],1}};
-    global_binds = {{6,[6,2],1},{7,[7,2],1}};
-    all_binds = {global_binds{:},loc_binds{:}};
-    kk = kk.set_bind(all_binds);
+    if numel(eq_cuts) > 1
+        kk = kk.set_local_foreground(true);
+        kk = kk.set_fun(@sqw_iron,init_fg_params,fixed_par);
+        %kk = kk.set_fun(@(h,k,l,e,par)sw_disp(proj,ff_calc,h,k,l,e,par),[parR(1),parR(2),parR(3),ampl_avrg,fwhh_avrg],[1,1,1,1,1]);
+        %global_binds = {{6,[6,2],1},{7,[7,2],1},{8,[8,2],1},{9,[9,2],1},{10,[10,2],1}};
+        global_binds = {{6,[6,2],1},{7,[7,2],1}};
+        all_binds = {global_binds{:},loc_binds{:}};
+        kk = kk.set_bind(all_binds{:});
+    else
+        kk = kk.set_fun(@sqw_iron,init_fg_params,fixed_par);
+    end
     
     % set up its own initial background value for each background function
     kk = kk.set_bfun(@(x,par)(par(1)+x*par(2)),init_bg_params);
     
     kk = kk.set_mc_points(10);
     %profile on;
-    kk = kk.set_options('listing',0,'fit_control_parameters',[1.e-2;20;1.e-3]);
+    kk = kk.set_options('listing',0,'fit_control_parameters',[1.e-2;20;1.e-4]);
     %kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-4;20;1.e-4]);
     %profile on;
     [w1D_arr1_tf,fp_arr1]=kk.fit;
@@ -116,25 +135,45 @@ for i=1:n_en
     %
 end
 
-for  i= 1:numel(nen)
-    [w1D_arr1_tf,fp_arr1,eq_cuts_indexes] = fit_rez{i}{:};
-    
-    for jj = 1:numel(eq_cuts_indexes)
-        ind = eq_cuts_indexes(jj);
-        obj.fitpar.p{ind} = fp_arr1.p{jj};
-        obj.fitpar.sig{ind} = fp_arr1.sig{jj};
-        obj.fitpar.bp{ind} = fp_arr1.bp{jj};
-        obj.fitpar.bsig{ind} = fp_arr1.bsig{jj};
-        
-        obj.fits_list(ind) = w1D_arr1_tf(jj);
+for  i= 1:n_en
+    if isempty(fit_rez{i})
+        continue;
     end
-end
+    [w1D_arr1_tf,fp_arr1,eq_cuts_indexes] = fit_rez{i}{:};
+    cut_en = arrayfun(cut_en_f ,w1D_arr1_tf);
+    if numel(unique(cut_en))>1
+        disp(i)
+        disp(unique(cut_en))
+        error('CUTS_LE_PROCESSOR:logical_error',...
+            ' cuts with different energies have been bound together')
+    end
+    if numel(eq_cuts_indexes) >1
+        for jj = 1:numel(eq_cuts_indexes)
+            ind = eq_cuts_indexes(jj);
+            obj.fitpar.p{ind} = fp_arr1.p{jj};
+            obj.fitpar.sig{ind} = fp_arr1.sig{jj};
+            obj.fitpar.bp{ind} = fp_arr1.bp{jj};
+            obj.fitpar.bsig{ind} = fp_arr1.bsig{jj};
+            
+            obj.fits_list(ind) = w1D_arr1_tf(jj);
+        end       
+    else
+        ind = eq_cuts_indexes(1);
+        obj.fitpar.p{ind} = fp_arr1.p;
+        obj.fitpar.sig{ind} = fp_arr1.sig;
+        obj.fitpar.bp{ind} = fp_arr1.bp;
+        obj.fitpar.bsig{ind} = fp_arr1.bsig;
 
-obj.fitpar = fitpar;
-obj.fits_list = fits_list;
+        
+        obj.fits_list(ind) = w1D_arr1_tf(1);
+        
+    end
+    obj.fitpar.chisq = obj.fitpar.chisq+fp_arr1.chisq;    
+end
+obj.fitpar.chisq = obj.fitpar.chisq/n_en;
 obj = obj.setup_j();
 %be ready to refit
 obj.init_fg_params_ = obj.fitpar.p;
 obj.init_bg_params_ = obj.fitpar.bp;
 
-obj = obj.save_en_cuts();
+obj = obj.save_en_cuts([],'J_CenFit_');
