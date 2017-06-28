@@ -21,8 +21,8 @@ E_min = 1.e+64;
 E_max = -E_min;
 for i=1:n_cuts
     rp1=repP{i};
-    en_range = rp1.getMinErange();
-    %en_range = rp1.getMaxErange();
+    %en_range = rp1.getMinErange();
+    en_range = rp1.getMaxErange();
     q_range =  rp1.getQvsE(en_range,1);
     if ~isreal(q_range)
         error('DO_FIRS:invalid_arguments',...
