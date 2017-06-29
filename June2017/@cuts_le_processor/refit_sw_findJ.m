@@ -46,6 +46,10 @@ cut_en = arrayfun(cut_en_f ,cuts_list);
 cut_en = unique(cut_en);
 n_en = numel(cut_en);
 fit_rez = cell(n_en,1);
+disp('*************************************************************')
+disp('*** Fitting loop started ')
+disp('*************************************************************')
+
 parfor i=1:n_en
     equal_cuts = {};
     for ii = 1:numel(file_directions)
