@@ -32,7 +32,7 @@ ixg = repmat(IX_dataset_1d,3,1);
 colors = {'r','g','b','k'};
 acolor(colors{1});
 aline('-')
-[~,~,li1] = plot(ixs(1));
+[~,~,li1] = dd(ixs(1));
 plots = repmat(li1(1),3,1);
 for i=2:3
     acolor(colors{i});
@@ -47,7 +47,7 @@ keep_figure
 %
 %-------------------------------------------------------------
 acolor(colors{1});
-[~,~,li1]  = plot(ixg(1));
+[~,~,li1]  = dd(ixg(1));
 plots(1) = li1(1);
 for i=2:3
     acolor(colors{i});
