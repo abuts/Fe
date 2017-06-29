@@ -26,8 +26,14 @@ p = {};
 bp ={};
 sig={};
 bsig={};
-fp_arr1 = struct('p',[],'sig',[],'bp',[],'bsig',[],...
-    'chisq',ld.fp_arr1.chisq,'converged',ld.fp_arr1.converged);
+if isfield(ld.fp_arr1,'converged')
+    fp_arr1 = struct('p',[],'sig',[],'bp',[],'bsig',[],...
+        'chisq',ld.fp_arr1.chisq,'converged',ld.fp_arr1.converged);
+else
+    fp_arr1 = struct('p',[],'sig',[],'bp',[],'bsig',[],...
+        'chisq',ld.fp_arr1.chisq,'converged',true);
+    
+end
 %
 for i=1:numel(en_list)
     en = en_list(i);
