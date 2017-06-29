@@ -1,4 +1,4 @@
-function Ei200_uvw100_at10m1TpMod2P(varargin)
+function repP=Ei200_uvw100_at10m1TpMod2P(varargin)
 
 root = fileparts(pwd);
 data_source= fullfile(root ,'sqw','Data','Fe_ei200.sqw');
@@ -22,5 +22,6 @@ rp2 = parWithCorrections(repPoints2,bragg,[0,1,0],dE,dK);
 rp3 = parWithCorrections(repPoints3,bragg,[0,0,1],dE,dK);
 
 repP={rp3,rp2,rp1};
-
-do_fits(data_source,bragg,'<1,0,0>',repP)
+if nargin == 0
+    do_fits(data_source,bragg,'<1,0,0>',repP)
+end

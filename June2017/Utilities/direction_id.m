@@ -1,5 +1,7 @@
 function id = direction_id(direction)
-% convert specified direction
+% convert specified direction into ID, which identify the group of
+% directions
+
 
 persistent dir_map;
 if isempty(dir_map)
