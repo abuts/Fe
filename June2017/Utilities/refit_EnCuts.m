@@ -27,9 +27,10 @@ init_fg_param = stor.fit_param.p;
 init_bg_param  = stor.fit_param.bp;
 
 if iscell(init_fg_param)
-    init_fg_param = init_fg_param(1);
-    init_bg_param  = init_bg_param(keep_only);
+    init_fg_param = init_fg_param{1};
 end
+init_bg_param  = init_bg_param(keep_only)';
+
 kk = tobyfit2(cut_list);
 %kk = kk.set_local_foreground(true);
 kk = kk.set_fun(@sqw_iron,init_fg_param,[0,0,1,1,0,1,0,0,0,0]);
