@@ -1,10 +1,10 @@
-function  stor=plot_EnCuts(cut_fname,varargin)
+function  [stor,ps]=plot_EnCuts(cut_fname,varargin)
 % View group of cuts,
 % Inputs:
 % either:
-%  cut_fname -- the name of the .mat file containing energy cuts 
+%  cut_fname -- the name of the .mat file containing energy cuts
 % or:
-%              EnCutBlock structure, containing the cuts 
+%              EnCutBlock structure, containing the cuts
 % or:
 %              The structure, with cuts and fits which may be a source of
 %              an EnCutBlock
@@ -12,8 +12,8 @@ function  stor=plot_EnCuts(cut_fname,varargin)
 %             Ei,dE,direction
 % where:  Ei :: the incident energy -- the key part of Fe_eiEi file name
 %         dE :: the energy transfer defining the sequence of cuts
-%   direction:: either 
-%               3-vector defining 
+%   direction:: either
+%               3-vector defining
 %               sequence of equivalent directions
 %              (e.g. [1,0,0] corresponging to <1,0,0> plains or [1,1,1])
 %             or
@@ -27,7 +27,17 @@ options = {'-keep_fig','-tight'};
 if~ok
     error('plot_EnCuts:invalid_argument',mess);
 end
-
+if ~keep_fig
+    ps = [];
+else
+    if tight
+        ps = pic_spread('-tight');
+    else
+        ps = pic_spread();
+    end
+    
+    
+end
 
 if isstruct(cut_fname)
     stor = EnCutBlock(cut_fname);
@@ -41,20 +51,15 @@ elseif isnumeric(cut_fname)
         dir = 100*dir(1)+10*dir(2)+dir(3);
     end
     cut_fname = ['EnCuts_Fe_ei',num2str(Ei),'_dE',num2str(dE),'_dir_!',num2str(dir),'!'];
-    stor = EnCutBlock.load(cut_fname);    
+    stor = EnCutBlock.load(cut_fname);
 else
     stor = EnCutBlock.load(cut_fname);
 end
 
-if tight
-    ps = pic_spread('-tight');
-else
-    ps = pic_spread();
-end
 
 n_cuts = numel(stor.cuts_list);
 disp('energies:')
-disp(stor.cut_energies);
+disp(stor.cut_energies');
 cuts_fitpar = stor.fit_param;
 for j=1:n_cuts
     acolor('k');

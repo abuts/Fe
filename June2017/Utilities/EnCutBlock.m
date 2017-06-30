@@ -3,11 +3,11 @@ classdef EnCutBlock
     % store/restore sequence of these cuts to hdd
     %
     properties
-        cuts_list
         fits_list;
         fit_param;
     end
     properties(Dependent)
+        cuts_list        
         cut_energies
     end
     properties(Constant,Access=private)
@@ -16,6 +16,7 @@ classdef EnCutBlock
     end
     properties(Access=private)
         cut_energies_;
+        cuts_list_;
     end
     
     methods
@@ -61,6 +62,14 @@ classdef EnCutBlock
                 save(filename,'-struct','out',fld_names{:});
             end
         end
+        function cl = get.cuts_list(obj)
+            cl = obj.cuts_list_;
+        end
+        function obj = set.cuts_list(obj,val)
+            obj.cuts_list_ = val;
+            obj.cut_energies_ = EnCutBlock.get_en_list(val);
+        end
+        
         
     end
     methods(Static)
@@ -74,7 +83,6 @@ classdef EnCutBlock
             obj.cuts_list =ld.cut_list;
             obj.fits_list =ld.w1D_arr1_tf;
             obj.fit_param =   ld.fp_arr1;
-            obj.cut_energies_ = EnCutBlock.get_en_list(ld.cut_list);
         end
         
     end
