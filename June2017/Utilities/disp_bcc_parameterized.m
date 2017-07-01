@@ -23,10 +23,8 @@ function [wdisp,sf] = disp_bcc_parameterized(qh,qk,ql,par)
 persistent param
 if isempty(param)
     param = load('J_vs_q');
-    param.q2_min = min(param.q_sq);
-    param.q2_max = max(param.q_sq);
-    param.J_min = min(param.JvsQ);
-    param.J_max = max(param.JvsQ);
+    param.q2_min = param.qi_min^2;
+    param.q2_max = param.qi_max^2;
 end
 
 Seff=par(1);
@@ -57,13 +55,9 @@ sf{1} = (Seff/2)*ones(size(w));
 
 function j = var_j(q2,param)
 
-if q2>param.q2_max
-    j = param.J_max;
-    return;
-end
+q_l = q2>param.q2_max;
+q_s = q2<param.q2_min;
 
-if q2<param.q2_min
-    j = param.J_min;
-    return;
-end
 j = interp1(param.q_sq,param.JvsQ,q2);
+j(q_l) = param.J_max;
+j(q_s) = param.J_min;

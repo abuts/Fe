@@ -4,13 +4,13 @@ bp = [0,0,0;1,0,0;0.5,0.5,0;0,0,0;1/2,1/2,1/2;1/2,1/2,0];
 
 %Ei400 DS3
 % J0: 33.72 +/- 0.1
-drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_hfm,[1,0,27.8836,0,0,0,0],'noplot');
-aline('-');
-acolor('r');
-[~,~,pl1]=dl(drc);
-drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_hfm,[1,0,40,0,0,0,0],'noplot');
-aline('--');
-[~,~,pl2]=pl(drc);
+% drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_hfm,[1,0,27.8836,0,0,0,0],'noplot');
+% aline('-');
+% acolor('r');
+% [~,~,pl1]=dl(drc);
+% drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_hfm,[1,0,40,0,0,0,0],'noplot');
+% aline('--');
+% [~,~,pl2]=pl(drc);
 
 %E400 DS3  [1,1,0]
 %J0: 25.6 +/- 0.8
@@ -19,15 +19,15 @@ aline('--');
 %J0: 27.346 +/- 0.630
 %J1:  6.549 +/- 0.626;
 
-
-acolor('g');
-aline('-');
-drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_hfm,[1,0,23.6,8.04,0,0,0],'noplot');
-[~,~,pl3]=pl(drc);
-drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_hfm,[1,0,27.346,6.549,0,0,0],'noplot');
-aline('--');
-[~,~,pl4]=pl(drc);
-
+% 
+% acolor('g');
+% aline('-');
+% % drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_hfm,[1,0,23.6,8.04,0,0,0],'noplot');
+% [~,~,pl3]=pl(drc);
+% drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_hfm,[1,0,27.346,6.549,0,0,0],'noplot');
+% aline('--');
+% [~,~,pl4]=pl(drc);
+% 
 %"E200:  [1,1,0]
 %J0: 28.146 +/- 0.068;
 %J1: 12.931 +/- 0.064;
@@ -48,13 +48,17 @@ aline('--');
 % pl(drc)
 % drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_hfm,[1,0,64.120,-8.249,-7.536,0,0],'noplot');
 % pl(drc)
-% aline(':');
-% drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_hfm,[1,0,65.663,-7.930,-8.047,0,0],'noplot');
-% pl(drc)
-acolor('k')
+acolor('r')
 aline('-');
 drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_parameterized,[1,0],'noplot');
+dl(drc)
+% aline(':');
+acolor('g')
+drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_hfm,[1,0,65.0893,-4.3400,-9.2316,0,0],'noplot');
 pl(drc)
+%ly 0 180
+
+
 
 
 

@@ -36,36 +36,37 @@ x = [x_tot1,x_tot2,x_tot3];
 s = [s_tot1',s_tot2',s_tot3'];
 plot(x,s);
 
-x_min = min(x);
-x_max = max(x);
+e_min = min(x);
+e_max = max(x);
 J_min = min(s);
 J_max = max(s);
 
 q= 0.01:0.01:0.99;
 JvsQ = zeros(size(q));
 for i=1:numel(q)
-    JvsQ(i) = 0.125*fzero(@(e)(j_vs_e(e,q(i),x,s,x_min,J_min,x_max,J_max)),0)/(1-cos(pi*q(i)));
+    JvsQ(i) = 0.125*fzero(@(e)(j_vs_e(e,q(i),x,s,e_min,J_min,e_max,J_max)),0)/(1-cos(pi*q(i)));
 end
 q_sq = q.*q;
 
 plot(q_sq,JvsQ);
-save('J_vs_q','q_sq','JvsQ');
+qi_min = acos(1-e_min/(8*J_min))/pi;
+qi_max = acos(1-e_max/(8*J_max))/pi;
+save('J_vs_q','qi_min','qi_max','J_min','J_max','q_sq','JvsQ');
 
 
 
-function val = j_vs_e(x,q,base_e,base_j,x_min,J_min,x_max,J_max)
+function val = j_vs_e(en,q,base_e,base_j,e_min,J_min,e_max,J_max)
 
 
-if x<x_min
+if en<e_min
     Je = J_min;
-elseif x>x_max
+elseif en>e_max
     Je = J_max;
 else
-    Je = interp1(base_e,base_j,x);
+    Je = interp1(base_e,base_j,en);
 end
-val = 8*Je*(1-cos(pi*q))-x;
+val = 8*Je*(1-cos(pi*q))-en;
 end
-
 
 
 
