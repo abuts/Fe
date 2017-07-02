@@ -29,6 +29,7 @@ end
 
 Seff=par(1);
 gap=par(2);
+dir = par(3);
 % JS_p5p5p5=par(3);
 % JS_100=par(4);
 % JS_110=par(5);
@@ -38,7 +39,7 @@ gap=par(2);
 w=gap*ones(size(qh));
 
 q2 = qh.*qh+qk.*qk+ql.*ql;
-JS_p5p5p5 = var_j(q2,param);
+JS_p5p5p5 = var_j(q2,param,dir);
 % Precompute some arrays used in more than one exchange pathway
 
 cos1h = cos(pi*qh);
@@ -53,11 +54,16 @@ w = w + (8*JS_p5p5p5).*(1-cos1h.*cos1k.*cos1l);
 wdisp{1} = w;
 sf{1} = (Seff/2)*ones(size(w));
 
-function j = var_j(q2,param)
+function j = var_j(q2,param,dir)
 
-q_l = q2>param.q2_max;
-q_s = q2<param.q2_min;
+if dir == 1
+    q_l = q2>param.q2_max;
+    q_s = q2<param.q2_min;
+else
+    q_l = false(size(q2));
+    q_s= false(size(q2));
+end
 
-j = interp1(param.q_sq,param.JvsQ,q2);
+j = interp1(param.q_sq,param.JvsQ{dir},q2);
 j(q_l) = param.J_max;
 j(q_s) = param.J_min;

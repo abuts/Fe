@@ -50,11 +50,11 @@ bp = [0,0,0;1,0,0;0.5,0.5,0;0,0,0;1/2,1/2,1/2;1/2,1/2,0];
 % pl(drc)
 acolor('r')
 aline('-');
-drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_parameterized,[1,0],'noplot');
+drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_parameterized,[1,0,1],'noplot');
 dl(drc)
 % aline(':');
 acolor('g')
-drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_hfm,[1,0,65.0893,-4.3400,-9.2316,0,0],'noplot');
+drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_hfm,[1,0,63.1511,-3.2433,-9.3387,0,0],'noplot');
 pl(drc)
 %ly 0 180
 
