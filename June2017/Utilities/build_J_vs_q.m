@@ -42,20 +42,31 @@ J_min = min(s);
 J_max = max(s);
 
 q= 0.01:0.01:0.99;
-JvsQ = zeros(size(q));
+JvsQ100 = zeros(size(q));
+JvsQ110 = zeros(size(q));
+JvsQ111 = zeros(size(q));
+
 for i=1:numel(q)
-    JvsQ(i) = 0.125*fzero(@(e)(j_vs_e(e,q(i),x,s,e_min,J_min,e_max,J_max)),0)/(1-cos(pi*q(i)));
+    JvsQ100(i) = 0.125*fzero(@(e)(j_vs_e100(e,q(i),x,s,e_min,J_min,e_max,J_max)),0)/(1-cos(pi*q(i)));
+    JvsQ110(i) = 0.125*fzero(@(e)(j_vs_e110(e,q(i),x,s,e_min,J_min,e_max,J_max)),0)/(1-cos(pi/sqrt(2)*q(i)).^2);
+    JvsQ111(i) = 0.125*fzero(@(e)(j_vs_e111(e,q(i),x,s,e_min,J_min,e_max,J_max)),0)/(1-cos(pi/sqrt(3)*q(i)).^3);
 end
 q_sq = q.*q;
 
-plot(q_sq,JvsQ);
 qi_min = acos(1-e_min/(8*J_min))/pi;
 qi_max = acos(1-e_max/(8*J_max))/pi;
+JvsQ = cell(3,1);
+JvsQ{1}= JvsQ100;
+JvsQ{2} = JvsQ110;
+JvsQ{3} = JvsQ111;
+plot(q_sq,JvsQ{1},'r',q_sq,JvsQ{2},'g',q_sq,JvsQ{3},'b');
+
+
 save('J_vs_q','qi_min','qi_max','J_min','J_max','q_sq','JvsQ');
 
 
 
-function val = j_vs_e(en,q,base_e,base_j,e_min,J_min,e_max,J_max)
+function val = j_vs_e100(en,q,base_e,base_j,e_min,J_min,e_max,J_max)
 
 
 if en<e_min
@@ -67,6 +78,32 @@ else
 end
 val = 8*Je*(1-cos(pi*q))-en;
 end
+
+function val = j_vs_e110(en,q,base_e,base_j,e_min,J_min,e_max,J_max)
+
+
+if en<e_min
+    Je = J_min;
+elseif en>e_max
+    Je = J_max;
+else
+    Je = interp1(base_e,base_j,en);
+end
+val = 8*Je*(1-cos(pi/sqrt(2)*q).^2)-en;
+end
+function val = j_vs_e111(en,q,base_e,base_j,e_min,J_min,e_max,J_max)
+
+
+if en<e_min
+    Je = J_min;
+elseif en>e_max
+    Je = J_max;
+else
+    Je = interp1(base_e,base_j,en);
+end
+val = 8*Je*(1-cos(pi/sqrt(3)*q).^3)-en;
+end
+
 
 
 
