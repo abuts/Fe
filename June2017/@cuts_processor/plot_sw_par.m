@@ -1,4 +1,4 @@
-function  [ixs,ixg]= plot_sw_par(obj,emin,emax)
+function  [ixs,ixg,figs]= plot_sw_par(obj,emin,emax)
 % Method to plot the life time and intensity of fitted sw
 %
 % returns 2 of 3-element arrays of IX_dataset_1d objects containing
@@ -32,32 +32,33 @@ ixg = repmat(IX_dataset_1d,3,1);
 colors = {'r','g','b','k'};
 acolor(colors{1});
 aline('-')
-[~,~,li1] = dd(ixs(1));
-plots = repmat(li1(1),3,1);
+[fg,~,li1] = dd(ixs(1));
+figs = repmat(fg,6,1);
+lines = repmat(li1(1),3,1);
 for i=2:3
     acolor(colors{i});
-    [~,~,li1]=pd(ixs(i));
-    plots(i) = li1(1);
+    [figs(i),~,li1]=pd(ixs(i));
+    lines(i) = li1(1);
 end
 ymax = max(2.5,s_max);
 ly(0,ymax)
-legend(plots,'<100>','<110>','<111>');
+legend(lines,'<100>','<110>','<111>');
 keep_figure
 
 %
 %-------------------------------------------------------------
 acolor(colors{1});
-[~,~,li1]  = dd(ixg(1));
-plots(1) = li1(1);
+[figs(4),~,li1]  = dd(ixg(1));
+lines(1) = li1(1);
 for i=2:3
     acolor(colors{i});
-    [~,~,li1]=pd(ixg(i));
-    plots(i) = li1(1);
+    [figs(3+i),~,li1]=pd(ixg(i));
+    lines(i) = li1(1);
 end
 ymax = max(80,g_max);
 ly(0,ymax)
 
-legend(plots,'<100>','<110>','<111>');
+legend(lines,'<100>','<110>','<111>');
 keep_figure
 
 %
