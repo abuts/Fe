@@ -27,7 +27,7 @@ if isempty(param)
     param.q2_max = param.qi_max^2;
 end
 
-Seff=par(1);
+%Seff=par(1);
 gap=par(2);
 dir = par(3);
 % JS_p5p5p5=par(3);
@@ -40,6 +40,7 @@ w=gap*ones(size(qh));
 
 q2 = qh.*qh+qk.*qk+ql.*ql;
 JS_p5p5p5 = var_j(q2,param,dir);
+err = interp1(param.q_sq,param.EvsQ_err{dir},q2);
 % Precompute some arrays used in more than one exchange pathway
 
 cos1h = cos(pi*qh);
@@ -52,7 +53,8 @@ w = w + (8*JS_p5p5p5).*(1-cos1h.*cos1k.*cos1l);
 
 
 wdisp{1} = w;
-sf{1} = (Seff/2)*ones(size(w));
+sf{1} = err;
+%sf{1} = (Seff/2)*ones(size(w));
 
 function j = var_j(q2,param,dir)
 

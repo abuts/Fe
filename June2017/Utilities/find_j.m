@@ -1,6 +1,6 @@
 q_max = 0.37;
 qhl = -q_max:0.01:-0.1471;
-qh =  0.1471:0.001:q_max;
+qh =  0.1471:0.01:q_max;
 qh = [qhl,qh];
 qk = zeros(size(qh));
 ql = zeros(size(qh));
@@ -49,8 +49,7 @@ fprintf('ERR: %f*x + %f*x^3 \n',pc4(4),pc4(2));
 pc100 = [pc4(3),pc4(1)];
 
 qh12 = qh/sqrt(2);
-qk12 = qh/sqrt(2);
-ed = disp_bcc_hfm(qh12,qk12,ql,tp);
+ed = disp_bcc_hfm(qh12,qh12,ql,tp);
 ed = ed{1};
 e = disp_bcc_parameterized(qh12,qh12,ql,[1,0,2]);
 

@@ -1,12 +1,13 @@
 ld = load('J_vs_E.mat');
 
-x2 = ld.jf200.x;
-f2 = ld.jf200.signal;
-e_min = x2(1);
-J_min = f2(1);
+x2     = ld.fj200.x;
+f2     = ld.fj200.signal;
+f2_err = ld.fj200.error;
 
-x4 = ld.jf400.x;
-f4 = ld.jf400.signal;
+
+x4 = ld.fj400.x;
+f4 = ld.fj400.signal;
+f4_err = ld.fj400.error;
 e_min_s = 45;
 e_max_s = 125;
 
@@ -15,6 +16,7 @@ ir2_min = find(x2==e_min_s);
 ir2_max = find(x2==e_max_s);
 x_tot1 = x2(1:ir2_min);
 s_tot1 = f2(1:ir2_min);
+e_tot1 = f2_err(1:1:ir2_min);
 
 % second subrange: take half from ei200, half from ei400
 s_par2 =f2(ir2_min+1:ir2_max);
@@ -25,16 +27,20 @@ s_par4 =f4(ir4_min+1:ir4_max);
 
 s_tot2 = 0.5*(s_par2 + s_par4);
 x_tot2 = x4(ir4_min+1:ir4_max);
+e_tot2 = f4_err(ir4_min+1:ir4_max);
 
 % third subrange: take data from ei400
 e_max_t = 180;
 ir4t_max = find(x4==e_max_t);
 s_tot3 = f4(ir4_max+1:ir4t_max);
 x_tot3 = x4(ir4_max+1:ir4t_max);
+e_tot3 = f4_err(ir4_max+1:ir4t_max);
 
 x = [x_tot1,x_tot2,x_tot3];
 s = [s_tot1',s_tot2',s_tot3'];
-plot(x,s);
+err = [e_tot1',e_tot2',e_tot3'];
+se = s+err;
+errorbar(x,s,err);
 
 e_min = min(x);
 e_max = max(x);
@@ -45,24 +51,48 @@ q= 0.01:0.01:0.99;
 JvsQ100 = zeros(size(q));
 JvsQ110 = zeros(size(q));
 JvsQ111 = zeros(size(q));
-
+JvsQ100_e = zeros(size(q));
+JvsQ110_e = zeros(size(q));
+JvsQ111_e = zeros(size(q));
 for i=1:numel(q)
-    JvsQ100(i) = 0.125*fzero(@(e)(j_vs_e100(e,q(i),x,s,e_min,J_min,e_max,J_max)),0)/(1-cos(pi*q(i)));
-    JvsQ110(i) = 0.125*fzero(@(e)(j_vs_e110(e,q(i),x,s,e_min,J_min,e_max,J_max)),0)/(1-cos(pi/sqrt(2)*q(i)).^2);
-    JvsQ111(i) = 0.125*fzero(@(e)(j_vs_e111(e,q(i),x,s,e_min,J_min,e_max,J_max)),0)/(1-cos(pi/sqrt(3)*q(i)).^3);
+    % this gived dispersion e (q);
+    E_vs_q100 = fzero(@(e)(j_vs_e100(e,q(i),x,s,e_min,J_min,e_max,J_max)),0);
+    Err_vs_q100 = fzero(@(e)(j_vs_e100(e,q(i),x,se,e_min,J_min,e_max,J_max)),0);
+    JvsQ100_e(i) = abs(Err_vs_q100 -E_vs_q100);
+    % and this strips it to J(q);
+    JvsQ100(i) = 0.125*E_vs_q100/(1-cos(pi*q(i)));
+    
+    E_vs_q110 = fzero(@(e)(j_vs_e110(e,q(i),x,s,e_min,J_min,e_max,J_max)),0);
+    Err_vs_q110 = fzero(@(e)(j_vs_e110(e,q(i),x,se,e_min,J_min,e_max,J_max)),0);    
+    JvsQ110_e(i) = abs(Err_vs_q110-E_vs_q110);
+    JvsQ110(i) = 0.125*E_vs_q110/(1-cos(pi/sqrt(2)*q(i)).^2);
+    
+    E_vs_q111 =  fzero(@(e)(j_vs_e111(e,q(i),x,s,e_min,J_min,e_max,J_max)),0);
+    Err_vs_q111 = fzero(@(e)(j_vs_e111(e,q(i),x,se,e_min,J_min,e_max,J_max)),0);
+    JvsQ111_e(i) = abs(Err_vs_q111-E_vs_q111);
+    
+    JvsQ111(i) = 0.125*E_vs_q111/(1-cos(pi/sqrt(3)*q(i)).^3);    
 end
 q_sq = q.*q;
 
 qi_min = acos(1-e_min/(8*J_min))/pi;
 qi_max = acos(1-e_max/(8*J_max))/pi;
 JvsQ = cell(3,1);
+JvsQ_err = cell(3,1);
 JvsQ{1}= JvsQ100;
 JvsQ{2} = JvsQ110;
 JvsQ{3} = JvsQ111;
+EvsQ_err{1} = JvsQ100_e;
+EvsQ_err{2} = JvsQ110_e;
+EvsQ_err{3} = JvsQ111_e;
 plot(q_sq,JvsQ{1},'r',q_sq,JvsQ{2},'g',q_sq,JvsQ{3},'b');
+hold on
+errorbar(q_sq,JvsQ{1},EvsQ_err{1},'r')
+errorbar(q_sq,JvsQ{2},EvsQ_err{2},'g')
+errorbar(q_sq,JvsQ{3},EvsQ_err{3},'b')
+hold off
 
-
-save('J_vs_q','qi_min','qi_max','J_min','J_max','q_sq','JvsQ');
+save('J_vs_q','qi_min','qi_max','J_min','J_max','q_sq','JvsQ','EvsQ_err');
 
 
 
@@ -103,7 +133,6 @@ else
 end
 val = 8*Je*(1-cos(pi/sqrt(3)*q).^3)-en;
 end
-
 
 
 

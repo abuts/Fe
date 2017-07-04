@@ -54,7 +54,10 @@ drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_parameterized,[1,0,
 dl(drc)
 % aline(':');
 acolor('g')
-drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_hfm,[1,0,63.1511,-3.2433,-9.3387,0,0],'noplot');
+drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_hfm,[1,0,63.7239   -4.8381   -9.0117,0,0],'noplot');
+pl(drc)
+drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_hfm,[1,0,128.4767  -77.9465  -11.1930 ,0,0],'noplot');
+acolor('b')
 pl(drc)
 %ly 0 180
 
