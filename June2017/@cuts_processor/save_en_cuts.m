@@ -41,11 +41,8 @@ for i=1:numel(keys)
     theKey = keys{i};
     stor = obj.build_stor_structure_(theKey);
     
-    direction_id = regexp(theKey,'[<>]');
-    dir_id = theKey(direction_id(1)+1:direction_id(2)-1);
-    
-    fn = sprintf('EnCuts_%s_dE%d_dir_!%s!',FileSourceID,stor.cut_energies(1),dir_id);
-    stor.save(fn);
+
+    stor.save();
     
     n_cuts = numel(stor.cuts_list);
     fprintf(' En=%d; Cuts Group N:%d/%d  Consisting of %d Cuts\n',stor.cut_energies(1),i,numel(keys),n_cuts);

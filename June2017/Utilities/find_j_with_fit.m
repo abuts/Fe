@@ -16,27 +16,28 @@ data = repmat(struct('x',[],'y',[],'e',[]),3,1);
 data0(1)= IX_dataset_1d(qh,e{1},err{1});
 data(1).x = qh; 
 data(1).y = e{1};
-data(1).e = err{1};
+data(1).e = ones(size(e{1}));
 qh12 = qh/sqrt(2);
 [e,err] = disp_bcc_parameterized(qh12,qh12,ql,[1,0,2]);
 data0(2) = IX_dataset_1d(qh,e{1},err{1});
 data(2).x = qh; 
 data(2).y = e{1};
-data(2).e = err{1};
+data(2).e = ones(size(e{1}));
 
 qh13 = qh/sqrt(3);
 [e,err] = disp_bcc_parameterized(qh13,qh13,qh13,[1,0,3]);
 data0(3) = IX_dataset_1d(qh,e{1},err{1});
 data(3).x = qh; 
 data(3).y = e{1};
-data(3).e = err{1};
+data(3).e =ones(size(e{1}));
 
+aline('-')
 acolor('r','g','b');
 dl(data0);
 fun = {@disp_bcc_hfm_red1,@disp_bcc_hfm_red2,@disp_bcc_hfm_red3};
 
 
-kk = multifit2(data);
+kk = multifit2(data0);
 kk = kk.set_local_foreground(true);
 kk = kk.set_fun(fun,tp,[0,0,1,1,1,0,0]);
 

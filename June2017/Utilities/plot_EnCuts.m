@@ -40,9 +40,13 @@ else
 end
 
 if isstruct(cut_fname)
-    stor = EnCutBlock(cut_fname);
+    stor = EnCutBlock(cut_fname,pars{:});
 elseif isa(cut_fname,'EnCutBlock')
-    stor = cut_fname;
+    if isempty(pars)
+        stor = cut_fname;
+    else
+        stor= EnCutBlock(cut_fname,pars{:});
+    end
 elseif isnumeric(cut_fname)
     Ei = cut_fname;
     dE = pars{1};
