@@ -1,4 +1,4 @@
-function  stor=refit_EnCuts(cut_fname,keep_only,varargin)
+function  stor=refit_EnCuts(cut_fname,keep_indexes,varargin)
 % Refit group of equivalent cuts made at given energy and direction
 
 %options = {'-keep_fig'};
@@ -16,12 +16,14 @@ else
     stor = load(cut_fname);
 end
 cut_list = stor.cuts_list;
-if exist('keep_only','var')
-    keep_only = logical(keep_only);
+if exist('keep_indexes','var')
+    
+    keep_only = false(size(stor.cuts_list));
+    keep_only(keep_indexes(:)) = true;
     cut_list = cut_list(keep_only);
 else
     
-    keep_only = true(numel(stor.cuts_list),1);
+    keep_only = true(size(stor.cuts_list));
 end
 init_fg_param = stor.fit_param.p;
 init_bg_param  = stor.fit_param.bp;
@@ -29,7 +31,7 @@ init_bg_param  = stor.fit_param.bp;
 if iscell(init_fg_param)
     init_fg_param = init_fg_param{1};
 end
-init_bg_param  = init_bg_param(keep_only)';
+init_bg_param  = init_bg_param(keep_only);
 
 kk = tobyfit2(cut_list);
 %kk = kk.set_local_foreground(true);

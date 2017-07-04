@@ -1,4 +1,4 @@
-function  cut_struct = plot_Cuts(obj,energy,direction,varargin)
+function  [cut_struct,ind] = plot_Cuts(obj,energy,direction,varargin)
 % View sequence of cuts correspondent to energy transfer and direction provided
 % as input and return the structure, usually stored with cut sequence
 % inputs:
@@ -8,8 +8,8 @@ function  cut_struct = plot_Cuts(obj,energy,direction,varargin)
 
 CutID = [num2str(energy(1)),direction_id(direction)];
 
-cut_struct = obj.build_stor_structure_(CutID);
-[~,plot_map]=plot_EnCuts(cut_struct,varargin{:});
+[cut_struct,ind] = obj.build_stor_structure_(CutID);
+[cut_struct,plot_map]=plot_EnCuts(cut_struct,varargin{:});
 
 
 for i=2:numel(energy)

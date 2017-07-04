@@ -1,5 +1,5 @@
 classdef pic_spread
-    %Class respronsible for spreading number of pictures around the
+    %Class respronsible for spreading number of pictures around a
     %screen
     
     properties
@@ -8,7 +8,7 @@ classdef pic_spread
         pic_size = [800,600];
         pic_count=0;
         % size of the left border in pictures to start from (e.g. if you have
-        % windows toolbad on the left side of the screen)
+        % windows toolbar on the left side of the screen)
         left_border=40;
         top_border =60;
     end
@@ -65,7 +65,7 @@ classdef pic_spread
             % defined by the picture handle provided as argument, to current size and
             % postion.
             % if '-rize' option is specified, after adding the last pictures 
-            %  method also rized all previous pictures
+            %  method also rizes all previous pictures
             
             keywords={'-rize'};
             [ok,mess,rize_fig]=parse_char_options(varargin,keywords);
