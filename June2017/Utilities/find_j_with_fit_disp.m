@@ -9,7 +9,7 @@ self_test = false;
 tp = [1,0,  63.1511   -3.2433   -9.3387,0,0];
 % tp = [1,0,51.5853,   -2.8766,   -6.0617,0,0];
 
-ld = load('En_vs_q');
+ld = load('En_vs_qTP');
 data0 = repmat(IX_dataset_1d,3,1);
 data0(1) = ld.disp100;
 data0(2) = ld.disp110;
