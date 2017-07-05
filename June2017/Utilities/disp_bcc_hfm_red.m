@@ -33,9 +33,12 @@ if dir == 1
     qk = zeros(size(qh));
     ql = qk;
 elseif dir == 2
+    qh = qh/sqrt(2);
     qk = qh;
     ql = zeros(size(qh));
 else
+    qh = qh/sqrt(3);
+    
     qk = qh;
     ql = qh;
 end

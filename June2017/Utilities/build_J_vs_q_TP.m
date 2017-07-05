@@ -37,19 +37,19 @@ x_tot3 = x4(ir4_max+1:ir4t_max);
 e_tot3 = f4_err(ir4_max+1:ir4t_max);
 
 x = [x_tot1,x_tot2,x_tot3];
-s = [s_tot1',s_tot2',s_tot3'];
+J = [s_tot1',s_tot2',s_tot3'];
 err = [e_tot1',e_tot2',e_tot3'];
-se = s+err;
-errorbar(x,s,err);
+se = J+err;
+errorbar(x,J,err);
 
 e_min = min(x);
 e_max = max(x);
-J_min = min(s);
-J_max = max(s);
+J_min = min(J);
+J_max = max(J);
 
-q100= zeros(size(s));
-q110= zeros(size(s));
-q111= zeros(size(s));
+q100= zeros(size(J));
+q110= zeros(size(J));
+q111= zeros(size(J));
 JvsQ100 = zeros(size(q100));
 JvsQ110 = zeros(size(q100));
 JvsQ111 = zeros(size(q100));
@@ -61,16 +61,16 @@ disp_d110 = zeros(numel(q100),2);
 disp_d111 = zeros(numel(q100),2);
 for i=1:numel(q100)
     % this gived dispersion e (q);
-    q100(i) = acos((1- x(i)/(8*s(i))))/pi;
-    q110(i) = acos(sqrt((1- x(i)/(8*s(i)))))/pi;
-    q111(i) = acos(((1- x(i)/(8*s(i))))^(1/3))/pi;        
+    q100(i) = acos((1- x(i)/(8*J(i))))/pi;
+    q110(i) = acos(sqrt((1- x(i)/(8*J(i)))))*sqrt(2)/pi;
+    q111(i) = acos(((1- x(i)/(8*J(i))))^(1/3))*sqrt(3)/pi;        
     E_vs_q100 = x(i);
     Err_vs_q100 = fzero(@(e)(j_vs_e100(e,q100(i),x,se,e_min,J_min,e_max,J_max)),0);
     JvsQ100_e(i) = abs(Err_vs_q100 -E_vs_q100);
     % and this strips it to J(q);
     JvsQ100(i) = 0.125*E_vs_q100/(1-cos(pi*q100(i)));
     disp_d100(i,1) =     E_vs_q100 ;
-    disp_d100(i,2) =     JvsQ100_e(i);
+    disp_d100(i,2) =     err(i);
     
     
     E_vs_q110 = x(i);
@@ -78,7 +78,7 @@ for i=1:numel(q100)
     JvsQ110_e(i) = abs(Err_vs_q110-E_vs_q110);
     JvsQ110(i) = 0.125*E_vs_q110/(1-cos(pi/sqrt(2)*q110(i)).^2);
     disp_d110(i,1) =     E_vs_q110 ;
-    disp_d110(i,2) =     JvsQ110_e(i);
+    disp_d110(i,2) =     err(i);
     
     
     E_vs_q111 =  x(i);
@@ -86,7 +86,7 @@ for i=1:numel(q100)
     JvsQ111_e(i) = abs(Err_vs_q111-E_vs_q111);
     
     disp_d111(i,1) =     E_vs_q111 ;    
-    disp_d111(i,2) =     JvsQ111_e(i) ;
+    disp_d111(i,2) =     err(i) ;
     
     
     JvsQ111(i) = 0.125*E_vs_q111/(1-cos(pi/sqrt(3)*q(i)).^3);

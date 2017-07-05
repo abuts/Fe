@@ -12,22 +12,34 @@ tp = [1,0,  63.1511   -3.2433   -9.3387,0,0];
 
 data0 = repmat(IX_dataset_1d,3,1);
 data = repmat(struct('x',[],'y',[],'e',[]),3,1);
-[e,err] = disp_bcc_parameterized(qh,qk,ql,[1,0,1]);
+if self_test
+    [e,err] = disp_bcc_hfm(qh,qk,ql,tp);
+else
+    [e,err] = disp_bcc_parameterized(qh,qk,ql,[1,0,1]);
+end
 data0(1)= IX_dataset_1d(qh,e{1},err{1});
-data(1).x = qh; 
+data(1).x = qh;
 data(1).y = e{1};
 data(1).e = ones(size(e{1}));
 qh12 = qh/sqrt(2);
-[e,err] = disp_bcc_parameterized(qh12,qh12,ql,[1,0,2]);
+if self_test
+    [e,err] = disp_bcc_hfm(qh12,qh12,ql,tp);
+else
+    [e,err] = disp_bcc_parameterized(qh12,qh12,ql,[1,0,2]);
+end
 data0(2) = IX_dataset_1d(qh,e{1},err{1});
-data(2).x = qh; 
+data(2).x = qh;
 data(2).y = e{1};
 data(2).e = ones(size(e{1}));
 
 qh13 = qh/sqrt(3);
-[e,err] = disp_bcc_parameterized(qh13,qh13,qh13,[1,0,3]);
+if self_test
+    [e,err] = disp_bcc_hfm(qh13,qh13,qh13,tp);
+else
+    [e,err] = disp_bcc_parameterized(qh13,qh13,qh13,[1,0,3]);
+end
 data0(3) = IX_dataset_1d(qh,e{1},err{1});
-data(3).x = qh; 
+data(3).x = qh;
 data(3).y = e{1};
 data(3).e =ones(size(e{1}));
 
@@ -48,11 +60,11 @@ kk = kk.set_options('listing',2,'fit_control_parameters',[1.e-2;60;1.e-3]);
 [fd,fitpar] = kk.fit;
 disp('fitpar:')
 disp(fitpar.p{1})
-data0(1) = IX_dataset_1d(fd(1).x,fd(1).y,fd(1).e);
-data0(2) = IX_dataset_1d(fd(2).x,fd(2).y,fd(2).e);
-data0(3) = IX_dataset_1d(fd(3).x,fd(3).y,fd(3).e);
+% data0(1) = IX_dataset_1d(fd(1).x,fd(1).y,fd(1).e);
+% data0(2) = IX_dataset_1d(fd(2).x,fd(2).y,fd(2).e);
+% data0(3) = IX_dataset_1d(fd(3).x,fd(3).y,fd(3).e);
 aline('--')
-pl(data0);
+pl(fd);
 lx(0.14,q_max);
 
 %
