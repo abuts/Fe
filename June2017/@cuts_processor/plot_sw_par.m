@@ -21,7 +21,9 @@ brn = cellfun(@(br)(['[',num2str(br(1)),num2str(br(2)),num2str(br(3)),'];']),...
 name = [brn{:}];
 [~,~,~,capt] = obj.setup_j;
 file_n = [obj.file_list{:}];
-name = sprintf('%s\n %s; %s',name,file_n(4:end),capt);
+%name = sprintf('%s\n %s; %s',name,file_n(4:end),capt);
+name = sprintf('%s\n %s;',name,file_n(4:end));
+
 ixs = repmat(IX_dataset_1d,3,1);
 ixg = repmat(IX_dataset_1d,3,1);
 [ixs(1),ixg(1)] = build_ds(en100,S100,S100_err,G100,G100_err,name);
