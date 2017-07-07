@@ -41,9 +41,9 @@ fun = {@disp_bcc_hfm_red1,@disp_bcc_hfm_red2,@disp_bcc_hfm_red3};
 
 kk = multifit2(data0);
 kk = kk.set_local_foreground(true);
-kk = kk.set_fun(fun,tp,[0,0,1,1,1,1,0]);
+kk = kk.set_fun(fun,tp,[0,0,1,1,1,1,1]);
 
-binds = {{3,[3,2],1},{4,[4,2],1},{5,[5,2],1}};
+binds = {{3,[3,2],1},{4,[4,2],1},{5,[5,2],1},{6,[6,2],1},{7,[7,2],1}};
 kk = kk.set_bind(binds{:});
 kk = kk.set_options('listing',2,'fit_control_parameters',[1.e-2;60;1.e-3]);
 
