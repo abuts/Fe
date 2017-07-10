@@ -47,18 +47,20 @@ bp = [0,0,0;1,0,0;0.5,0.5,0;0,0,0;1/2,1/2,1/2;1/2,1/2,0];
 % aline('--');
 % pl(drc)
 % drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_hfm,[1,0,64.120,-8.249,-7.536,0,0],'noplot');
-% pl(drc)
+% pl(drc)aline('-');
+
+% acolor('b')
+% drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_hfm,[1,0,77.9660  -11.9776   -6.4575   -0.6321   -3.7522],'labels',{'\Gamma','H','N','\Gamma','P','N'},'noplot');
+% dl(drc)
 acolor('r')
-aline('-');
-drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_parameterized,[1,0,1],'noplot');
+drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_parameterized,[1,0,1],'noplot','labels',{'\Gamma','H','N','\Gamma','P','N'});
 dl(drc)
 % aline(':');
-acolor('g')
-drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_hfm,[1,0,63.7446   -5.4095   -8.7849,0,0],'noplot');
-pl(drc)
-drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_hfm,[1,0,77.9660  -11.9776   -6.4575   -0.6321   -3.7522],'noplot');
-acolor('b')
-pl(drc)
+% acolor('g')
+% drc = dispersion_plot([2.83,2.83,2.83,90,90,90],bp,@disp_bcc_hfm,[1,0,63.7446   -5.4095   -8.7849,0,0],'noplot');
+% pl(drc)
+
+%pl(drc)
 %ly 0 180
 
 

@@ -51,7 +51,7 @@ e_max = max(x);
 J_min = min(s);
 J_max = max(s);
 
-q= 0.1:0.01:0.5;
+q= 0.1:0.02:0.5;
 JvsQ100 = zeros(size(q));
 JvsQ110 = zeros(size(q));
 JvsQ111 = zeros(size(q));
@@ -109,12 +109,17 @@ res = struct();
 res.disp100 = IX_dataset_1d(q,disp_d100(1,:),disp_d100(2,:));
 res.disp110 = IX_dataset_1d(q,disp_d110(1,:),disp_d110(2,:));
 res.disp111 = IX_dataset_1d(q,disp_d111(1,:),disp_d111(2,:));
-acolor('r')
+acolor('b')
 dd(res.disp100);
-acolor('g');
-pd(res.disp110);
+keep_figure
 acolor('b');
-pd(res.disp111);
+dd(res.disp110);keep_figure
+
+
+acolor('b');
+dd(res.disp111);
+keep_figure
+
 
 % save('En_vs_q','-struct','res');
 
