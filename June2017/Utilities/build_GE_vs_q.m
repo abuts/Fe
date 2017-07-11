@@ -8,6 +8,7 @@ f2_err = ld.fj200.error;
 x4 = ld.fj400.x;
 f4 = ld.fj400.signal;
 f4_err = ld.fj400.error;
+
 e_min_s = 45;
 e_max_s = 125;
 
@@ -45,6 +46,7 @@ ld = load('s_g_vs_eEi400.mat');
 g100 = [ld.g_of_e(1).x;ld.g_of_e(1).signal'];
 g110 = [ld.g_of_e(2).x;ld.g_of_e(2).signal'];
 g111 = [ld.g_of_e(3).x;ld.g_of_e(3).signal'];
+dd(ld.g_of_e);
 
 e_min = min(x);
 e_max = max(x);
@@ -80,9 +82,20 @@ for i=1:numel(q)
     disp_d111(1,i) =   E_vs_q111 ;
     
 end
-disp_d100(2,:) = interp1(g100(1,:),g100(2,:),disp_d100(1,:));
-disp_d110(2,:) = interp1(g110(1,:),g110(2,:),disp_d110(1,:));
-disp_d111(2,:) = interp1(g111(1,:),g111(2,:),disp_d111(1,:));
+disp_d100(2,:) = 0.5*interp1(g100(1,:),g100(2,:),disp_d100(1,:));
+% keep = ~isnan(disp_d100(2,:));
+% disp_d100 = disp_d100(:,keep);
+q100 = q;
+disp_d110(2,:) = 0.5*interp1(g110(1,:),g110(2,:),disp_d110(1,:));
+% keep = ~isnan(disp_d110(2,:));
+% disp_d110 = disp_d110(:,keep);
+q110 = q;
+
+disp_d111(2,:) = 0.5*interp1(g111(1,:),g111(2,:),disp_d111(1,:));
+% keep = ~isnan(disp_d111(2,:));
+% disp_d111 = disp_d111(:,keep);
+q111= q;
+
 
 
 
@@ -106,17 +119,19 @@ JvsQ{3} = JvsQ111;
 %hold off
 
 res = struct();
-res.disp100 = IX_dataset_1d(q,disp_d100(1,:),disp_d100(2,:));
-res.disp110 = IX_dataset_1d(q,disp_d110(1,:),disp_d110(2,:));
-res.disp111 = IX_dataset_1d(q,disp_d111(1,:),disp_d111(2,:));
-acolor('b')
+aline(2)
+res.disp100 = IX_dataset_1d(q100,disp_d100(1,:),disp_d100(2,:));
+res.disp110 = IX_dataset_1d(q110,disp_d110(1,:),disp_d110(2,:));
+res.disp111 = IX_dataset_1d(q111,disp_d111(1,:),disp_d111(2,:));
+aline('-')
+acolor('r')
 dd(res.disp100);
 keep_figure
-acolor('b');
+acolor('r');
 dd(res.disp110);keep_figure
 
 
-acolor('b');
+acolor('r');
 dd(res.disp111);
 keep_figure
 
