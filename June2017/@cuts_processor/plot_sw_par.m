@@ -21,8 +21,8 @@ brn = cellfun(@(br)(['[',num2str(br(1)),num2str(br(2)),num2str(br(3)),'];']),...
 name = [brn{:}];
 [~,~,~,capt] = obj.setup_j;
 file_n = [obj.file_list{:}];
-%name = sprintf('%s\n %s; %s',name,file_n(4:end),capt);
-name = sprintf('%s\n %s;',name,file_n(4:end));
+name = sprintf('%s\n %s; %s',name,file_n(4:end),capt);
+%name = sprintf('%s\n %s;',name,file_n(4:end));
 
 ixs = repmat(IX_dataset_1d,3,1);
 ixg = repmat(IX_dataset_1d,3,1);
@@ -77,6 +77,5 @@ ixd_s = IX_dataset_1d(en(valid),s(valid),s_err(valid),...
 ixd_g = IX_dataset_1d(en(valid),g(valid),g_err(valid),...
     ['Inverse lifetime for peaks: ',name],IX_axis('Energy transfer','mEv'),...
     IX_axis('Decay','mEv'),false);
-
 
 

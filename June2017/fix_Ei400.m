@@ -121,7 +121,7 @@ kk = kk.set_mc_points (mc);
 kk = kk.set_fun (@(h,k,l,en,varargin)...
     (bragg_sphere_and_mag_ff(ff_fix,h,k,l,en,varargin{:})),...
     {[amp,qfwhh,efwhh],[alatt,angdeg]},[1,1,1]);
-kk = kk.set_options('list',1,'fit_control_parameters',[1.e-2;60;1.e-6]);
+kk = kk.set_options('list',2,'fit_control_parameters',[1.e-2;60;1.e-6]);
 kk = kk.set_bfun(@(x,par)(par(1)),bpin);
 
 if simulate

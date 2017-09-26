@@ -1,7 +1,7 @@
-function weight = sqw_iron (qh,qk,ql,en,par)
+function weight = sqw_iron_gauss (qh,qk,ql,en,par)
 % Spectral weight for domain averaged body centred cubic Heisenberg ferromagnet
 %
-%   >> weight = sqw_iron (qh,qk,ql,en,par,ion)
+%   >> weight = sqw_iron_gauss (qh,qk,ql,en,par,ion)
 %
 % Input:
 % ------
@@ -60,14 +60,14 @@ elseif par(1)==0
 else
     error('Parameter ff must be 0 or 1')
 end
-%T = par(2);
+T = par(2);
 gamma = par(3);
 
 % Dispersion and spectral weight(=Seff/2)
 [wdisp,idisp] = disp_bcc_hfm (qh,qk,ql,par(4:end));
 
 % Broaden by damped simple harmonic oscillator, preserving static susceptibility
-weight = 2*idisp{1} .* TwoGauss (en, wdisp{1}, gamma);
+weight = (((4/3)*290.6)*idisp{1}) .* (gauss_over_eps (en, wdisp{1}, gamma) .* bose_times_eps(en,T));
 
 % Correct for magnetic form factor if requested
 if ff_correct
@@ -77,7 +77,43 @@ if ff_correct
     weight = weight .* ffsqr;
 end
 
-function y = TwoGauss(x, q0, gamma)
+%---------------------------------------------------------------------------------------
+function y = gauss_over_eps (en, en0, gam)
+% Delta function response function divided by energy, broadened as Gaussians
+%
+%   >> y = gauss_over_eps (en, en0, gam)
+%
+% This function broadens the delta function response:
+%
+%       (delta(en-en0) + delta(en+en0)) / en
+% 
+% as Gaussians.
+% Multiply by en/(1-exp(en/(kB*t))) as returned by the output of:
+%
+%       bose_times_eps(en,T)
+%
+% to get the broadened response of:
+%
+%       <n(en)+1>*delta(en-en0) + <n(en)>*delta(en+en0)
+%
+% Input:
+% ------
+%   en      Array of energy transfers
+%   en0     Array of energies of the dispersion. Array with the same size
+%          as en
+%   gam     Inverse lifetime (same units as en and en0)
+%          If gam is scalar, then expanded to the same size as en and en0
+%
+% Output:
+% -------
+%   y       Array of calculated response (has the same size as en)
 
-y=(exp(-0.5*((x-q0)/gamma).^2))/sqrt(2*pi)/gamma;
-
+% sigma = gam / log(4);   % convert HWHH to sigma
+% y = (exp(-0.5*((en-en0)/sigma).^2) + exp(-0.5*((en+en0)/sigma).^2)) ./ ((en0+1)*sigma*sqrt(2*pi));
+ 
+sigma = gam / log(4);   % convert HWHH to sigma
+sigma = sigma*ones(size(en0));
+bad = (sigma>0.5*en0);
+sigma(bad)=0.5*(en0(bad));
+y = (exp(-0.5*((en-en0)./sigma).^2) ) ./ (sigma*sqrt(2*pi));
+ 

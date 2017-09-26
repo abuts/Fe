@@ -1,7 +1,7 @@
 function res = fix_Ei200(varargin)
 
 
-simulate = true;
+simulate = false;
 data_file = fullfile(pwd,'sqw','Data','Fe_ei200.sqw');
 
 

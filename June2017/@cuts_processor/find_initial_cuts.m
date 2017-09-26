@@ -4,7 +4,7 @@ function [obj,filenames,file_directions,missing_files,missing_dir] = find_initia
 %
 %
 %Return:
-% filenames::        list of existign files to read data from.
+% filenames::        list of existing files to read data from.
 % file_directions :: list of 3D vectors, defining the direction of a cut. (e.g.
 %                    {[1,0,0],[0,1,0],[1,1,1]};
 % missing_files   :: list of missing filenames
