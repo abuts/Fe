@@ -30,12 +30,14 @@ init_bg_param  = stor.fit_param.bp;
 
 if iscell(init_fg_param)
     init_fg_param = init_fg_param{1};
+    init_fg_param(7) = 0;
+    init_fg_param(8) = 0;
 end
 init_bg_param  = init_bg_param(keep_only);
 
 kk = tobyfit2(cut_list);
 %kk = kk.set_local_foreground(true);
-kk = kk.set_fun(@sqw_iron,init_fg_param,[0,0,1,1,0,1,0,0,0,0]);
+kk = kk.set_fun(@sqw_iron_gauss,init_fg_param,[0,0,1,1,0,1,0,0,0,0]);
 %kk = kk.set_fun(@(h,k,l,e,par)sw_disp(proj,ff_calc,h,k,l,e,par),[parR(1),parR(2),parR(3),ampl_avrg,fwhh_avrg],[1,1,1,1,1]);
 
 %global_binds = {{6,[6,2],1},{7,[7,2],1},{8,[8,2],1},{9,[9,2],1},{10,[10,2],1}};
