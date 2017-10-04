@@ -27,6 +27,6 @@ if numel(direction)==3
 elseif numel(direction) == 1
     dir_id = num2str(direction);
 else   
-    error('DIRECTION_ID:invalid_argument','unrecognized direction format');
+    error('DIRECTION_ID:invalid_argument','unrecognised direction format');
 end
 id = dir_map(dir_id);

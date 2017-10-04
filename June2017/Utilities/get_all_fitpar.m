@@ -46,9 +46,14 @@ for i=1:numel(en)
     cuts = cl.cut_list;
     p=cl.fp_arr1.p;
     bp=cl.fp_arr1.bp;
+    u = [1;0;0;0];
     for j=1:n_cuts
         fitpar_array(1,ic)=en(i);
-        dir_vec = abs(cuts(j).data.u_to_rlu*dir);
+        
+        dir_vec = (cuts(j).data.u_to_rlu*u);
+        %dir_vec = sum(dir_vec.*dir);
+        %disp(cuts(j).data.u_to_rlu(1:3,1:3));
+        %$disp(dir_vec');
         dir_id = find(dir_vec-1>-0.001);
         bragg = cuts(j).data.uoffset(1:3)';
         fitpar_array(2,ic) = cut_id.get_id(bragg(1),bragg(2),bragg(3),dir_id);

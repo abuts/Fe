@@ -4,13 +4,20 @@ classdef cut_id
     % number.
     %
     % The id-s are uniquely defined for bragg indexes in -10+10 range.
-    % [-10 +99]?
+    % [-10 +89]?
     properties(Constant,Access=private)
         bragg_base_ = [10,10,10,10];
     end
     methods(Static)
         function id = get_id(varargin)
             % id from bragg index and direction number
+            %
+            % Usage:
+            % id = cut_id.get_id([1,1,0,1])
+            % or
+            % id = cut_id.get_id(1,1,0,1)
+            % where three first numbers are bragg indexes and the last one
+            % -- direction id.
             if nargin == 1
                 arr = varargin{1};
                 

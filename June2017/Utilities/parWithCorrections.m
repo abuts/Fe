@@ -164,6 +164,7 @@ classdef parWithCorrections
             emax = max(obj.ref_par_Y);
             en   = (emin:5:emax)';
         end
+        %
         function en = getMinErange(obj)
             % return maximal range of energies to make the cuts
             % adjusting to cut resolution.   
@@ -432,6 +433,7 @@ classdef parWithCorrections
                 en =[en(1:ind),NaN,en(ind+1:end)];
             end
         end
+        %
         function [I,dI]=corr_fun(newBetta,oldBetta,I,dI,x)
             % function to correct intensity by newly changed parabola
             % coefficients
@@ -440,9 +442,11 @@ classdef parWithCorrections
             dI=dI.*cc;
             %
         end
+        %
         function fit = reCorrect(fit,oldPar,newPar)
             [fit.I,fit.dI]=parWithCorrections.corr_fun(newPar(3),oldPar(3),fit.I,fit.dI,fit.xx);
         end
+        %
         function [I,dI] = reCorrectI(I0,dI0,qs,old_par,new_par)
             % methor to modify intensity corrections with better verified sw
             % parameters
