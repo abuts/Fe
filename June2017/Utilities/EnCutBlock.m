@@ -106,18 +106,32 @@ classdef EnCutBlock
             cp = EnCutBlock();
             cp.cuts_list_ = obj.cuts_list(selection);
             cp.fits_list =  obj.fits_list(selection);
-            cp.fit_param   = select_fitpar(obj.fit_param,selection);
+            cp.fit_param   = EnCutBlock.fitpar_selection(obj.fit_param,selection);
             cp.cut_energies_ = ...
                 EnCutBlock.get_en_list(cp.cuts_list);
             cp.filename_  = obj.filename_;
         end
-        
         
     end
     methods(Static)
         function en_list = get_en_list(cut_list)
             en_list= arrayfun(@(x)(0.5*(x.data.iint(2,3)+x.data.iint(1,3))),...
                 cut_list);
+        end
+        function par=fitpar_selection(fit_params,selection)
+            par = fit_params;
+            par.p = fit_params.p(selection);
+            par.sig = fit_params.sig(selection);
+            par.bp = fit_params.bp(selection);            
+            par.sig = fit_params.bsig(selection);                        
+            par.chisq = fit_params.chisq;   
+            fields = fieldnames(par);
+            for i=1:numel(fields)
+                fld = fields{i};
+                if size(par.(fld),2)==1
+                    par.(fld) = par.(fld)';
+                end
+            end
         end
         function obj=load(filename)
             ld = load(filename);
