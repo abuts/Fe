@@ -50,7 +50,8 @@ disp('*************************************************************')
 disp('*** Fitting loop started ')
 disp('*************************************************************')
 
-parfor i=1:n_en
+for i=1:n_en
+%parfor i=1:n_en
     equal_cuts = {};
     for ii = 1:numel(file_directions)
         direction = file_directions{ii};

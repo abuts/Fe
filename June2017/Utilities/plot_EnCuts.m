@@ -15,7 +15,7 @@ function  [stor,ps]=plot_EnCuts(cut_fname,varargin)
 %   direction:: either
 %               3-vector defining
 %               sequence of equivalent directions
-%              (e.g. [1,0,0] corresponging to <1,0,0> plains or [1,1,1])
+%              (e.g. [1,0,0] corresponding to <1,0,0> plains or [1,1,1])
 %             or
 %              a 3-digit integer, defining a sequence of directions
 %              (e.g 100, 110 or 111);
@@ -31,13 +31,14 @@ if ~keep_fig
     ps = [];
 else
     if tight
-        ps = pic_spread('-tight');
+        ps = fig_spread('-tight');
     else
-        ps = pic_spread();
+        ps = fig_spread();
     end
     
     
 end
+ps.resize_figures = true;
 
 if isstruct(cut_fname)
     stor = EnCutBlock(cut_fname,pars{:});
@@ -83,7 +84,7 @@ for j=1:n_cuts
         fprintf(' err: %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f\n',fiterr(3:10));
     end
     if keep_fig
-        ps = ps.place_pic(fh);
+        ps = ps.place_fig(fh);
         keep_figure();
     else
         pause(1)
