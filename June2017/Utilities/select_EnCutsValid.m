@@ -1,4 +1,4 @@
-en=20:5:250;
+en=40:5:250;
 dir = {'100','110','111'};
 filebase = 'Fe_ei401';
 root_folder = fileparts(fileparts(mfilename('fullpath')));
@@ -19,6 +19,7 @@ for i=1:numel(en)
         dss = ds.select_fitpar(valid);
         target = fullfile(targ_folder,fn);
         dss.save(target);
+        fhh.close_all();
     end
 end
 
