@@ -18,6 +18,9 @@ while ischar(tline)
     %C = strsplit(tline);
     C = textscan(tline,'%4s %4s %4s %4s %14.5f');
     %dat(ih,ik,il,ie) = str2double(C(6));
+    if isnan(C{5})
+        continue
+    end
     dat(ih,ik,il,ie) = C{5};
     ic = ic+1;
     
