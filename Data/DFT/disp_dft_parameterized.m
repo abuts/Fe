@@ -4,49 +4,70 @@ function wdisp = disp_dft_parameterized(qh,qk,ql,en,varargin)
 persistent hi_grid;
 persistent q_axis;
 persistent e_axis;
-%persistent x3;
-%persistent x4;
+persistent magFF;
+A = varargin{1}/pi;
+if numel(A)>1
+    use_magff =A(2);
+    A = A(1);
+else
+    use_magff = varargin{2};
+end
 if isempty(hi_grid)
-    a0 = 2.866;
     e_max = 680;
     path = fileparts(mfilename('fullpath'));
-    if isempty(varargin{1})
-        disp('*** loading dft_data for interploation ****>')
-        hi_grid= load(fullfile(path,'Volume.mat'),'dds');
-        hi_grid = hi_grid.dds;
-        disp('*** completed loading <*****')    
+    if nargin > 6
+        hi_grid = varargin{3};
     else
-        hi_grid = varargin{1};
+        disp('*** loading dft_data for interploation ****>')
+        hi_grid= load(fullfile(path,'Volume.mat'),'dat');
+        hi_grid = hi_grid.dat;
+        disp('*** completed loading <*****')
     end
     q0 = 1;
     %-0.7029    1.4075
     q_axis = single(0:q0/100:q0);
     e_axis = single(0:e_max/500:e_max);
+    
+    a0 = 2.845;
+    bm = bmatrix ([a0,a0,a0],[90,90,90]);
+    mi = MagneticIons('Fe0');
+    magFF = mi.getFF_calculator(bm);
 end
+
+if min(size(qh)) ~= 1
+    sz = size(qh);
+    do_reshape = true;
+    
+    qh = reshape(qh,numel(qh),1);
+    qk = reshape(qk,numel(qh),1);
+    ql = reshape(ql,numel(qh),1);
+    en = reshape(en,numel(qh),1);
+else
+    do_reshape = false;
+end
+qr = [qh,qk,ql];
+%
 % move all vectors into 0-1 quadrant where the interpoland is defined.
-q3 = [qh,qk,ql];
-%sq2 = 1/sqrt(2.);
-%sm = [sq2,sq2,0;sq2,0,sq2;0,sq2,sq2];
-brav = fix(q3);
+brav = fix(qr);
 brav = brav+sign(brav);
 brav = (brav-rem(brav,2));
-%q3r  = brav-floor(brav);
-%qr = single(q3r/sm);
+%
+qr   = single(abs(qr-brav));
+enr  = single(en);
 
-qr = single(abs(q3-brav));
-% qr = zeros(size(q3));
-% for i=1:numel(transf_vec)
-%     qt = q3+transf_vec{i};
-%     valid =qt(:,1)>=0 & qt(:,1)<=1 &qt(:,2)>=0 & qt(:,2) <=1;
-%     qr(valid,:) = qt(valid,:);
-% end
+wdisp = interpn(q_axis,q_axis ,q_axis ,e_axis,hi_grid,...
+    qr(:,1),qr(:,2),qr(:,3),enr,'linear',-1);
+clear qr;
+clear enr;
 
-qhi = single(qr(:,1));
-qki = single(qr(:,2));
-qli = single(qr(:,3));
-en  = single(en);
-
-wdisp = interpn(q_axis,q_axis ,q_axis ,e_axis,hi_grid,qhi,qki,qli,en,'linear',-1);
-
+if use_magff
+    ff  = A*magFF(qh,qk,ql,en,[]);
+    wdisp = wdisp.*ff';
+else
+    wdisp = wdisp*A;
+end
+if do_reshape
+    wdisp = reshape(wdisp,sz);
+end
 
 
