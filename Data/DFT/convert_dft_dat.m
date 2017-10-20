@@ -19,6 +19,7 @@ while ischar(tline)
     C = textscan(tline,'%4s %4s %4s %4s %14.5f');
     %dat(ih,ik,il,ie) = str2double(C(6));
     if isnan(C{5})
+        fprintf('NaN at i%d;j%d,k%d;l%d\n',ih,ik,il,ie);
         continue
     end
     dat(ih,ik,il,ie) = C{5};

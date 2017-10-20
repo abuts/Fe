@@ -2,7 +2,7 @@ function fh=reviewPictures(fh)
 % interactively review set of images
 
 
-p = prompt();
+p = prompt(fh);
 while p ~= 'q'
     switch p
         case 'h'
@@ -16,11 +16,12 @@ while p ~= 'q'
         otherwise
             disp('invalid input')
     end
-    p = prompt();
+    p = prompt(fh);
 end
 
 
-function res = prompt()
-fprintf('Select option: h - hide screen; s - show screen; r - replot; q - quit\n');
+function res = prompt(fh)
+fprintf('Nfig: %d, hidden %d; Select: h - hide screen; s - show screen; r - replot; q - quit\n',...
+    fh.fig_count,fh.n_hidden_fig);
 res = input('?: ','s');
 res = lower(res);
