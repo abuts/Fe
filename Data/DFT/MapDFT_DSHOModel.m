@@ -57,8 +57,8 @@ for i=1:Ne
         par(4) = (em/A_Fe)*((e2-e02)^2+4*G2*e2)/(Gamma*e0*e(i));  % S
         [w1_tf,fp]=fit(w1f,@DSHO_hub,...
             par,[0,1,1,1,1,1],'fit',[1.e-4,40,1.e-6]);
-        %     [w1_tf,fp]=fit(w1f,@DSHO_hub,...
-        %                 par,[0,1,1,1,1,1],'evaluate');
+        %[w1_tf,fp]=fit(w1f,@DSHO_hub,...
+        %    par,[0,1,1,1,1,1],'evaluate');
         
     catch
         continue
@@ -74,22 +74,27 @@ for i=1:Ne
     Gam_vsE(i) = abs(fp.p(3));
     S_ampl(i)  = fp.p(4);
     
-    %     par(2) = J0_vsE(i);
     Gamma = Gam_vsE(i);  % gamma
-    %     par(4) = S_ampl(i);
+    
     bg(i,:) = fp.p(4:5);
     
 end
-disp_q = IX_dataset_1d(e,J0_vsE);
-disp_q.title = 'DSHO fit. J0 + linear background*0.1';
-%disp_q.x_axis = 'En (mEv)';
+disp_q = IX_dataset_1d(e,S_ampl,Gam_vsE);
+disp_q.title = 'DSHO fit. S+-Gamma + linear background';
+disp_q.x_axis = 'En (mEv)';
 acolor('r')
 plot(disp_q);
-bg_d = IX_dataset_1d(e,0.1*bg(:,1));
-bg_d.title = 'backgound*0.1';
+bg_d = IX_dataset_1d(e,bg(:,1));
+bg_d.title = 'backgound';
 
 acolor('k');
 pl(bg_d);
+keep_figure;
+
+J_ds = IX_dataset_1d(e,J0_vsE);
+J_ds.x_axis = 'En (mEv)';
+J_ds.s_axis = 'J0 (mEv)';
+dl(J_ds);
 
 
 function y = DSHO_hub(x, p, varargin)
