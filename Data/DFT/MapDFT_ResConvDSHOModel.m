@@ -22,8 +22,8 @@ dE    = (e_max-e_min)/(Ne-1);
 q  = q_min+(iq-1)*dQ;
 e  = e_min+(ie-1)*dE;
 
-qh = q'-0.5*(q_max+q_min);
-qk = zeros(size(qh));
+qh = q';
+qk = -ones(size(qh));
 ql = zeros(size(qh));
 en = ones(size(qh));
 
@@ -37,7 +37,7 @@ Gam_vsE   = zeros(Ne,1)*NaN;
 
 S_ampl_exp    = zeros(Ne,1)*NaN;
 J0_vsE_exp    = zeros(Ne,1)*NaN;
-Gam_vsE_exp   = zeros(Ne,1)*NaN;
+Gam_vsE   = zeros(Ne,1)*NaN;
 
 bg     = zeros(Ne,2)*NaN;
 
@@ -62,7 +62,7 @@ for i=1:Ne
     end
     Ei = en*e(i);
     fw = disp_dft_parameterized(qh,qk,ql,Ei,[1,0]);
-    w1f = IX_dataset_1d(qh,fw,ones(size(qh)));
+    w1f = IX_dataset_1d(qh-0.5*(q_max+q_min),fw,ones(size(qh)));
     
     % Create "Experimental" resolution convoluted data.
     tfs = tobyfit2(w_guide);
@@ -78,7 +78,7 @@ for i=1:Ne
         
         par0(1) = e(i);
         [em,im] = max(fw);
-        qm = qh(im);
+        qm = qh(im)-0.5*(q_max+q_min);
         e2 = e(i)*e(i);
         e02 = e2/3*(1+2*sqrt(1+3*Gamma*Gamma/e2));
         e0 = sqrt(e02);
@@ -94,20 +94,20 @@ for i=1:Ne
         par(2) = fp.p(3); % Gamma
         par(3) = fp.p(4);  %S
         %
-        S0_ampl(i) = par(3);
         J00_vsE(i) = par(1);
         Gam0_vsE(i) = par(2);
+        S0_ampl(i) = par(3);
+        
         
         const = fp.p(4);
         grad = fp.p(5);
-        %
         tft = tobyfit2(source);
         tft = tft.set_fun(@DSHO_hub,par,[1,1,1]);
         tft = tft.set_bfun(@lin_bg,[const,grad]);
         
         tft = tft.set_mc_points(10);
         
-        tft = tft.set_options('listing',1,'fit_control_parameters',[1.e-4;60;1.e-6]);
+        tft = tft.set_options('listing',1,'fit_control_parameters',[1.e-2;60;1.e-6]);
         
         [w1_tf,fp]=tft.fit;
         
@@ -142,7 +142,7 @@ acolor('g')
 disp_q0 = disp_q;
 disp_q0.signal = S0_ampl;
 disp_q0.error  = Gam0_vsE;
-pl(disp_q0);
+pd(disp_q0);
 
 bg_d = IX_dataset_1d(e,bg(:,1));
 bg_d.title = 'backgound';
