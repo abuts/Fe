@@ -27,17 +27,17 @@ qk = -ones(size(qh));
 ql = zeros(size(qh));
 en = ones(size(qh));
 
-S0_ampl    = zeros(Ne,1)*NaN;
-J00_vsE    = zeros(Ne,1)*NaN;
-Gam0_vsE   = zeros(Ne,1)*NaN;
+S0_ampl    = zeros(3,Ne)*NaN;
+J00_vsE    = zeros(3,Ne)*NaN;
+Gam0_vsE   = zeros(3,Ne)*NaN;
 
-S_ampl    = zeros(Ne,1)*NaN;
-J0_vsE    = zeros(Ne,1)*NaN;
-Gam_vsE   = zeros(Ne,1)*NaN;
+S_ampl    = zeros(3,Ne)*NaN;
+J0_vsE    = zeros(3,Ne)*NaN;
+Gam_vsE   = zeros(3,Ne)*NaN;
 
 S_ampl_exp    = zeros(Ne,1)*NaN;
 J0_vsE_exp    = zeros(Ne,1)*NaN;
-Gam_vsE   = zeros(Ne,1)*NaN;
+Gam_vsE_exp   = zeros(Ne,1)*NaN;
 
 bg     = zeros(Ne,2)*NaN;
 
@@ -61,6 +61,13 @@ for i=1:Ne
         w_guide = set_sample_and_inst(w_guide,sample,@maps_instrument_for_tests,'-efix',600,'S');
     end
     Ei = en*e(i);
+    S0_ampl(1,i) = e(i);
+    J00_vsE(1,i) = e(i);
+    Gam0_vsE(1,i) = e(i);
+    
+    S_ampl(1,i) = e(i);
+    J0_vsE(1,i) = e(i);
+    Gam_vsE(1,i) = e(i);
     fw = disp_dft_parameterized(qh,qk,ql,Ei,[1,0]);
     w1f = IX_dataset_1d(qh-0.5*(q_max+q_min),fw,ones(size(qh)));
     
@@ -94,9 +101,12 @@ for i=1:Ne
         par(2) = fp.p(3); % Gamma
         par(3) = fp.p(4);  %S
         %
-        J00_vsE(i) = par(1);
-        Gam0_vsE(i) = par(2);
-        S0_ampl(i) = par(3);
+        J00_vsE(2,i)  = par(1);
+        Gam0_vsE(2,i) = par(2);
+        S0_ampl(2,i) = par(3);
+        J00_vsE(3,i) = fp.sig(2);
+        Gam0_vsE(3,i)= fp.sig(3);
+        S0_ampl(3,i) = fp.sig(4);
         
         
         const = fp.p(4);
@@ -111,7 +121,8 @@ for i=1:Ne
         
         [w1_tf,fp]=tft.fit;
         
-    catch
+    catch Err
+        disp(['Error: ',Err.message]);
         continue
     end
     acolor('k')
@@ -119,47 +130,62 @@ for i=1:Ne
     acolor('g')
     w1_0tf.x = w1_0tf.x+0.5*(q_max+q_min);
     pl(w1_0tf,'name','Horace 1D plot');
+    w1f.x = w1f.x+0.5*(q_max+q_min);
+    acolor('b')
+    pd(w1f,'name','Horace 1D plot');
     acolor('r')
     pl(w1_tf);
     if  ~fp.converged
         continue
     end
-    J0_vsE(i)  = fp.p(1);
-    Gam_vsE(i) = abs(fp.p(2));
-    S_ampl(i)  = fp.p(3);
+    J0_vsE(2,i)  = fp.p(1);
+    Gam_vsE(2,i) = abs(fp.p(2));
+    S_ampl(2,i)  = fp.p(3);
+    J0_vsE(3,i) = fp.sig(1);
+    Gam_vsE(3,i)= fp.sig(2);
+    S_ampl(3,i) = fp.sig(3);
     
-    Gamma = Gam_vsE(i);  % gamma
+    
+    Gamma = Gam_vsE(2,i);  % gamma
     
     bg(i,:) = fp.bp(:);
     
 end
-disp_q = IX_dataset_1d(e,S_ampl,Gam_vsE*0.1);
-disp_q.title = 'DSHO fit. S+-Gamma + linear background';
-disp_q.x_axis = 'En (mEv)';
+S_q = IX_dataset_1d(S_ampl);
+S0_q = IX_dataset_1d(S0_ampl);
+S_q.title = 'DSHO fit: S + linear background';
+S_q.x_axis = 'En (mEv)';
+S_q.s_axis = 'Ampliture (AU)';
 acolor('r')
-plot(disp_q);
+pd(S_q);
 acolor('g')
-disp_q0 = disp_q;
-disp_q0.signal = S0_ampl;
-disp_q0.error  = Gam0_vsE;
-pd(disp_q0);
+pd(S0_q);
 
 bg_d = IX_dataset_1d(e,bg(:,1));
 bg_d.title = 'backgound';
-
 acolor('k');
 pl(bg_d);
 keep_figure;
 
+G_q = IX_dataset_1d(Gam_vsE);
+G0_q = IX_dataset_1d(Gam0_vsE);
+G_q.title = 'DSHO fit: Gamma';
+G_q.x_axis = 'En (mEv)';
+G_q.s_axis = 'mEv';
 acolor('r')
-J_ds = IX_dataset_1d(e,J0_vsE);
+plot(G_q);
+acolor('g')
+pd(G0_q);
+keep_figure
+
+acolor('r')
+J_ds = IX_dataset_1d(J0_vsE);
+J_ds0 = IX_dataset_1d(J00_vsE);
 J_ds.x_axis = 'En (mEv)';
 J_ds.s_axis = 'J0 (mEv)';
-dl(J_ds);
-J_ds0 = J_ds;
-J_ds0.signal = J00_vsE;
+pd(J_ds);
 acolor('g');
-pl(J_ds0);
+pd(J_ds0);
 keep_figure;
 
 
