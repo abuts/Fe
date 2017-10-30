@@ -1,12 +1,12 @@
 function MapDFT_DSHOModel()
 Nq = 100;
 iq = 1:Nq;
-Ne = 50;
+Ne = 40;
 ie = 1:Ne;
 q_min = 0;
 q_max = 2;
 e_min = 10;
-e_max = 680;
+e_max = 210;
 
 dQ    = (q_max-q_min)/(Nq-1);
 dE    = (e_max-e_min)/(Ne-1);
@@ -18,9 +18,9 @@ qk = -ones(size(qh));
 ql = zeros(size(qh));
 en = ones(size(qh));
 
-S_ampl    = zeros(Ne,1)*NaN;
-J0_vsE    = zeros(Ne,1)*NaN;
-Gam_vsE   = zeros(Ne,1)*NaN;
+S_ampl    = zeros(3,Ne)*NaN;
+J0_vsE    = zeros(3,Ne)*NaN;
+Gam_vsE   = zeros(3,Ne)*NaN;
 bg     = zeros(Ne,2)*NaN;
 
 
@@ -59,6 +59,9 @@ for i=1:Ne
             par,[0,1,1,1,1,1],'fit',[1.e-4,40,1.e-6]);
         %[w1_tf,fp]=fit(w1f,@DSHO_hub,...
         %    par,[0,1,1,1,1,1],'evaluate');
+        S_ampl(1,i) = e(i);
+        J0_vsE(1,i) = e(i);
+        Gam_vsE(1,i) = e(i);
         
     catch
         continue
@@ -70,20 +73,26 @@ for i=1:Ne
     if  ~fp.converged
         continue
     end
-    J0_vsE(i)  = fp.p(2);
-    Gam_vsE(i) = abs(fp.p(3));
-    S_ampl(i)  = fp.p(4);
+    J0_vsE(2,i) = fp.p(2);
+    Gam_vsE(2,i) = abs(fp.p(3));
+    S_ampl(2,i) = fp.p(4);
     
-    Gamma = Gam_vsE(i);  % gamma
+    J0_vsE(3,i) = fp.sig(2);
+    Gam_vsE(3,i) = fp.sig(3);
+    S_ampl(3,i) = fp.sig(4);
     
-    bg(i,:) = fp.p(4:5);
+    
+    
+    Gamma = Gam_vsE(2,i);  % gamma
+    
+    bg(i,:) = fp.p(5:6);
     
 end
-disp_q = IX_dataset_1d(e,S_ampl,Gam_vsE);
-disp_q.title = 'DSHO fit. S+-Gamma + linear background';
+disp_q = IX_dataset_1d(S_ampl);
+disp_q.title = 'DSHO fit. S+ linear background';
 disp_q.x_axis = 'En (mEv)';
-acolor('r')
-plot(disp_q);
+acolor('g')
+dd(disp_q);
 bg_d = IX_dataset_1d(e,bg(:,1));
 bg_d.title = 'backgound';
 
@@ -91,10 +100,19 @@ acolor('k');
 pl(bg_d);
 keep_figure;
 
-J_ds = IX_dataset_1d(e,J0_vsE);
+disp_q = IX_dataset_1d(Gam_vsE);
+disp_q.title = 'DSHO fit: Gamma';
+disp_q.x_axis = 'En (mEv)';
+acolor('r')
+pd(disp_q);
+keep_figure;
+
+
+J_ds = IX_dataset_1d(J0_vsE);
 J_ds.x_axis = 'En (mEv)';
 J_ds.s_axis = 'J0 (mEv)';
-dl(J_ds);
+pd(J_ds);
+keep_figure;
 
 
 function y = DSHO_hub(x, p, varargin)
