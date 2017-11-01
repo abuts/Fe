@@ -18,7 +18,7 @@ if isempty(hi_grid)
     if nargin > 6
         hi_grid = varargin{3};
     else
-        disp('*** loading dft_data for interploation ****>')
+        disp('*** loading dft_data for interpolation ****>')
         hi_grid= load(fullfile(path,'Volume.mat'),'dat');
         hi_grid = hi_grid.dat;
         disp('*** completed loading <*****')
@@ -47,7 +47,7 @@ else
 end
 qr = [qh,qk,ql];
 %
-% move all vectors into 0-1 quadrant where the interpoland is defined.
+% move all vectors into 0-1 quadrant where the interpolant is defined.
 brav = fix(qr);
 brav = brav+sign(brav);
 brav = (brav-rem(brav,2));

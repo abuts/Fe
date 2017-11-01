@@ -1,7 +1,7 @@
 function [disp_q,disp_q0,J_ds,J_ds0]=MapDFT_ResConvDSHOModel()
-Nq = 100;
+Nq = 101;
 iq = 1:Nq;
-Ne = 40;
+Ne = 41;
 ie = 1:Ne;
 q_min = 1;
 q_max = 3;
@@ -9,7 +9,7 @@ e_min = 10;
 e_max = 210;
 
 data_root = fileparts(fileparts(mfilename('fullpath')));
-ds = fullfile(data_root,'sqw','Fe_ei401.sqw');
+ds = fullfile(data_root,'sqw','Fe_ei787.sqw');
 proj = struct('u',[1,0,0],'v',[0,1,0]);
 % w_guide = cut_sqw(ds,proj,[1,0.04,3],[-0.1,0.1],[-0.1,0.1],5);
 % plot(w_guide);
