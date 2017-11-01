@@ -1,4 +1,4 @@
-en=125:5:250;
+en=145:5:250;
 dir = {'100','110','111'};
 filebase = 'Fe_ei401';
 root_folder = fileparts(fileparts(mfilename('fullpath')));
