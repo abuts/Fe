@@ -5,12 +5,12 @@ persistent hi_grid;
 persistent q_axis;
 persistent e_axis;
 persistent magFF;
-A = varargin{1}/pi;
+A = varargin{1};
 if numel(A)>1
     use_magff =A(2);
-    A = A(1);
+    A = A(1)/pi;
 else
-    use_magff = varargin{2};
+    use_magff = varargin{2}/pi;
 end
 if isempty(hi_grid)
     e_max = 680;
