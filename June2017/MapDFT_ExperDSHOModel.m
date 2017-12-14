@@ -62,7 +62,7 @@ for i=1:Ne
     try
         par= [fitpar_guess.J0(2,i),fitpar_guess.Gamma(2,i),fitpar_guess.S(2,i)];
         tft = tobyfit2(exp_file.cut_list);
-        tft = tft.set_fun(@DSHO_hub,par,[0,1,1]);
+        tft = tft.set_fun(@DSHO_hub,par,[1,1,1]);
         tft = tft.set_bfun(@lin_bg,[const,grad]);
         
         tft = tft.set_mc_points(10);
@@ -111,9 +111,9 @@ for i=1:Ne
 end
 fs_res = fig_spread();
 
-S_q = IX_dataset_1d(Sexp_vsE)*100;
+S_q = IX_dataset_1d(Sexp_vsE)*10;
 S_th = IX_dataset_1d(fitpar_guess.S);
-S_q.title = 'DSHO fit S: 100*exper (red) vs res_conv DFT (blue)';
+S_q.title = 'DSHO fit S: 10*exper (red) vs res conv DFT (blue)';
 S_q.x_axis = 'En (mEv)';
 S_q.s_axis = 'Ampliture (AU)';
 acolor('r'); pd(S_q); acolor('b');%pd(S_th);
@@ -127,7 +127,7 @@ keep_figure;
 
 A_dft = IX_dataset_1d(A_dftRC_vsE);
 A_dftNRC = IX_dataset_1d(A_dftNRC_vsE);
-A_dft.title = 'DFT amplitude to fit experimental cuts\n blue -- res_conv DFT, green -- non-convoluted';
+A_dft.title = 'DFT amplitude to fit experimental cuts. blue -- res_conv DFT, green -- non-convoluted';
 A_dft.x_axis = 'En (mEv)';
 A_dft.s_axis = 'Ampliture (AU)';
 acolor('b')
