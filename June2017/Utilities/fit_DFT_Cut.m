@@ -12,13 +12,13 @@ for i=1:numel(cut_list)
 end
 
 % SW amplitude to fit
-par = 0.1;
+par = [0.1,true];
 
 %
-kk = tobyfit2(cut_list);
+kk = tobyfit(cut_list);
 %ff_calc = mff.getFF_calculator(cut_list(1));
 %kk = kk.set_local_foreground(true);
-kk = kk.set_fun(@disp_dft_parameterized,par,1);
+kk = kk.set_fun(@disp_dft_parameterized,par,[1,0]);
 
 
 % set up its own initial background value for each background function
