@@ -42,7 +42,7 @@ end
 %   par = [ff, T, gamma, Seff, gap, J0, J1, J2, 0, 0];
 %
 %
-kk = tobyfit2(obj.cuts_list);
+kk = tobyfit(obj.cuts_list);
 %ff_calc = mff.getFF_calculator(cut_list(1));
 kk = kk.set_local_foreground(true);
 kk = kk.set_fun(@sqw_iron,obj.init_fg_params_,obj.fit_par_range);
