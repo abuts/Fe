@@ -1,8 +1,11 @@
 function wdisp = disp_dft_parameterized(qh,qk,ql,en,varargin)
-% interplate and expand numerical DFT data over whole q-dE space
+% interpolate and expand numerical DFT data over whole q-dE space
 %
 % Use this function as model for Tobyfit or sqw_eval or func_eval
 % algorithms.
+% Accepts one or two input parameters:
+% A and 
+%
 
 persistent hi_grid;
 persistent q_axis;
