@@ -111,7 +111,7 @@ for i=1:n_en
     init_fg_params = all_fg_params(eq_indexes);
     init_bg_params = all_bg_params(eq_indexes);
     %
-    kk = tobyfit2(eq_cuts );
+    kk = tobyfit(eq_cuts );
     if numel(eq_cuts) > 1
         kk = kk.set_local_foreground(true);
         kk = kk.set_fun(@sqw_iron,init_fg_params,fixed_par);
