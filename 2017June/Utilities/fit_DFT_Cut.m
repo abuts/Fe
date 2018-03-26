@@ -1,4 +1,4 @@
-function [fp_arr1,ws_arr_tf]=fit_DFT_Cut(cut_list)
+function [fp_arr1,ws_arr_fitted]=fit_DFT_Cut(cut_list)
 
 
 
@@ -12,26 +12,26 @@ for i=1:numel(cut_list)
 end
 
 % SW amplitude to fit
-par = 0.1;
+par = [0.018,true];
 
 %
 kk = tobyfit(cut_list);
 %ff_calc = mff.getFF_calculator(cut_list(1));
 %kk = kk.set_local_foreground(true);
-kk = kk.set_fun(@disp_dft_parameterized,par,1);
+kk = kk.set_fun(@disp_dft_parameterized,par,[1,0]);
 
 
 % set up its own initial background value for each background function
 %bpin = fp_arr.bp;
-%kk = kk.set_bfun(@lin_bg,bpin);
+kk = kk.set_bfun(@lin_bg,[0.15,0]);
 
 kk = kk.set_mc_points(10);
 %profile on;
 kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-2;60;1.e-6]);
 %kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-4;20;1.e-4]);
 %profile on;
-%[ws_arr_tf,fp_arr1]=kk.simulate;
-[ws_arr_tf,fp_arr1]=kk.fit;
+%[ws_arr_fitted,fp_arr1]=kk.simulate;
+[ws_arr_fitted,fp_arr1]=kk.fit;
 %profile off
 %profile viewer
 
