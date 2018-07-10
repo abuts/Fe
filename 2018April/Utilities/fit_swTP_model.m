@@ -87,9 +87,9 @@ for i=1:size(cut_p,1)
     
     
     
-    const = w1.data.s(1); % take background as the intencity at leftmost point
+    const = w1.data.s(1); % take background as the intensity at leftmost point
     grad  = 0;  % guess background gradient is 0
-    amp=(w0.data.s-const); % guess gausian amplitude
+    amp=(w0.data.s-const); % guess Gaussian amplitude
     
     ic = uint32(I_types.I_cut);     D1FitRez(ic,i)  =amp;
     di = uint32(I_types.dI_cut);    D1FitRez(di,i)  =w0.data.e*(k_max-k_min);
@@ -100,7 +100,7 @@ for i=1:size(cut_p,1)
     try
         [w1_tf,fp3]=fit(w1f,@TwoGaussAndBkgd,...
             [IP,q_range(i),peak_width,const,grad],[1,1,1,1,1],'fit',[1.e-4,40,1.e-6]);
-    catch
+    catch ERR
         ws_valid(i) = false;
         continue
         
@@ -134,20 +134,20 @@ for i=1:size(cut_p,1)
     end
     
     
-%     acolor('k')
-%     pl2=plot(w1f);
-%     acolor('r')
-%     pd(w1_tf);
-%     if cross
-%         hold on
-%         y_min = min( w1.data.s);
-%         y_max = max(w1.data.s);
-%         line([k_min,k_max],[y_min ,y_max ],'Color','r','LineWidth',2)
-%         line([k_min,k_max],[y_max, y_min ],'Color','r','LineWidth',2)
-%         hold off
-%     end
-%     
-%     drawnow;
+    acolor('k')
+    pl2=plot(w1f);
+    acolor('r')
+    pd(w1_tf);
+    if cross
+        hold on
+        y_min = min( w1.data.s);
+        y_max = max(w1.data.s);
+        line([k_min,k_max],[y_min ,y_max ],'Color','r','LineWidth',2)
+        line([k_min,k_max],[y_max, y_min ],'Color','r','LineWidth',2)
+        hold off
+    end
+    
+    drawnow;
 end
 %
 I   = abs(D1FitRez(uint32(I_types.I_cut),:));
@@ -236,7 +236,7 @@ par = [ff, T, gamma, Seff, gap, J1, J2, J3, J4,J5];
 
 %
 cut_list = cut_list(ws_valid);
-kk = tobyfit2(cut_list);
+kk = tobyfit(cut_list);
 %ff_calc = mff.getFF_calculator(cut_list(1));
 kk = kk.set_local_foreground(true);
 kk = kk.set_fun(@sqw_iron,par,[0,0,1,1,0,0,0,0,0,0]);

@@ -1,8 +1,8 @@
 function [result,all_plots]=fit_sw_intensity(data_source,bragg,cut_direction,cut_p,dE,dK)
-% Make range of 1D cuts, fits them with gaussian and found gaussian
+% Make range of 1D cuts, fits them with Gaussian and found Gaussian
 % parameters, fit Gaussian maxima positions with parabola
 % and found parameters of this parabola.
-% Estimante intensity along parabola from Gaussian fit amplitude and
+% Estimate intensity along parabola from Gaussian fit amplitude and
 % correct this intensity by cut properties, dependent on SW curvature
 %Inputs:
 % data_source -- full path and name of the sqw file to cut
@@ -35,7 +35,7 @@ pl1=plot(w2);
 lz 0 2
 hold on
 % remember the place of the last image and place the impage to proper
-% posision
+% position
 mff = MagneticIons('Fe0');
 %w2=mff.fix_magnetic_ff(w2);
 % pl1=plot(w2);
@@ -74,9 +74,9 @@ for i=1:size(cut_p,1)
     
     
     
-    const = w1.data.s(1); % take background as the intencity at leftmost point
+    const = w1.data.s(1); % take background as the intensity at leftmost point
     grad  = 0;  % guess background gradient is 0
-    amp=(w0.data.s-const)*(k_max-k_min); % guess gausian amplitude
+    amp=(w0.data.s-const)*(k_max-k_min); % guess Gaussian amplitude
     
     ic = uint32(I_types.I_cut);     D1FitRez(ic,i)  =amp;
     di = uint32(I_types.dI_cut);    D1FitRez(di,i)  =w0.data.e*(k_max-k_min);
