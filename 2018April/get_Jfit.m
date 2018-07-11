@@ -20,8 +20,14 @@ for i=1:numel(en)
     end
     binding = ld.bind_map(key);
     ind = [binding{:}];
-    par = ld.fitpar.p(ind);
-    err = ld.fitpar.sig(ind);
+    if ~isempty(ld.fitpar)
+        par = ld.fitpar.p(ind);
+        err = ld.fitpar.sig(ind);
+    else
+        par = ld.fp_arr1.p(ind);
+        err = ld.fp_arr1.sig(ind);
+        
+    end
     
     par1 = par{1};
     sig1 = err{1};
@@ -31,7 +37,7 @@ for i=1:numel(en)
     JofEnS(i) = sig1(6);
     SofEnS(i) = sig1(4);
     GofEnS(i) = sig1(3);
-  
+    
 end
 
 valid = ~isnan(JofEn);
@@ -43,18 +49,18 @@ JofEnS = JofEnS(valid);
 SofEnS = SofEnS(valid);
 GofEnS = GofEnS(valid);
 Jds = IX_dataset_1d (en,JofEn,JofEnS);
-Jds.title = 'J0 vs En';
+Jds.title = ['J0 vs En; direction: ',dirId];
 Jds.x_axis = 'En (mEv)';
 Jds.s_axis = 'J0 (mEv)';
 
 Sds = IX_dataset_1d (en,SofEn,SofEnS);
-Sds.title = 'Sw Ampliture vs En';
+Sds.title = ['Sw Ampliture vs En; direction: ',dirId];
 Sds.x_axis = 'En (mEv)';
 Sds.s_axis = 'S';
 
 
 GamDs = IX_dataset_1d (en,GofEn,GofEnS);
-GamDs.title = 'Decay vs En';
+GamDs.title = ['Decay vs En; direction: ',dirId];
 GamDs.x_axis = 'En (mEv)';
 GamDs.s_axis = '\gamma (mEv)';
 
