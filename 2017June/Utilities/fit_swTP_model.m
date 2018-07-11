@@ -29,11 +29,11 @@ proj.uoffset = bragg;
 % 2D cut to investigate further:
 w2 = cut_sqw(data_source,proj,Kr,[-dK,+dK],[-dK,+dK],[]);
 %
-% %figure;
-% pl1=plot(w2);
-% lz 0 2
-% ly 0 140
-% hold on
+%figure;
+plot(w2);
+lz 0 2
+%y 0 140
+hold on
 % remember the place of the last image and place the impage to proper
 % posision
 mff = MagneticIons('Fe0');

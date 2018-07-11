@@ -16,6 +16,12 @@ else
 end
 if numel(direction) == 1
     dir_name = ['[', num2str(direction),']'];
+elseif ischar(direction)
+    if direction(1)~='['
+        dir_name =['[',direction,']'];
+    else
+        dir_name = direction;
+    end
 else
     dir_name  = caption(direction);
 end

@@ -1,5 +1,6 @@
 classdef cuts_processor
-    %
+    % The class helper to take range of cuts and fit these cuts using
+    % Tobyfit and 
     properties
         % the initial (guess) exchange parameters to start fitting
         

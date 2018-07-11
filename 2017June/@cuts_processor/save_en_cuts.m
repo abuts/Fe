@@ -27,15 +27,18 @@ end
 fitted_par_id = obj.fitted_par_id;
 filename = [file_preffix,FileSourceID,bragg_id,fitted_par_id];
 
-fitpar = []; % Will extract it from fp_arr1;
-bg_params = []; % Will extract it from fp_arr1;
+fitpar = obj.fitpar; % Will extract it from fp_arr1 but can be extracted from here;
+bg_params = obj.fitpar.bp; % Will extract it from fp_arr1;
 bind_map = obj.equal_cuts_map;
 fp_arr1  = obj.fitpar;
 save(filename ,'fitpar','bg_params','bragg_list',...
     'file_list','bind_map','fp_arr1');
 
-%   Detailed explanation goes here
+% disable saving energy blocks for the time 
+return;
+
 keys = obj.equal_cuts_map.keys;
+
 
 for i=1:numel(keys)
     theKey = keys{i};
