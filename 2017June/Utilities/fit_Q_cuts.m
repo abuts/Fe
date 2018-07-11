@@ -46,7 +46,7 @@ fixed_par = [0, 0, 1,     1,    0,   0,  0,  0,  0, 0];
 fitpar = cell(n_en,1);
 for i=1:n_en
     % %parfor i=1:n_en
-    kk = tobyfit2(cuts(:,i));
+    kk = tobyfit(cuts(:,i));
     if n_en > 1
         %kk = kk.set_local_foreground(true);
         kk = kk.set_fun(@sqw_iron,init_fg_par{i},fixed_par);

@@ -50,6 +50,7 @@ disp('*************************************************************')
 disp('*** Fitting loop started ')
 disp('*************************************************************')
 
+%
 for i=1:n_en
 %parfor i=1:n_en
     equal_cuts = {};
@@ -136,15 +137,15 @@ for i=1:n_en
     %[w1D_arr1_tf,fp_arr1]=kk.simulate;
     %profile off
     %profile viewer
-    fit_rez{i} = {w1D_arr1_tf,fp_arr1,eq_indexes};
+    fit_rez{i} = {w1D_arr1_tf,fp_arr1,eq_indexes,cut_en(i)};
     %
 end
-
+obj.fitpar.converged = true;
 for  i= 1:n_en
     if isempty(fit_rez{i})
         continue;
     end
-    [w1D_arr1_tf,fp_arr1,eq_cuts_indexes] = fit_rez{i}{:};
+    [w1D_arr1_tf,fp_arr1,eq_cuts_indexes,cut_en0] = fit_rez{i}{:};
     cut_en = arrayfun(cut_en_f ,w1D_arr1_tf);
     if numel(unique(cut_en))>1
         disp(i)
@@ -174,6 +175,7 @@ for  i= 1:n_en
         
     end
     obj.fitpar.chisq = obj.fitpar.chisq+fp_arr1.chisq;    
+    obj.fitpar.converged = obj.fitpar.converged && fp_arr1.converged;        
 end
 obj.fitpar.chisq = obj.fitpar.chisq/n_en;
 obj = obj.setup_j();

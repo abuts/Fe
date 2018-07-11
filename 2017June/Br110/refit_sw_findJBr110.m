@@ -10,6 +10,3 @@ cp.J0 = 16.;
 %cp.J2 = 0;
 cp = cp.refit_sw_findJ();
 
-
-
-

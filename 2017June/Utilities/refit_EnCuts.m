@@ -33,7 +33,7 @@ if iscell(init_fg_param)
 end
 init_bg_param  = init_bg_param(keep_only);
 
-kk = tobyfit2(cut_list);
+kk = tobyfit(cut_list);
 %kk = kk.set_local_foreground(true);
 kk = kk.set_fun(@sqw_iron,init_fg_param,[0,0,1,1,0,1,0,0,0,0]);
 %kk = kk.set_fun(@(h,k,l,e,par)sw_disp(proj,ff_calc,h,k,l,e,par),[parR(1),parR(2),parR(3),ampl_avrg,fwhh_avrg],[1,1,1,1,1]);

@@ -1,18 +1,19 @@
-function [cuts_list,fits_list,fit_par] = plot_dirCut(file_base,varargin)
+function [cuts_list,fits_list,fit_par,fs] = plot_dirCut(file_base,varargin)
 % load from hdd and plot group of cuts corresponding to a particular bragg
 % peak and cut direction
 %
-% The file can be specified directly by its name or by cut' parameters e.g. 
+% The file can be specified directly by its name or by cut' parameters e.g.
 % file_base,Bragg indexes and cut direction where
-% file_base -- the file with cuts or the base name of the sqw file 
+% file_base -- the file with cuts or the base name of the sqw file
 %              the cuts were made or incident energy of this cut
-% Bragg     -- the cuts initial Bragg position 
+% Bragg     -- the cuts initial Bragg position
 % cut_dir   -- the direction the cut was made (e.g. [1,0,0], [0,-1,0], 111, 1-11
 %              [1,1,1], [1,-1,1] etc...)
-% 
+%
 if isnumeric(file_base)
     file_base = ['Fe_ei',num2str(file_base)];
 end
+fs=fig_spread('-tight');
 
 in_files = build_filename_s( file_base,varargin{:});
 for i=1:numel(in_files)
@@ -51,6 +52,7 @@ for i=1:numel(in_files)
     figure('Name',['Intensity scale for peak: ',br_name,' direction: ',dir_name]);
     li1=errorbar(e_axis,S,S_err,'b');
     ly 0 2.5
+    fs = fs.place_fig(li1);
     %
     glob_par = fit_par.p{1};
     glob_err = fit_par.sig{1};
@@ -73,14 +75,17 @@ for i=1:numel(in_files)
     figure('Name',['Inverse lifetime (meV) for peaks: ',br_name,' direction: ',dir_name]);
     li2=errorbar(e_axis,gamma,gamma_err,'b');
     legend(li2,leg);
+    fs = fs.place_fig(li2);
     fits_list = stor.w1D_arr1_tf;
     n_cuts = numel(cuts_list);
     for j=1:n_cuts
         acolor('k');
         plot(cuts_list(j));
         acolor('r');
-        pl(fits_list(j));
+        fh = pl(fits_list(j));
+        fs = fs.place_fig(fh);
         fprintf(' cut N: %d/%d\n',j,n_cuts);
+        fprintf('    : gamma  Seff gap J0  J1  J2    J3\n');
         fprintf(' par: %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f\n',fit_par.p{j}(3:10));
         fprintf(' err: %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f\n',fit_par.sig{j}(3:10));
         pause(1)

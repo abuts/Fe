@@ -1,5 +1,5 @@
 function files_list = build_filename_s( file_base,varargin )
-% sing filebase and Bragg peak /direction qualifier return the list of
+% Using file_base and Bragg peak /direction qualifier return the list of
 % appropriate file names containing appropriate direction cut file(s)
 if nargin == 1
     [~,~,fe]=fileparts(file_base);

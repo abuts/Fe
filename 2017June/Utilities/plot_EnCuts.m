@@ -66,6 +66,7 @@ n_cuts = numel(stor.cuts_list);
 disp('energies:')
 disp(stor.cut_energies');
 cuts_fitpar = stor.fit_param;
+
 for j=1:n_cuts
     acolor('k');
     fh=plot(stor.cuts_list(j));
