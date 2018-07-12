@@ -35,7 +35,7 @@ save(filename ,'fitpar','bg_params','bragg_list',...
     'file_list','bind_map','fp_arr1');
 
 % disable saving energy blocks for the time 
-return;
+%return;
 
 keys = obj.equal_cuts_map.keys;
 

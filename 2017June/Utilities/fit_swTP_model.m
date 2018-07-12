@@ -5,9 +5,9 @@ function [result,all_plots]=fit_swTP_model(data_source,bragg,cut_direction,cut_p
 % correct this intensity by cut properties, dependent on SW curvature
 %Inputs:
 % data_source -- full path and name of the sqw file to cut
-% bragg       -- hkl coordinates of bragg peak to cut around
+% Bragg       -- hkl coordinates of Bragg peak to cut around
 % cut_directio-- hkl vector pointing to the cut direction with central
-%                point of bragg
+%                point of Bragg
 % cut_p       -- array of Q-dE points along cut direction to do 1D cuts
 %                around
 % dE          -- half of energy resolution of the cut
@@ -31,8 +31,8 @@ w2 = cut_sqw(data_source,proj,Kr,[-dK,+dK],[-dK,+dK],[]);
 %
 %figure;
 plot(w2);
-lz 0 2
-%y 0 140
+lz 0 1
+ly 0 400
 hold on
 % remember the place of the last image and place the impage to proper
 % posision
@@ -239,7 +239,7 @@ cut_list = cut_list(ws_valid);
 kk = tobyfit(cut_list);
 %ff_calc = mff.getFF_calculator(cut_list(1));
 kk = kk.set_local_foreground(true);
-kk = kk.set_fun(@sqw_iron,par,[0,0,1,1,0,0,0,0,0,0]);
+kk = kk.set_fun(@sqw_iron,par,[0,0,1,1,0,1,0,0,0,0]);
 %kk = kk.set_fun(@(h,k,l,e,par)sw_disp(proj,ff_calc,h,k,l,e,par),[parR(1),parR(2),parR(3),ampl_avrg,fwhh_avrg],[1,1,1,1,1]);
 %kk = kk.set_bind({1,[1,2],1},{2,[2,2],1},{3,[3,2],1});
 if numel(cut_list) > 1
@@ -258,13 +258,14 @@ kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-4;60;1.e-6]);
 [w1D_arr1_tf,fp_arr1]=kk.fit;
 %profile off
 %profile viewer
-% for i=1:numel(w1D_arr1_tf)
-%     acolor('k');
-%     plot(cut_list(i));
-%     acolor('r');
-%     pd(w1D_arr1_tf(i));
-%     pause(1)
-% end
+for i=1:numel(w1D_arr1_tf)
+    acolor('k');
+    plot(cut_list(i));
+    acolor('r');
+    pd(w1D_arr1_tf(i));
+    disp(fp_arr1.p{i});
+    pause(1)
+end
 %cut_energies = e_sw(valid);
 res_file = rez_name(data_source,bragg,cut_direction);
 es_valid = arrayfun(@(x)(0.5*(x.data.iint(1,3)+x.data.iint(2,3))),cut_list);
