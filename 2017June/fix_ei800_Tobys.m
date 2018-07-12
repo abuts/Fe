@@ -8,7 +8,7 @@
 
 % Set up locations of data sources
 
-data800='d:\data\Fe\sqw_Toby\Fe_ei787.sqw';
+data800=fullfile(pwd,'sqw','Data','Fe_ei787.sqw');
 
 % Clear all exist proj:
 tmp = whos('proj*'); for i=1:numel(tmp), clear(tmp(i).name), end
@@ -146,6 +146,12 @@ win = [w_200_rad, w_200_trans, w_200_vert,...
     w_1m10_trans, w_1m10_vert,...
     w_m110_trans, w_m110_vert];
 
+
+sample=IX_sample(true,[1,0,0],[0,1,0],'cuboid',[0.04,0.03,0.02]);
+for i = 1:numel(win)
+    win(i) = set_sample_and_inst(win(i),sample,@maps_instrument_for_tests,'-efix',600,'S');
+end
+
 kk = tobyfit (win);
 kk = kk.set_fun (@sqw_iron,par,free);
 kk = kk.set_bfun (@linear_bg,[0.15,0]);
@@ -170,16 +176,17 @@ kk = kk.set_options ('list',2);
 for i=1:numel(win)
     acolor k
     plot(win(i))
+    acolor r
     pl(wout.sum(i))
     pl(wout.back(i))
     pause(3)
 end
 
-% From refinement of original sqw file: (Alex copy, unaligned) 
+% From refinement of original sqw file: (Alex copy, unaligned)
 % Refiuned lattice parameter: 2.842  Angstroms
 % Refined rotation vector (deg): < 1 degree
 % rlu_corr =
-% 
+%
 %     0.9977   -0.0123   -0.0042
 %     0.0123    0.9977   -0.0039
 %     0.0043    0.0038    0.9978
@@ -195,7 +202,7 @@ end
 %     0.9984   -0.0124   -0.0053
 %     0.0124    0.9984   -0.0034
 %     0.0053    0.0033    0.9985
-    
+
 
 kk2 = tobyfit (win);
 kk2 = kk2.set_local_foreground;
@@ -209,6 +216,7 @@ kk2 = kk2.set_options ('list',2);
 for i=1:numel(win)
     acolor k
     plot(win(i))
+    acolor r
     pl(wout.sum(i))
     pl(wout.back(i))
     pause(1)

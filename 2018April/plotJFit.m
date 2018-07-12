@@ -22,7 +22,7 @@
 
 
 acolor('r'); aline('-')
-Jds2_1.title = 'J0 vs En; directions <100> <110> and <111>';
+Jds2_1.title = 'J0 vs En; directions <100> <110> and <111> + 3 different input datasets';
 dd(Jds2_1);  aline('--')
 pd(Jds2_3);  aline(':')
 pd(Jds2_8);
