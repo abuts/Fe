@@ -23,6 +23,8 @@ classdef EnCutBlock
     end
     
     methods
+        fh = plot(obj);
+            
         function obj = EnCutBlock(varargin)
             % Inputs:
             % cuts_list
@@ -58,6 +60,8 @@ classdef EnCutBlock
                         obj = varargin{1};
                     end
                     
+                elseif ischar(varargin{1})
+                    obj = EnCutBlock.load(varargin{1});
                 else
                     obj.cuts_list = varargin{1};
                     obj.fits_list = varargin{2};
@@ -66,6 +70,15 @@ classdef EnCutBlock
                         obj.get_en_list(varargin{1});
                 end
             end
+        end
+        
+        function cut_comb = combine_cuts(obj)
+            if iscell(obj.cuts_list_)
+                cutarr = [obj.cuts_list_{:}];
+            else
+                cutarr =obj.cuts_list_;
+            end
+            cut_comb  =combine_cuts(cutarr);
         end
         %
         function en = get.cut_energies(obj)

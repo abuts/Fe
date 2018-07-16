@@ -82,6 +82,8 @@ for j=1:n_cuts
     end
     if numel(fitpar)==10
         fprintf(' par: %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f\n',fitpar(3:10));
+    end
+    if numel(fiterr)==10
         fprintf(' err: %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f\n',fiterr(3:10));
     end
     if keep_fig

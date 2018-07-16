@@ -1,11 +1,11 @@
 function  stor=refit_EnCuts(cut_fname,keep_indexes,varargin)
 % Refit group of equivalent cuts made at given energy and direction
 
-%options = {'-keep_fig'};
-%[ok,mess,keep_fig] = parse_char_options(varargin,options);
-%if~ok
-%    error('plot_EnCuts:invalid_argument',mess);
-%end
+options = {'-combine_cuts'};
+[ok,mess,comb_cuts] = parse_char_options(varargin,options);
+if~ok
+    error('plot_EnCuts:invalid_argument',mess);
+end
 
 
 if isstruct(cut_fname)
@@ -15,21 +15,37 @@ elseif isa(cut_fname,'EnCutBlock')
 else
     stor = load(cut_fname);
 end
-cut_list = stor.cuts_list;
-if exist('keep_indexes','var')
+
+cut_list = EnCutFormat.get_cut_list(stor);
+if exist('keep_indexes','var') && ~isempty(keep_indexes)
     keep_only = false(size(stor.cuts_list));
     keep_only(keep_indexes(:)) = true;
     cut_list = cut_list(keep_only);
-else   
-    keep_only = true(size(stor.cuts_list));
+else
+    keep_only = true(size(cut_list));
 end
-init_fg_param = stor.fit_param.p;
-init_bg_param  = stor.fit_param.bp;
-
+fit_param = EnCutFormat.get_fit_par(stor);
+init_fg_param = fit_param.p;
+init_bg_param  = fit_param.bp;
+if comb_cuts
+    if ~isa(stor,'EnCutBlock')
+        stor = EnCutBlock(stor);
+    end
+    cut_list = stor.combine_cuts();
+    keep_only = false(size(cut_list));
+    keep_only(1) = true;
+end
 if iscell(init_fg_param)
+    if comb_cuts
+        disp(init_fg_param{1})
+    end
     init_fg_param = init_fg_param{1};
     init_fg_param(7) = 0;
     init_fg_param(8) = 0;
+else
+    if comb_cuts
+        disp(init_fg_param)
+    end
 end
 init_bg_param  = init_bg_param(keep_only);
 
@@ -50,7 +66,7 @@ kk = kk.set_mc_points(10);
 kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-2;60;1.e-6]);
 %kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-4;20;1.e-4]);
 %profile on;
-[w1D_arr1_tf,fp_arr1]=kk.fit;
+[w1D_arr1_tf,fp_arr1]=kk.fit('comp');
 %[w1D_arr1_tf,fp_arr1]=kk.simulate;
 %profile off
 %profile viewer
@@ -58,4 +74,8 @@ stor.cuts_list = cut_list;
 stor.fits_list = w1D_arr1_tf;
 stor.fit_param = fp_arr1;
 %stor.cut_energies = cut_fname.cut_energies(keep_only);
-
+if iscell(fp_arr1.p)
+    disp(fp_arr1.p{1});
+else
+    disp(fp_arr1.p);
+end

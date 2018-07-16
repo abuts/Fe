@@ -182,8 +182,8 @@ data_source  = [hd,'/EI200'];
 % -----------------------------------------------------------------------
 % Map files may contain changes in the order of spectra to account for reveral of tubes, some tubes swapped etc.
 % when mapping the correct virtual detector array. The corresponding phx and par files also reflect this
-% reordering, so only use the coresponding phx and par files
-% The monitors have had the smae psectrum numbers for 4to1 (41473,41474,41475) and mid-tubes (577,578,579) since
+% reordering, so only use the corresponding phx and par files
+% The monitors have had the same sectrum numbers for 4to1 (41473,41474,41475) and mid-tubes (577,578,579) since
 % cycle 003. We continue to use the same monitor map files as the original defaults.
 %
 %   4to1_<cycle>.map                        % 1-to-1 mapping of spectra to workspaces

@@ -1,9 +1,16 @@
-en=145:5:250;
+% script helper to look through range of constant energy cuts, 
+% generated during the fitting using cut_processor or cut_le_processor and
+% selecting the nice cuts for future reprocessing using the same classes.
+
+en=50:5:100;
+% cuts directions
 dir = {'100','110','111'};
-filebase = 'Fe_ei401';
+filebase = 'Fe_ei787';
 root_folder = fileparts(fileparts(mfilename('fullpath')));
-source_folder = fullfile(root_folder,'Jvar_All8Braggs');
-targ_folder   = fullfile(root_folder,'Jvar_All8Braggs_SelectedCuts');
+% where the source cuts are located
+source_folder = fullfile(root_folder,'J0varEi800');
+% where to write the 
+targ_folder   = fullfile(root_folder,'J0varEi800_selected_cuts');
 
 for i=1:numel(en)
     for j=1:numel(dir)
@@ -22,6 +29,5 @@ for i=1:numel(en)
         fhh.close_all();
     end
 end
-
 
 
