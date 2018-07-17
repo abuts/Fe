@@ -24,7 +24,7 @@ classdef EnCutBlock
     
     methods
         fh = plot(obj);
-            
+        
         function obj = EnCutBlock(varargin)
             % Inputs:
             % cuts_list
@@ -135,9 +135,9 @@ classdef EnCutBlock
             par = fit_params;
             par.p = fit_params.p(selection);
             par.sig = fit_params.sig(selection);
-            par.bp = fit_params.bp(selection);            
-            par.sig = fit_params.bsig(selection);                        
-            par.chisq = fit_params.chisq;   
+            par.bp = fit_params.bp(selection);
+            par.sig = fit_params.bsig(selection);
+            par.chisq = fit_params.chisq;
             fields = fieldnames(par);
             for i=1:numel(fields)
                 fld = fields{i};
