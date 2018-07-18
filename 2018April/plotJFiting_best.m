@@ -1,28 +1,23 @@
-[Jds2_1,Sds_200K_100,GamDs_200K_100]=get_Jfit('J_CenFit_Fe_ei200br_[0m11]J0-0','<100>');
-[Jds_400K_100,Sds_400K_100,GamDs_400K_100]=get_Jfit('J_CenFit_Fe_ei401br_[0m11]J0-0','<100>');
-[Jds2_11,Sds_200K_110,GamDs_200K_110]=get_Jfit('J_CenFit_Fe_ei200br_[0m11]J0-0','<110>');
-[Jds4_11,Sds_400K_110,GamDs_400K_110]=get_Jfit('J_CenFit_Fe_ei401br_[0m11]J0-0','<110>');
-[Jds2_12,Sds_200K_111,GamDs_200K_111]=get_Jfit('J_CenFit_Fe_ei200br_[0m11]J0-0','<111>');
-[Jds4_12,Sds_400K_111,GamDs_400K_111]=get_Jfit('J_CenFit_Fe_ei401br_[0m11]J0-0','<111>');
 
-[Jds2_3,Sds2_3,GamDs2_3]=get_Jfit('J_CenFit_Fe_ei200_3Braggs_J0-0','<100>');
-[Jds4_3,Sds4_3,GamDs4_3]=get_Jfit('J_CenFit_Fe_ei401_3Braggs_J0-0','<100>');
-[Jds2_31,Sds2_31,GamDs2_31]=get_Jfit('J_CenFit_Fe_ei200_3Braggs_J0-0','<110>');
-[Jds4_31,Sds4_31,GamDs4_31]=get_Jfit('J_CenFit_Fe_ei401_3Braggs_J0-0','<110>');
-[Jds2_32,Sds2_32,GamDs2_32]=get_Jfit('J_CenFit_Fe_ei200_3Braggs_J0-0','<111>');
-[Jds4_32,Sds4_32,GamDs4_32]=get_Jfit('J_CenFit_Fe_ei401_3Braggs_J0-0','<111>');
+[~,Sds200K_100,GamDs200K_100]=get_Jfit('J_CenFit_Fe_ei200_8Braggs_J0-0','<100>');
+[~,Sds200K_110,GamDs200K_110]=get_Jfit('J_CenFit_Fe_ei200_8Braggs_J0-0','<110>');
+[Jds200K,Sds200K_111,GamDs200K_111]=get_Jfit('J_CenFit_Fe_ei200_8Braggs_J0-0','<111>');
 
-[Jds2_8,Sds2_8,GamDs2_8]=get_Jfit('J_CenFit_Fe_ei200_8Braggs_J0-0','<100>');
-[Jds4_8,Sds4_8,GamDs4_8]=get_Jfit('J_CenFit_Fe_ei401_8Braggs_J0-0 ','<100>');
-[Jds2_81,Sds2_81,GamDs2_81]=get_Jfit('J_CenFit_Fe_ei200_8Braggs_J0-0','<110>');
-[Jds4_81,Sds4_81,GamDs4_81]=get_Jfit('J_CenFit_Fe_ei401_8Braggs_J0-0 ','<110>');
-[Jds2_82,Sds2_82,GamDs2_82]=get_Jfit('J_CenFit_Fe_ei200_8Braggs_J0-0','<111>');
-[Jds4_82,Sds4_82,GamDs4_82]=get_Jfit('J_CenFit_Fe_ei401_8Braggs_J0-0 ','<111>');
+[~,Sds400K_100,GamDs400K_100]=get_Jfit('J_CenFit_Fe_ei401_8Braggs_J0-0 ','<100>');
+[~,Sds400K_110,GamDs400K_110]=get_Jfit('J_CenFit_Fe_ei401_8Braggs_J0-0 ','<110>');
+[Jds400K,Sds400K_111,GamDs400K_111]=get_Jfit('J_CenFit_Fe_ei401_8Braggs_J0-0 ','<111>');
 
+[~,Sds800K_100,GamDs800K_100]= get_Jfit('J_CenFit_Fe_ei787_3Braggs_J0-0','<100>');
+[~,Sds800K_110,GamDs800K_110]= get_Jfit('J_CenFit_Fe_ei787_3Braggs_J0-0','<110>');
+[Jds800K,Sds800K_111,GamDs800K_111]= get_Jfit('J_CenFit_Fe_ei787_3Braggs_J0-0','<111>');
+save('J_fit_AllEi_Jtotal','Jds200K','Jds400K','Jds800K',...
+    'Sds200K_100','Sds200K_110','Sds200K_111','GamDs200K_100','GamDs200K_110','GamDs200K_111',...
+    'Sds400K_100','Sds400K_110','Sds400K_111','GamDs400K_100','GamDs400K_110','GamDs400K_111',...    
+    'Sds800K_100','Sds800K_110','Sds800K_111','GamDs800K_100','GamDs800K_110','GamDs800K_111');
 
 
 acolor('r'); aline('-')
-Jds2_1.title = 'J0 vs En; directions <100> <110> and <111> + 3 different input datasets';
+Jds200K.title = 'J0 vs En; directions <100> <110> and <111> + 3 different input datasets';
 dd(Jds2_1);  aline('--')
 pd(Jds2_3);  aline(':')
 pd(Jds2_8);

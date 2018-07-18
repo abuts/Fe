@@ -23,8 +23,13 @@ classdef EnCutBlock
     end
     
     methods
-        fh = plot(obj);
-        
+        % plot first block of the fitted data and return fig handle        
+        fh = plot(obj,varargin);
+        % save first block of the fitted data as set of IX datasets
+        save_as_IXd(obj);
+        %
+        plot_with_dG(obj,varargin);
+        %
         function obj = EnCutBlock(varargin)
             % Inputs:
             % cuts_list

@@ -1,4 +1,4 @@
-[Jds2_8,Sds2_8,GamDs2_8]=get_Jfit('J_CenFit_Fe_ei200_8Braggs_J0-0','<100>');
+[Jd_200K,Sds2_8,GamDs2_8]=get_Jfit('J_CenFit_Fe_ei200_8Braggs_J0-0','<100>');
 [Jds4_8,Sds4_8,GamDs4_8]=get_Jfit('J_CenFit_Fe_ei401_8Braggs_J0-0 ','<100>');
 [Jds8_3,Sds8_3,GamDs8_3]= get_Jfit('J_CenFit_Fe_ei787_3Braggs_J0-0','<100>');
 

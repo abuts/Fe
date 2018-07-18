@@ -1,4 +1,7 @@
-en = 50:5:220;
+% read EnCuts for a specific direction combine them into single
+% symmetrized cut, fit this cut and extract fit parameters for plotting and analysis
+%
+en = 100;
 G = NaN*zeros(numel(en),1);
 J = NaN*zeros(numel(en),1);
 S = NaN*zeros(numel(en),1);
@@ -6,8 +9,8 @@ Gs = NaN*zeros(numel(en),1);
 Js = NaN*zeros(numel(en),1);
 Ss = NaN*zeros(numel(en),1);
 source_dir = 'D:\Data\Fe\2017June\J0var_All_8Braggs';
-Ei = 401;
-dir = '111';
+Ei = 200;
+dir = '100';
 
 for i=1:numel(en)
     fname = sprintf('EnCuts_Fe_ei%d_dE%d_dir_!%s!.mat',Ei,en(i),dir);
@@ -24,7 +27,7 @@ for i=1:numel(en)
         Gs(i) = cb.fit_param.sig(3);
         Ss(i) = cb.fit_param.sig(4);
         Js(i) = cb.fit_param.sig(6);
-   
+        cb.plot();
     catch ME
         warning('Can not refit or combune cuts for energy %d, Reason %s',en(i),ME.message)
     end
