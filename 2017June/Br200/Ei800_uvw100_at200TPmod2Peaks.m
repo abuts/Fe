@@ -1,6 +1,6 @@
 function Ei800_uvw100_at200TPmod2Peaks(varargin)
 
-data_source= fullfile(pwd,'sqw','Data','Fe_ei787.sqw');
+data_source= fullfile(fileparts(pwd),'sqw','Data','Fe_ei787.sqw');
 bragg = [2,0,0];
 
 

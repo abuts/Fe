@@ -4,8 +4,13 @@ function wdisp = disp_dft_parameterized(qh,qk,ql,en,varargin)
 % Use this function as model for Tobyfit or sqw_eval or func_eval
 % algorithms.
 % Accepts one or two input parameters:
-% A and 
-%
+% Two (or one) elements Array A containing:
+% A(1) -- the amplitude of theoretical magnetic scattering, used as fitting parameter to 
+%         fit theoretical magnetic scattering and the experimental results
+% A(2) -- if present and == 1 specifies if one needs to apply magnetic form factor corrections, 
+%         or ignore these corrections if A(2) == 0
+%         if its absent, the magnetic form factor sign should be defined as the second 
+%         parameter of the function
 
 persistent hi_grid;
 persistent q_axis;
@@ -27,7 +32,7 @@ if isempty(hi_grid)
         disp('*** loading dft_data for interpolation ****>')
         hi_grid= load(fullfile(path,'Volume.mat'),'dat');
         hi_grid = hi_grid.dat;
-        disp('*** completed loading <*****')
+        disp('*** loading completed  <*****')
     end
     q0 = 1;
     %-0.7029    1.4075
