@@ -1,6 +1,6 @@
 function [a0,slope,a_interp,delta]=FeT_expansion(Ti)
-% calculate lattice parameters ol Alplha Fe from the 
-% results, published at:
+% calculate Temperature dependance of the lattice parameters ol Alplha Fe 
+% from the results, published at:
 %   Basinski, Z. S., Hume-Rothery, W. & Sutton, A. L. 
 %   The Lattice Expansion of Iron. 
 %  Proc. R. Soc. Lond. Ser. Math. Phys. Sci. 229, 459 (1955).
@@ -24,8 +24,8 @@ source =...
     92	11.6360;...
     73	11.6330;...
     20	11.6310];
-T = source(:,1);
-a = (source(:,2)*2).^(1/3);
+T = source(:,1); % Tn in K
+a = (source(:,2)*2).^(1/3); % lattice parameter (A)
 
 [p,S]=polyfit(T,a,3) ;
 a0 = p(end);

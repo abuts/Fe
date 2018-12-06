@@ -4,7 +4,7 @@ function fp_data = get_fitpar_vs_en(obj,n_fitpar,direction,en_list)
 % Input :
 % n_fitpar  -- number of the parameter to extract
 % direction -- the direction of extraction
-% en_list   -- if provided, range of energies to extact parameter
+% en_list   -- if provided, range of energies to extract parameter
 %              if not, maximal object's energy range will be used
 %
 % Output:
