@@ -15,7 +15,7 @@ if nargin>1
     mi = MagneticIons('Fe0');
     w2c = mi.correct_mag_ff(w2c);
 end
-plot(w2c);
+fh = plot(w2c);
 lx -2.5 2.5
 ly -2.5 2.5
 
@@ -25,3 +25,8 @@ else
     lz 0 0.3
 end
 
+sample=IX_sample(true,[1,0,0],[0,1,0],'cuboid',[0.04,0.03,0.02]);
+w2c = set_sample_and_inst(w2c,sample,@maps_instrument_for_tests,'-efix',600,'A');
+
+d = 0.4;
+resolution_plot(w2c,[0,-1-d;0,-1+d;0,1-d;0,1+d;-1-d,0;-1+d,0;1-d,0;1+d,0],'fig',fh)
