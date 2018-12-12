@@ -1,6 +1,6 @@
 function [ampl,bg] = fit_cut_110_GH_Ei1400()
 Emax = 400;
-dE   = 5;
+dE   = 10;
 Efit_min = 70;
 Dqh = [0.85,1.15];
 Dqk = [-0.15,0.15];
@@ -92,7 +92,7 @@ function [A,err,bg_val,bg_err,fgs]=fit_encut(en_cut,fgs)
 acolor('k');
 fh= plot(en_cut);
 kk = tobyfit(en_cut );
-kk = kk.set_fun(@disp_dft_parameterized,[0.1,1],[1,0]);
+kk = kk.set_fun(@disp_dft_parameterized,[0.045,1],[0,0]);
 % set up its own initial background value for each background function
 kk = kk.set_bfun(@(x,par)(par(1)),0);
 
