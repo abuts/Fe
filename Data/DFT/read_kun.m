@@ -21,7 +21,9 @@ q = sqrt(q1.^2+q2.^2+q3.^2);
 if ~exist('IXd_format','var')
     IXd_format = false;
 end
-cont = IX_dataset_2d(q(1,:),dE(:,1),s);
-if ~IXd_format
-    q_bg = [q_bg;q_end];
+if IXd_format
+    cont = IX_dataset_2d(q(1,:),dE(:,1),s);
+else
+    q_bg = [q_bg,q_end];
+    cont = {q,dE,s};
 end

@@ -6,6 +6,8 @@ classdef FCC_Igrid
         
         dr_ = 0.02;
         fcc_Q1_grid_
+        int_cell_
+        cell_dir_
     end
     
     properties
@@ -22,7 +24,10 @@ classdef FCC_Igrid
             [0,1,1;1,0,0];[0,1,1;1,0,0]};...  % All GP+PH
             {[1,0,0;0,1,0];[1,0,0;0,0,1];...
             [0,1,0;0,0,1];[0,1,0;1,1,1];...
-            [1,1,1;1,0,0];[1,1,1;0,0,1]}};    % All 2*HN
+            [1,1,1;1,0,0];[1,1,1;0,0,1]};...   % All 2*HN
+            {[1/2,1/2,0;1/2,1/2,1];[1/2,0,1/2;1/2,1,1/2];...
+            [0,1/2,1/2;1,1/2,1/2]}...           % All 2*NP
+            };
         %obj.p_{5} = {[1,0,0;0,1,1];[0,1,0;1,1,1];[0,0,1;1,1,1]}; % All 2*HP
     end
     
@@ -33,6 +38,61 @@ classdef FCC_Igrid
             end
             obj.dr_ = dr;
             obj = build_Q1_grid_(obj);
+            [obj.int_cell_,obj.cell_dir_] = import_Kun_2Q1();
+        end
+        function disp = calc_sqw(obj,qh,qk,ql,en)
+            qr = [qh,qk,ql];
+            %
+            % move all vectors into 0-1 quadrant where the interpolant is defined.
+            brav = fix(qr);
+            brav = brav+sign(brav);
+            brav = (brav-rem(brav,2));
+            %
+            qr   = single(abs(qr-brav));
+            enr  = single(en);
+            
+            ind = floor(qr/obj.dr_)+1;
+            linind = sub2ind(size(obj.fcc_Q1_grid_), ind(:,1),  ind(:,2), ind(:,3));            
+
+            int_ind = obj.fcc_Q1_grid_(linind);
+            disp = zeros(size(qh));
+            for i=1:numel(obj.p_)
+                sym = obj.p_{i};
+                sym_ind = floor(int_ind/100);
+                this_ind = (sym_ind == i);
+                selected_ind = find(this_ind);
+                this_q = qr(this_ind,:);
+                this_e = enr(this_ind);
+                dir_ind = int_ind(this_ind) -sym_ind(this_ind)*100;
+                interpol_coeff = obj.int_cell_{i};
+                iX = interpol_coeff{1};
+                iY = interpol_coeff{2};                
+                Z = interpol_coeff{3};                                
+                for j=1:numel(sym)
+                    dir= sym{j};      
+                    [e1,e2,e3,l1] = build_ort(dir(1,:),dir(2,:));                    
+                    this_dir = (dir_ind == j);
+                    e_dir = this_e(this_dir);
+                    if isempty(e_dir)
+                        continue;
+                    end
+                    q_dir = this_q(this_dir,:)-dir(1,:);
+
+                    dir_ind = selected_ind(this_dir);
+                    dist = sqrt((q_dir*e2').^2+(q_dir*e3').^2);
+                    close_enough = dist<=obj.dr_;
+                    e_line  = e_dir(close_enough);
+                    if isempty(e_line)
+                        continue
+                    end
+                    q_dir = q_dir(close_enough,:);
+                    dir_ind = dir_ind(close_enough);
+                    q_line = q_dir*e1';
+                    
+                    sig = interpn(iX(1,:),iY(:,1),Z',q_line,e_line,'linear',-1);
+                    disp(dir_ind) = sig;
+                end
+            end
         end
         
         
@@ -43,7 +103,6 @@ classdef FCC_Igrid
             N1 = floor(1/obj.dr_);
             obj.dr_ = 1/N1;
             obj.fcc_Q1_grid_ = zeros(N1,N1,N1);
-            %di = 0:N1-1;
             Ni = [N1-1;N1-1;N1-1];
             dr = obj.dr_;
             dr_r = dr/10;
@@ -53,34 +112,23 @@ classdef FCC_Igrid
                     dir= sym{j};
                     e0 = dir(1,:);
                     e1 = dir(2,:);
-                    e01 = e1-e0;
-                    l1 = sqrt(e01*e01');
-                    ort = e01/l1;
-                    orz = (ort == 0);
-                    if any(orz)
-                        ort1 = zeros(1,3);
-                        z0 = find(orz,1);
-                        ort1(z0)= 1;
-                    else
-                        ort1 =[0,-ort(3),ort(2)]/sqrt(ort(3)^2+ort(2)^2);
-                    end
-                    ort2 = cross(ort,ort1);
+                    [ort,ort1,ort2,l1] = build_ort(e0,e1);
                     
                     d1 = ort.*(0:dr_r:l1-dr_r)';
-                    grid = [d1-ort1*dr;d1+ort1*dr;d1-ort2*dr;d1+ort2*dr];
+                    grid = [d1;d1-ort1*dr;d1+ort1*dr;d1-ort2*dr;d1+ort2*dr];
                     grid = grid + repmat(e0.*Ni'*dr,size(grid,1),1);
                     Ngrid = floor(grid/dr);
                     %Ngrid = Ngrid+repmat(e0.*Ni',size(Ngrid,1),1);
                     p_j1 = floor(Ngrid(:,1))+1;
                     p_j1 = obj.check_limits_(p_j1,1,N1);
-                    p_j2 = floor(Ngrid(:,2))+1;                    
-                    p_j2 = obj.check_limits_(p_j2,1,N1);                    
-                    p_j3 = floor(Ngrid(:,3))+1;                    
-                    p_j3 = obj.check_limits_(p_j3,1,N1);                    
-                    linind = sub2ind(size(obj.fcc_Q1_grid_), p_j1, p_j2,p_j3);                    
+                    p_j2 = floor(Ngrid(:,2))+1;
+                    p_j2 = obj.check_limits_(p_j2,1,N1);
+                    p_j3 = floor(Ngrid(:,3))+1;
+                    p_j3 = obj.check_limits_(p_j3,1,N1);
+                    linind = sub2ind(size(obj.fcc_Q1_grid_), p_j1, p_j2,p_j3);
                     linind = unique(linind);
                     obj.fcc_Q1_grid_(linind)=100*i+j;
-
+                    
                     %p_j =floor(e0'.*Ni+e01'*di)+1;
                     %obj.fcc_Q1_grid_(p_j(1,:),p_j(2,:),p_j(3,:))=i;
                 end
