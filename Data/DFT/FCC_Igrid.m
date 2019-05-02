@@ -78,7 +78,7 @@ classdef FCC_Igrid
                     end
                     q_dir = this_q(this_dir,:)-dir(1,:);
 
-                    dir_ind = selected_ind(this_dir);
+                    dir_ind_sel = selected_ind(this_dir);
                     dist = sqrt((q_dir*e2').^2+(q_dir*e3').^2);
                     close_enough = dist<=obj.dr_;
                     e_line  = e_dir(close_enough);
@@ -86,11 +86,11 @@ classdef FCC_Igrid
                         continue
                     end
                     q_dir = q_dir(close_enough,:);
-                    dir_ind = dir_ind(close_enough);
+                    dir_ind_sel = dir_ind_sel(close_enough);
                     q_line = q_dir*e1';
                     
                     sig = interpn(iX(1,:),iY(:,1),Z',q_line,e_line,'linear',-1);
-                    disp(dir_ind) = sig;
+                    disp(dir_ind_sel) = sig;
                 end
             end
         end
