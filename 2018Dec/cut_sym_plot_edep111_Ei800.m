@@ -5,15 +5,22 @@ pr = projection([1/sqrt(2),-1/sqrt(2),0],[0,0,1],[-1/sqrt(2),-1/sqrt(2),0]);
 dat = fullfile(pwd,'sqw','data','Fe_ei787.sqw');
 l0 = -1;
 dL = [l0-0.1,l0+0.1];
-
-v1=[-1/sqrt(2),-1/sqrt(2),0]; v2=[0,0,1]; v3=[1,1,0];
-w2 = cut_sqw(dat,pr,[-3,0.05,2.5],[-2.5,0.05,2.5],dL,[0,dE,400]);
-w2 =symmetrise_sqw(w2,v1,v2,v3);
-v1 = [1/sqrt(2),-1/sqrt(2),0];
-v2=[-1/sqrt(2),-1/sqrt(2),0]; v3=[1,1,0];
-w2 =symmetrise_sqw(w2,v1,v2,v3);
-
-
+sym_file_name = 'cut_sym_plot_edep111Ei800.mat';
+persistent w2
+if isempty(w2)
+    
+    if ~(exist(sym_file_name,'file')==2)
+        v1=[-1/sqrt(2),-1/sqrt(2),0]; v2=[0,0,1]; v3=[1,1,0];
+        w2 = cut_sqw(dat,pr,[-3,0.05,2.5],[-2.5,0.05,2.5],dL,[0,dE,400]);
+        w2 =symmetrise_sqw(w2,v1,v2,v3);
+        v1 = [1/sqrt(2),-1/sqrt(2),0];
+        v2=[-1/sqrt(2),-1/sqrt(2),0]; v3=[1,1,0];
+        w2 =symmetrise_sqw(w2,v1,v2,v3);
+        save(sym_file_name ,'w2')
+    else
+        load(sym_file_name,'w2');
+    end
+end
 if extract_background
     bg = cut_sqw(dat,pr,bg_par{:});
     bgc = replicate(bg,w2);

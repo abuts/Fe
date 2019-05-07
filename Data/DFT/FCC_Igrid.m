@@ -11,6 +11,13 @@ classdef FCC_Igrid
     end
     
     properties
+        % the property to select one of five calculated symmetry directions
+        % if empry, all directions are considered
+        panel_dir    = []
+        % the property selects one of the equivalend symmetry directions
+        % from equivalent directions, appropriate for selected symmetry
+        % directions. If empty, all directions are used
+        equiv_sym    = []
     end
     properties(Constant)
         %p_ = {{[0,0,0;1,0,0];[0,0,0;0,1,0];[0,0,0;0,0,1];...
@@ -63,9 +70,14 @@ classdef FCC_Igrid
             
             int_ind = obj.fcc_Q1_grid_(linind);
             disp = zeros(size(qh));
-            for i=1:numel(obj.p_)
-            %for i=1:1
-                sym = obj.p_{i};
+            if isempty(obj.panel_dir)
+                all_dir = obj.p_;
+            else
+                all_dir = obj.p_(obj.panel_dir);
+            end
+            
+            for i=1:numel(all_dir)
+                sym = all_dir{i};
                 sym_ind = floor(int_ind/100);
                 this_ind = (sym_ind == i);
                 selected_ind = find(this_ind);
@@ -76,10 +88,19 @@ classdef FCC_Igrid
                 iX = interpol_coeff{1};
                 iY = interpol_coeff{2};
                 Z = interpol_coeff{3};
-                for j=1:numel(sym)
-                    dir= sym{j};
+                
+                sym_ind = 1:numel(sym);
+                if isempty(obj.equiv_sym)
+                    all_sym = sym;
+                else
+                    sym_ind = sym_ind(obj.equiv_sym);
+                    all_sym = sym(obj.equiv_sym);
+                end
+                for j=1:numel(all_sym)
+                    j_dir = sym_ind(j);
+                    dir= all_sym{j};
                     [e1,e2,e3,l1] = build_ort(dir(1,:),dir(2,:));
-                    this_dir = (dir_ind == j);
+                    this_dir = (dir_ind == j_dir);
                     e_dir = this_e(this_dir);
                     if isempty(e_dir)
                         continue;

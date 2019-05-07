@@ -1,5 +1,5 @@
 function bp=gen_rf_points_110(d,bragg_list)
-
+% build 
 np = size(bragg_list,1);
 bp = zeros(4*np,2);
 for i=1:np

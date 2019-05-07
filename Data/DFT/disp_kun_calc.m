@@ -17,7 +17,7 @@ persistent magFF;
 A = varargin{1};
 if numel(A)>1
     use_magff =A(2);
-    A = abs(A(1))/pi;
+    Amp = abs(A(1))/pi;
 else
     use_magff = varargin{2}/pi;
 end
@@ -29,6 +29,10 @@ if isempty(fcc_igrid)
     bm = bmatrix ([a0,a0,a0],[90,90,90]);
     mi = MagneticIons('Fe0');
     magFF = mi.getFF_calculator(bm);
+end
+if numel(A) > 2
+    fcc_igrid.panel_dir = A(3);
+    fcc_igrid.equiv_sym = A(4);    
 end
 
 if min(size(qh)) ~= 1
@@ -46,10 +50,10 @@ end
 wdisp = fcc_igrid.calc_sqw(qh,qk,ql,en);
 
 if use_magff
-    ff  = A*magFF(qh,qk,ql,en,[]);
+    ff  = Amp*magFF(qh,qk,ql,en,[]);
     wdisp = wdisp.*ff';
 else
-    wdisp = wdisp*A;
+    wdisp = wdisp*Amp;
 end
 if do_reshape
     wdisp = reshape(wdisp,sz);
