@@ -13,6 +13,10 @@ classdef FCC_Igrid
     properties
     end
     properties(Constant)
+        %p_ = {{[0,0,0;1,0,0];[0,0,0;0,1,0];[0,0,0;0,0,1];...
+        %    [1,1,0;0,1,0];[1,1,0;1,0,0]}}
+        %            {[0,0,0;1,0,0];[0,0,0;0,1,0];[0,0,0;0,0,1];...
+        %            [1,1,0;0,1,0];[1,1,0;1,0,0];[1,1,0;1,1,1];...
         p_ = {...
             {[0,0,0;1,0,0];[0,0,0;0,1,0];[0,0,0;0,0,1];...
             [1,1,0;0,1,0];[1,1,0;1,0,0];[1,1,0;1,1,1];...
@@ -52,11 +56,15 @@ classdef FCC_Igrid
             enr  = single(en);
             
             ind = floor(qr/obj.dr_)+1;
-            linind = sub2ind(size(obj.fcc_Q1_grid_), ind(:,1),  ind(:,2), ind(:,3));            
-
+            Nx = size(obj.fcc_Q1_grid_,1);
+            on_edge = ind>Nx;
+            ind(on_edge) = Nx;
+            linind = sub2ind(size(obj.fcc_Q1_grid_), ind(:,1),  ind(:,2), ind(:,3));
+            
             int_ind = obj.fcc_Q1_grid_(linind);
             disp = zeros(size(qh));
             for i=1:numel(obj.p_)
+            %for i=1:1
                 sym = obj.p_{i};
                 sym_ind = floor(int_ind/100);
                 this_ind = (sym_ind == i);
@@ -66,18 +74,18 @@ classdef FCC_Igrid
                 dir_ind = int_ind(this_ind) -sym_ind(this_ind)*100;
                 interpol_coeff = obj.int_cell_{i};
                 iX = interpol_coeff{1};
-                iY = interpol_coeff{2};                
-                Z = interpol_coeff{3};                                
+                iY = interpol_coeff{2};
+                Z = interpol_coeff{3};
                 for j=1:numel(sym)
-                    dir= sym{j};      
-                    [e1,e2,e3,l1] = build_ort(dir(1,:),dir(2,:));                    
+                    dir= sym{j};
+                    [e1,e2,e3,l1] = build_ort(dir(1,:),dir(2,:));
                     this_dir = (dir_ind == j);
                     e_dir = this_e(this_dir);
                     if isempty(e_dir)
                         continue;
                     end
                     q_dir = this_q(this_dir,:)-dir(1,:);
-
+                    
                     dir_ind_sel = selected_ind(this_dir);
                     dist = sqrt((q_dir*e2').^2+(q_dir*e3').^2);
                     close_enough = dist<=obj.dr_;
@@ -89,7 +97,7 @@ classdef FCC_Igrid
                     dir_ind_sel = dir_ind_sel(close_enough);
                     q_line = q_dir*e1';
                     
-                    sig = interpn(iX(1,:),iY(:,1),Z',q_line,e_line,'linear',-1);
+                    sig = interpn(iX(1,:),iY(:,1),Z',q_line,e_line,'linear',NaN);
                     disp(dir_ind_sel) = sig;
                 end
             end

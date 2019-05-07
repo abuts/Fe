@@ -21,8 +21,9 @@ if numel(A)>1
 else
     use_magff = varargin{2}/pi;
 end
+fcc_igrid = FCC_Igrid();
 if isempty(fcc_igrid)
-    fcc_igrid = FCC_Igrid();
+    %    fcc_igrid = FCC_Igrid();
     
     a0 = 2.845;
     bm = bmatrix ([a0,a0,a0],[90,90,90]);
