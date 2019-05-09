@@ -1,12 +1,12 @@
 function MapKUN_DSHOModel()
 Nq = 100;
 iq = 1:Nq;
-Ne = 40;
+Ne = 100;
 ie = 1:Ne;
 q_min = 0;
 q_max = 2;
 e_min = 10;
-e_max = 210;
+e_max = 500;
 
 dQ    = (q_max-q_min)/(Nq-1);
 dE    = (e_max-e_min)/(Ne-1);

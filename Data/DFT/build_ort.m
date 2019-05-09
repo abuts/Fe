@@ -1,7 +1,12 @@
 function [e1,e2,e3,l1] = build_ort(e0,e1)
 % build orthogonal right coordinate system around the vector, defined by
 % two input vectors e0 and e1
-e01 = e1-e0;
+if ~exist('e1','var')
+    e01 = e0;
+else    
+    e01 = e1-e0;    
+end
+
 l1 = sqrt(e01*e01');
 e1 = e01/l1;
 ortz = (e1 == 0);

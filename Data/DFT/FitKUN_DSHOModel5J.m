@@ -1,19 +1,42 @@
 function FitKUN_DSHOModel5J()
 % fit Kun sumulations using 5 coordination spheres J model
 %
-Nq = 100;
-iq = 1:Nq;
-Ne = 40;
-ie = 1:Ne;
-q_min = 0;
-q_max = 2;
-e_min = 10;
-e_max = 210;
 
-dQ    = (q_max-q_min)/(Nq-1);
-dE    = (e_max-e_min)/(Ne-1);
-q  = q_min+(iq-1)*dQ;
-e  = e_min+(ie-1)*dE;
+alatt = [2.84,2.84,2.84];
+angdeg = [90,90,90];
+u=[1,0,0];
+v = [0,1,0];
+psi = 0;
+
+
+fcc = FCC_Igrid();
+
+sym_list = [1,2,3,4,5];
+dir_list = [1,1,1,1,1];
+%sqw_obj = repmat(sqw(),1,numel(sym_list));
+Ei = 801;
+for i=1:numel(sym_list)
+    [q_range,e_range,dir] = fcc.get_range(sym_list(i),dir_list(i));
+    sqqw =fake_sqw(e_range,q_range,'',Ei,1, alatt, angdeg,...
+        u, v, psi, 0, 0, 0, 0);
+    sqqw = sqw_eval(sqqw{1},@disp_kun_calc,[1,0,sym_list(i),dir_list(i)]);
+    
+    [u,v] = build_ort(dir);
+    proj = struct('u',u,'v',v);
+    sqqw  = cut_sqw(sqqw,proj,[],[-0.1,0.1],[-0.1,0.1],[]);
+    if i==1
+        sqw_obj = repmat(sqqw,1,numel(sym_list));
+    else
+        sqw_obj(i) = sqqw;
+    end
+    plot(sqw_obj(i));
+end
+
+
+
+
+%data_dir = fileparts(fileparts(mfilename('fullpath')));
+%par_file = fullfile(data_dir,'sources','SPE_EI401','map15052_ei400meV.nxspe');
 
 qh = q';
 qk = -ones(size(qh));
