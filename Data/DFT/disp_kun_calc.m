@@ -21,9 +21,10 @@ if numel(A)>1
 else
     use_magff = varargin{2}/pi;
 end
+
 fcc_igrid = FCC_Igrid();
-if isempty(fcc_igrid)
-    %    fcc_igrid = FCC_Igrid();
+if isempty(magFF)
+    %fcc_igrid = FCC_Igrid();
     
     a0 = 2.845;
     bm = bmatrix ([a0,a0,a0],[90,90,90]);
@@ -33,6 +34,9 @@ end
 if numel(A) > 2
     fcc_igrid.panel_dir = A(3);
     fcc_igrid.equiv_sym = A(4);    
+end
+if numel(A) > 4
+    fcc_igrid.cut_width = A(5);
 end
 
 if min(size(qh)) ~= 1

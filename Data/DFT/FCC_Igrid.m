@@ -8,6 +8,10 @@ classdef FCC_Igrid
         fcc_Q1_grid_
         int_cell_
         cell_dir_
+        cut_width_;
+    end
+    properties(Dependent)
+        cut_width
     end
     
     properties
@@ -18,6 +22,8 @@ classdef FCC_Igrid
         % from equivalent directions, appropriate for selected symmetry
         % directions. If empty, all directions are used
         equiv_sym    = []
+        %
+        
     end
     properties(Constant)
         %p_ = {{[0,0,0;1,0,0];[0,0,0;0,1,0];[0,0,0;0,0,1];...
@@ -28,16 +34,16 @@ classdef FCC_Igrid
             {[0,0,0;1,0,0];[0,0,0;0,1,0];[0,0,0;0,0,1];...
             [1,1,0;0,1,0];[1,1,0;1,0,0];[1,1,0;1,1,1];...
             [1,0,1;0,0,1];[1,0,1;1,0,0];[1,0,1;1,1,1];...
-            [0,1,1;0,1,0];[0,1,1;0,0,1];[0,1,1;1,1,1]};... % All GH
+            [0,1,1;0,1,0];[0,1,1;0,0,1];[0,1,1;1,1,1]};... % All GH (12)
             {[0,0,0;1,1,0];[0,0,0;1,0,1];[0,0,0;0,1,1];...
-            [1,1,0;1,0,1];[1,1,0;0,1,1];[1,0,1;0,1,1]};... % All 2*GN
+            [1,1,0;1,0,1];[1,1,0;0,1,1];[1,0,1;0,1,1]};... % All 2*GN (6)
             {[0,0,0;1,1,1];[1,1,0;0,0,1];...
-            [0,1,1;1,0,0];[0,1,1;1,0,0]};...  % All GP+PH
+            [0,1,1;1,0,0];[0,1,1;1,0,0]};...  % All GP+PH  (4)
             {[1,0,0;0,1,0];[1,0,0;0,0,1];...
             [0,1,0;0,0,1];[0,1,0;1,1,1];...
-            [1,1,1;1,0,0];[1,1,1;0,0,1]};...   % All 2*HN
+            [1,1,1;1,0,0];[1,1,1;0,0,1]};...   % All 2*HN (6)
             {[1/2,1/2,0;1/2,1/2,1];[1/2,0,1/2;1/2,1,1/2];...
-            [0,1/2,1/2;1,1/2,1/2]}...           % All 2*NP
+            [0,1/2,1/2;1,1/2,1/2]}...           % All 2*NP (3)
             };
         %obj.p_{5} = {[1,0,0;0,1,1];[0,1,0;1,1,1];[0,0,1;1,1,1]}; % All 2*HP
     end
@@ -59,7 +65,7 @@ classdef FCC_Igrid
             e_range = ids{2}(:,1);
             npe = numel(e_range);
             de = (max(e_range) - min(e_range))/(npe-1);
-            i = 0:npe-1;            
+            i = 0:npe-1;
             e_range = min(e_range)+de*i;
             
             q_dir = sym{n_dir};
@@ -74,6 +80,58 @@ classdef FCC_Igrid
             q_range = q_range+q_var;
         end
         function disp = calc_sqw(obj,qh,qk,ql,en)
+            qr = [qh,qk,ql];
+            %
+            % move all vectors into 0-1 quadrant where the interpolant is defined.
+            brav = fix(qr);
+            brav = brav+sign(brav);
+            brav = (brav-rem(brav,2));
+            %
+            qr   = single(abs(qr-brav));
+            enr  = single(en);
+            
+            disp = zeros(size(qh));
+            if isempty(obj.panel_dir)
+                error('FCC_Igrid:invalid_argument',...
+                    'the function needs pannel direction parameter to be set');
+            else
+                all_dir = obj.p_(obj.panel_dir);
+            end
+            
+            for i=1:numel(all_dir)
+                sym = all_dir{i};
+                
+                interpol_coeff = obj.int_cell_{obj.panel_dir(i)};
+                iX = interpol_coeff{1};
+                iY = interpol_coeff{2};
+                Z = interpol_coeff{3};
+                
+                if isempty(obj.equiv_sym)
+                    error('FCC_Igrid:invalid_argument',...
+                        'the function needs summetry direction parameter to be set');
+                else
+                    all_sym = sym(obj.equiv_sym);
+                end
+                for j=1:numel(all_sym)
+                    dir= all_sym{obj.equiv_sym(j)};
+                    [e1,e2,e3,l1] = build_ort(dir(1,:),dir(2,:));
+                    
+                    q_dir = qr-dir(1,:);
+                    dist = sqrt((q_dir*e2').^2+(q_dir*e3').^2);
+                    close_enough = dist<=obj.cut_width_;
+                    e_line  = enr(close_enough);
+                    if isempty(e_line)
+                        continue
+                    end
+                    q_dir = q_dir(close_enough,:);
+                    q_line = q_dir*e1';
+                    
+                    disp(close_enough) = interpn(iX(1,:),iY(:,1),Z',q_line,e_line,'linear',0);
+                end
+            end
+        end
+        
+        function disp = calc_sqw_all(obj,qh,qk,ql,en)
             qr = [qh,qk,ql];
             %
             % move all vectors into 0-1 quadrant where the interpolant is defined.
@@ -106,7 +164,7 @@ classdef FCC_Igrid
                 this_q = qr(this_ind,:);
                 this_e = enr(this_ind);
                 dir_ind = int_ind(this_ind) -sym_ind(this_ind)*100;
-                interpol_coeff = obj.int_cell_{i};
+                interpol_coeff = obj.int_cell_{obj.panel_dir(i)};
                 iX = interpol_coeff{1};
                 iY = interpol_coeff{2};
                 Z = interpol_coeff{3};
@@ -131,7 +189,7 @@ classdef FCC_Igrid
                     
                     dir_ind_sel = selected_ind(this_dir);
                     dist = sqrt((q_dir*e2').^2+(q_dir*e3').^2);
-                    close_enough = dist<=obj.dr_;
+                    close_enough = dist<=obj.cut_width_;
                     e_line  = e_dir(close_enough);
                     if isempty(e_line)
                         continue
@@ -148,6 +206,13 @@ classdef FCC_Igrid
         
         function gen_sqw2d(n_dir,n_sym)
         end
+        function qw = get.cut_width(obj)
+            qw = obj.cut_width_;
+        end
+        function obj = set.cut_width(obj,qw)
+            obj.cut_width_ = qw;
+        end
+        
     end
     methods(Access=private)
         function obj = build_Q1_grid_(obj)
