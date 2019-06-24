@@ -94,12 +94,10 @@ classdef FCC_Igrid
             if isempty(obj.panel_dir)
                 error('FCC_Igrid:invalid_argument',...
                     'the function needs pannel direction parameter to be set');
-            else
-                all_dir = obj.p_(obj.panel_dir);
             end
             
-            for i=1:numel(all_dir)
-                sym = all_dir{i};
+            for i=1:numel(obj.panel_dir)
+                sym = obj.p_{obj.panel_dir(i)};
                 
                 interpol_coeff = obj.int_cell_{obj.panel_dir(i)};
                 iX = interpol_coeff{1};
@@ -113,7 +111,7 @@ classdef FCC_Igrid
                     all_sym = sym(obj.equiv_sym);
                 end
                 for j=1:numel(all_sym)
-                    dir= all_sym{obj.equiv_sym(j)};
+                    dir= all_sym{j};
                     [e1,e2,e3,l1] = build_ort(dir(1,:),dir(2,:));
                     
                     q_dir = qr-dir(1,:);
