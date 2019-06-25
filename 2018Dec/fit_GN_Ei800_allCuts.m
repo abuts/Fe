@@ -1,7 +1,7 @@
 function [ampl,bg] = fit_GN_Ei800_allCuts()
 Emax = 450;
 dE   = 5;
-Efit_min = 330;
+Efit_min = 50;
 Kun_width = 0.1;
 Dqk = [-0.1,0.1];
 Dql = [-0.1,0.1];
@@ -60,6 +60,7 @@ for i=1:nfp
         break;
     else
         cut2fit = cut2fit(valid);
+        kun_sym_dir  = kun_sym_dir(valid);
     end
     [A,err,bg_val,bg_er,fgs]=fit_encut(cut2fit,fgs,2,kun_sym_dir,Kun_width);
     sv_ampl(i) = A;
