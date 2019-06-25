@@ -59,7 +59,17 @@ for i=1:nfp
     cut2fit = cell(1,numel(proj));
     for j=1:numel(proj)
         cut2fit{j}  = cut_sqw(w2all{j},proj{j},[-3,0.02,3],Dqk ,Dql,[en(i)-dE,en(i)+dE]);
+        if isempty(cut2fit{j}.data.pix)
+            cut2fit{j} = [];
+        end
     end
+    valid = cellfun(@(ds)(isa(ds,'sqw')),cut2fit);
+    if ~any(valid)
+        break;
+    else
+        cut2fit = cut2fit(valid);
+    end
+    
     [A,err,bg_val,bg_er,fgs]=fit_encut(cut2fit,fgs,1,kun_sym_dir,Kun_width);
     sv_ampl(i) = A;
     fit_err(i) = err;
