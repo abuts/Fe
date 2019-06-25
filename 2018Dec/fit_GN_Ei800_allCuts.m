@@ -61,7 +61,7 @@ for i=1:nfp
     else
         cut2fit = cut2fit(valid);
     end
-    [A,err,bg_val,bg_er,fgs]=fit_encut(cut2fit,fgs,kun_sym_dir,Kun_width);
+    [A,err,bg_val,bg_er,fgs]=fit_encut(cut2fit,fgs,2,kun_sym_dir,Kun_width);
     sv_ampl(i) = A;
     fit_err(i) = err;
     bg_fit(i) = bg_val;
@@ -80,56 +80,4 @@ pd(ampl);
 acolor('r')
 bg = IX_dataset_1d(en,bg_fit,bg_err);
 pd(bg);
-
-function [A,err,bg_val,bg_err,fgs]=fit_encut(en_cuts,fgs,kun_sym_dir,Kun_width )
-%bg_val  =0;
-%bg_err = 0;
-acolor('k');
-fh= plot(en_cuts{1});
-for i=2:numel(en_cuts)
-    pd(en_cuts{i});
-end
-kk = tobyfit(en_cuts{:});
-fg_arr = cell(1,numel(kun_sym_dir));
-fg_par = cell(1,numel(kun_sym_dir));
-fg_free = cell(1,numel(kun_sym_dir));
-bg_arr  = cell(1,numel(kun_sym_dir));
-bg_par  = cell(1,numel(kun_sym_dir));
-for i=1:numel(kun_sym_dir)
-    fg_arr{i} = @disp_kun_calc;
-    fg_par{i} = [1,1,2,kun_sym_dir(i),Kun_width];
-    fg_free{i} = [1,0,0,0,0];
-    bg_arr{i} = @(x,par)(par(1));
-    bg_par{i} = 0;
-end
-
-kk = kk.set_fun(fg_arr,fg_par,fg_free);
-kk = kk.set_bind ({1, [1,1]});
-
-% set up its own initial background value for each background function
-kk = kk.set_bfun(bg_arr,bg_par);
-
-kk = kk.set_mc_points(10);
-%profile on;
-kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-4;20;1.e-4]);
-%kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-2;20;1.e-4]);
-%profile on;
-%[w1d_arr_tf,fitpar]=kk.simulate;
-[w1d_arr_tf,fitpar]=kk.fit;
-acolor('r');
-for i=1:numel(en_cuts)
-    pl(w1d_arr_tf{i});
-end
-par = fitpar.p{1};
-A   = abs(par(1));
-sig = fitpar.sig{1};
-err = sig(1);
-bp = fitpar.bp{1};
-bg_val = bp(1);
-bsig = fitpar.bsig{1};
-bg_err = bsig(1);
-if exist('fgs','var')
-    fgs = fgs.place_fig(fh);
-end
-
 
