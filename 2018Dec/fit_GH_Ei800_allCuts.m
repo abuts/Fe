@@ -68,6 +68,7 @@ for i=1:nfp
         break;
     else
         cut2fit = cut2fit(valid);
+        kun_sym_dir = kun_sym_dir(valid);
     end
     
     [A,err,bg_val,bg_er,fgs]=fit_encut(cut2fit,fgs,1,kun_sym_dir,Kun_width);
