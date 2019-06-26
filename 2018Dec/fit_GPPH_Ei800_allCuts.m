@@ -13,8 +13,8 @@ Dql = [-0.1,0.1];
 %kun_sym_dir2 = [2,2,2,2];
 %proj3 = {projection([-1,1,1],[1,1,0],'uoffset',[1,1,0]),projection([-1,1,1],[1,1,0],'uoffset',[1,1,0])};
 %kun_sym_dir3 = [2,2];
-proj = {projection([-1,1,1],[1,1,0],'uoffset',[2,0,0]),projection([1,-1,1],[1,1,0],'uoffset',[0,2,0])};
-kun_sym_dir = [1,1];
+proj = {projection([-1,-1,1],[-1,1,0],'uoffset',[2,0,0]),projection([-1,-1,1],[-1,1,0],'uoffset',[0,2,0]),projection([-1,1,1],[1,1,0],'uoffset',[2,0,0]),projection([1,-1,1],[1,1,0],'uoffset',[0,2,0])};
+kun_sym_dir = [1,1,1,1];
 %pr = projection([1,-1,0],[1,1,0]);
 dat = fullfile(pwd,'sqw','data','Fe_ei787.sqw');
 
@@ -59,10 +59,10 @@ for i=1:nfp
         break;
     else
         cut2fit = cut2fit(valid);
-        kun_sym_dir = kun_sym_dir(valid);        
+        kun_sym_sel = kun_sym_dir(valid);        
     end
     
-    [A,err,bg_val,bg_er,fgs]=fit_encut(cut2fit,fgs,1,kun_sym_dir,Kun_width);
+    [A,err,bg_val,bg_er,fgs]=fit_encut(cut2fit,fgs,1,kun_sym_sel,Kun_width);
     sv_ampl(i) = A;
     fit_err(i) = err;
     bg_fit(i) = bg_val;

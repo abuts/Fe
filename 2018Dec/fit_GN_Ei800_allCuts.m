@@ -60,9 +60,9 @@ for i=1:nfp
         break;
     else
         cut2fit = cut2fit(valid);
-        kun_sym_dir  = kun_sym_dir(valid);
+        kun_sym_sel  = kun_sym_dir(valid);
     end
-    [A,err,bg_val,bg_er,fgs]=fit_encut(cut2fit,fgs,2,kun_sym_dir,Kun_width);
+    [A,err,bg_val,bg_er,fgs]=fit_encut(cut2fit,fgs,2,kun_sym_sel,Kun_width);
     sv_ampl(i) = A;
     fit_err(i) = err;
     bg_fit(i) = bg_val;
