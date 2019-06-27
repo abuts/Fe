@@ -2,7 +2,7 @@ function [A,err,bg_val,bg_err,fgs]=fit_encut(en_cuts,fgs,kun_sym,kun_sym_dir,Kun
 % function to fit range of energy cuts with Kun's simulations.
 %
 %inputs:
-%en_cuts -- list of energy cuts for given symmetry direction. 
+%en_cuts -- list of energy cuts for given symmetry direction.
 % fgs    -- class fig_spread used to spread images illiustrating the
 %           progress of the simulations
 % kun_sym   the number of the symmetry direction to sumulate. The numbers
@@ -10,7 +10,7 @@ function [A,err,bg_val,bg_err,fgs]=fit_encut(en_cuts,fgs,kun_sym,kun_sym_dir,Kun
 %           managing Kun's simulations
 % kun_sym_dir -- the number of sub-symmetry for each cut (the ort within
 %          the FCC cube [0,0,0->1,1,1] where Kun's simulations are expanded
-%          to. 
+%          to.
 % Kun_width -- the width of the cut, in hkl directions. The points, located
 %          within this distance from the choosen symmetry direction are
 %          projected to the symmetry direction and used as the source of
@@ -51,16 +51,30 @@ kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-4;20;1.e-4]);
 %[w1d_arr_tf,fitpar]=kk.simulate;
 [w1d_arr_tf,fitpar]=kk.fit;
 acolor('r');
+if ~iscell(w1d_arr_tf)
+    w1d_arr_tf = {w1d_arr_tf};
+    multiple_cuts = false;
+else
+    multiple_cuts = true;
+end
 for i=1:numel(en_cuts)
     pl(w1d_arr_tf{i});
 end
-par = fitpar.p{1};
+if multiple_cuts
+    par = fitpar.p{1};
+    sig = fitpar.sig{1};
+    bp = fitpar.bp{1};
+    bsig = fitpar.bsig{1};
+else
+    par = fitpar.p;
+    sig = fitpar.sig;
+    bp = fitpar.bp;
+    bsig = fitpar.bsig;
+    
+end
 A   = abs(par(1));
-sig = fitpar.sig{1};
 err = sig(1);
-bp = fitpar.bp{1};
 bg_val = bp(1);
-bsig = fitpar.bsig{1};
 bg_err = bsig(1);
 if exist('fgs','var')
     fgs = fgs.place_fig(fh);
