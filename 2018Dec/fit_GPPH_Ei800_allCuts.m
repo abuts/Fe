@@ -3,6 +3,7 @@ Emax = 450;
 dE   = 5;
 Efit_min = 50;
 Kun_width = 0.1;
+Kun_sym = 3;
 
 Dqk = [-0.1,0.1];
 Dql = [-0.1,0.1];
@@ -17,7 +18,12 @@ proj = {projection([1,1,1],[1,-1,0],'uoffset',[0,0,0]),projection([-1,1,1],[1,1,
         projection([-1,1,1],[1,1,0],'uoffset',[2,0,0]),projection([-1,1,-1],[1,1,0],'uoffset',[2,0,0]),...   !-5
         projection([1,-1,1],[1,1,0],'uoffset',[0,2,0]),projection([1,-1,-1],[1,1,0],'uoffset',[0,2,0])};    %!-5
 kun_sym_dir = [1,1,1,1,  2,2,2,2, 2,2, 1,1,1,1,1,1,1,1];
-%pr = projection([1,-1,0],[1,1,0]);
+% trying to extract mainly PH part 
+proj = {projection([-1, 1,1],[1,1,0],'uoffset',[0,1,0]),projection([-1,1,-1],[-1,1,0],'uoffset',[0,1,0]),...
+        projection([1,1,1],[1,-1,0],'uoffset',[0,1,0]),projection([1,1,-1],[1,-1,0],'uoffset',[0,1,0]),...    
+        projection([1,-1,1],[1,-1,0],'uoffset',[1,0,0]),projection([1,1,1],[1,-1,0],'uoffset',[1,0,0]),...
+        projection([1,-1,-1],[1,-1,0],'uoffset',[1,0,0]),projection([1,1,-1],[1,-1,0],'uoffset',[1,0,0])};
+kun_sym_dir = [3,3,3,3,4,4,4,4];
 dat = fullfile(pwd,'sqw','data','Fe_ei787.sqw');
 
 
@@ -31,7 +37,7 @@ for i=1:numel(proj)
     plot(w2all{i});
     ly 0 400
     lz  0 1
-    w2tha{i} = sqw_eval(w2all{i},@disp_kun_calc,[1,0,3,kun_sym_dir(i),Kun_width]);
+    w2tha{i} = sqw_eval(w2all{i},@disp_kun_calc,[1,0,Kun_sym,kun_sym_dir(i),Kun_width]);
     plot(w2tha{i});
     ly 0 400
     lz  0 1
@@ -64,7 +70,7 @@ for i=1:nfp
         kun_sym_sel = kun_sym_dir(valid);        
     end
     
-    [A,err,bg_val,bg_er,fgs]=fit_encut(cut2fit,fgs,1,kun_sym_sel,Kun_width);
+    [A,err,bg_val,bg_er,fgs]=fit_encut(cut2fit,fgs,Kun_sym,kun_sym_sel,Kun_width);
     sv_ampl(i) = A;
     fit_err(i) = err;
     bg_fit(i) = bg_val;
