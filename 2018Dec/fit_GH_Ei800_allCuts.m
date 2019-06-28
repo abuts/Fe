@@ -3,6 +3,7 @@ Emax = 450;
 dE   = 5;
 Efit_min = 50;
 Kun_width = 0.1;
+kun_sym = 1;
 
 Dqk = [-0.1,0.1];
 Dql = [-0.1,0.1];
@@ -41,7 +42,7 @@ for i=1:numel(proj)
     plot(w2all{i});
     ly 0 400
     lz  0 1
-    w2tha{i} = sqw_eval(w2all{i},@disp_kun_calc,[1,1,1,kun_sym_dir(i),Kun_width]);
+    w2tha{i} = sqw_eval(w2all{i},@disp_kun_calc,[1,1,kun_sym,kun_sym_dir(i),Kun_width]);
     plot(w2tha{i});
     ly 0 400
     lz  0 1
@@ -57,6 +58,12 @@ sv_ampl = NaN*zeros(1,numel(en));
 fit_err = NaN*zeros(1,numel(en));
 bg_fit   = NaN*zeros(1,numel(en));
 bg_err   = NaN*zeros(1,numel(en));
+
+bg_par = struct();
+bg_par.all_bg = cell(1,numel(en));
+bg_par.all_bge = cell(1,numel(en));
+bg_par.en = NaN*zeros(1,numel(en));
+
 fgs = fig_spread('-tight');
 for i=1:nfp
     cut2fit = cell(1,numel(proj));
@@ -74,11 +81,16 @@ for i=1:nfp
         kun_sym_sel = kun_sym_dir(valid);
     end
     
-    [A,err,bg_val,bg_er,fgs]=fit_encut(cut2fit,fgs,1,kun_sym_sel,Kun_width);
+    [A,err,bg_val,bg_er,fgs,bp,bpsig]=fit_encut(cut2fit,fgs,kun_sym,kun_sym_sel,Kun_width);    
     sv_ampl(i) = A;
     fit_err(i) = err;
     bg_fit(i) = bg_val;
     bg_err(i) = bg_er;
+    %
+    bg_par.en(i) = en(i);
+    bg_par.all_bg{i} = bp;
+    bg_par.all_bge{i} = bpsig;
+    save('bg_model_GH','bg_par');
 end
 acolor('b')
 errorbar(en,sv_ampl,fit_err)

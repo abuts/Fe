@@ -53,6 +53,12 @@ sv_ampl = NaN*zeros(1,numel(en));
 fit_err = NaN*zeros(1,numel(en));
 bg_fit   = NaN*zeros(1,numel(en));
 bg_err   = NaN*zeros(1,numel(en));
+
+bg_par = struct();
+bg_par.all_bg = cell(1,numel(en));
+bg_par.all_bge = cell(1,numel(en));
+bg_par.en = NaN*zeros(1,numel(en));
+
 fgs = fig_spread('-tight');
 for i=1:nfp
     cut2fit = cell(1,numel(proj));
@@ -70,11 +76,16 @@ for i=1:nfp
         kun_sym_sel = kun_sym_dir(valid);        
     end
     
-    [A,err,bg_val,bg_er,fgs]=fit_encut(cut2fit,fgs,Kun_sym,kun_sym_sel,Kun_width);
+    [A,err,bg_val,bg_er,fgs,bp,bpsig]=fit_encut(cut2fit,fgs,kun_sym,kun_sym_sel,Kun_width);    
     sv_ampl(i) = A;
     fit_err(i) = err;
     bg_fit(i) = bg_val;
     bg_err(i) = bg_er;
+    %
+    bg_par.en(i) = en(i);
+    bg_par.all_bg{i} = bp;
+    bg_par.all_bge{i} = bpsig;
+    save('bg_model_GPPH','bg_par');
 end
 acolor('b')
 errorbar(en,sv_ampl,fit_err)

@@ -10,11 +10,11 @@ Dql = [-0.1,0.1];
 
 
 proj = {projection([1,0,1],[0,1,0],'uoffset',[1,0,0]),projection([1,0,-1],[0,1,0],'uoffset',[1,0,0]),...
-        projection([0,1,1],[1,0,0],'uoffset',[1,0,0]),projection([0,1,-1],[1,0,0],'uoffset',[1,0,0]),...    
-        projection([0,1,1],[1,0,0],'uoffset',[0,1,0]),projection([0,1,-1],[1,0,0],'uoffset',[0,1,0]),...    
-        projection([1,0,1],[0,1,0],'uoffset',[0,1,0]),projection([1,0,-1],[0,1,0],'uoffset',[0,1,0]),...            
-        projection([-1,1,0],[1,1,0],'uoffset',[1,0,0]),projection([1,1,0],[1,-1,0],'uoffset',[1,0,0]),...};
-        projection([-1,-1,0],[1,-1,0],'uoffset',[0,1,0]),projection([1,1,0],[1,-1,0],'uoffset',[0,1,0])};
+    projection([0,1,1],[1,0,0],'uoffset',[1,0,0]),projection([0,1,-1],[1,0,0],'uoffset',[1,0,0]),...
+    projection([0,1,1],[1,0,0],'uoffset',[0,1,0]),projection([0,1,-1],[1,0,0],'uoffset',[0,1,0]),...
+    projection([1,0,1],[0,1,0],'uoffset',[0,1,0]),projection([1,0,-1],[0,1,0],'uoffset',[0,1,0]),...
+    projection([-1,1,0],[1,1,0],'uoffset',[1,0,0]),projection([1,1,0],[1,-1,0],'uoffset',[1,0,0]),...};
+    projection([-1,-1,0],[1,-1,0],'uoffset',[0,1,0]),projection([1,1,0],[1,-1,0],'uoffset',[0,1,0])};
 kun_sym_dir = [2,2,5,5,3,3,4,4  ,1,1,1,1];
 
 %pr = projection([1,-1,0],[1,1,0]);
@@ -47,6 +47,10 @@ sv_ampl = NaN*zeros(1,numel(en));
 fit_err = NaN*zeros(1,numel(en));
 bg_fit   = NaN*zeros(1,numel(en));
 bg_err   = NaN*zeros(1,numel(en));
+bg_par = struct();
+bg_par.all_bg = cell(1,numel(en));
+bg_par.all_bge = cell(1,numel(en));
+bg_par.en = NaN*zeros(1,numel(en));
 fgs = fig_spread('-tight');
 for i=1:nfp
     cut2fit = cell(1,numel(proj));
@@ -64,11 +68,16 @@ for i=1:nfp
         kun_sym_sel = kun_sym_dir(valid);
     end
     
-    [A,err,bg_val,bg_er,fgs]=fit_encut(cut2fit,fgs,kun_sym,kun_sym_sel,Kun_width);
+    [A,err,bg_val,bg_er,fgs,bp,bpsig]=fit_encut(cut2fit,fgs,kun_sym,kun_sym_sel,Kun_width);
     sv_ampl(i) = A;
     fit_err(i) = err;
     bg_fit(i) = bg_val;
     bg_err(i) = bg_er;
+    %
+    bg_par.en(i) = en(i);
+    bg_par.all_bg{i} = bp;
+    bg_par.all_bge{i} = bpsig;
+    save('bg_model_HN','bg_par');
 end
 acolor('b')
 errorbar(en,sv_ampl,fit_err)

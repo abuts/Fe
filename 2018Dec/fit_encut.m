@@ -1,4 +1,4 @@
-function [A,err,bg_val,bg_err,fgs]=fit_encut(en_cuts,fgs,kun_sym,kun_sym_dir,Kun_width )
+function [A,err,bg_val,bg_err,fgs,bp,bsig]=fit_encut(en_cuts,fgs,kun_sym,kun_sym_dir,Kun_width )
 % function to fit range of energy cuts with Kun's simulations.
 %
 %inputs:
@@ -63,8 +63,8 @@ end
 if multiple_cuts
     par = fitpar.p{1};
     sig = fitpar.sig{1};
-    bp = fitpar.bp{1};
-    bsig = fitpar.bsig{1};
+    bp = [fitpar.bp{:}];
+    bsig = [fitpar.bsig{:}];
 else
     par = fitpar.p;
     sig = fitpar.sig;
