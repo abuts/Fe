@@ -24,8 +24,8 @@ proj = {projection([1,0,0],[0,1,0],'uoffset',[0,-1,0]),projection([1,0,0],[0,1,0
 %kun_sym_dir = [4,1,4];
 kun_sym_dir = [4,1,4,5,2,5,6,6,6,10,8,1,2,1,2];
 
-proj = {projection([1,0,0],[0,1,0],'uoffset',[0,0,0]),projection([1,0,0],[0,1,0],'uoffset',[2,0,0])};
-kun_sym_dir = [1,1];
+% proj = {projection([1,0,0],[0,1,0],'uoffset',[0,0,0]),projection([1,0,0],[0,1,0],'uoffset',[2,0,0])};
+% kun_sym_dir = [1,1];
 
 %pr = projection([1,-1,0],[1,1,0]);
 dat = fullfile(pwd,'sqw','data','Fe_ei787.sqw');
