@@ -10,8 +10,10 @@ proj = {projection([1,-1,0],[1,1,0],'uoffset',[1,1,0]),projection([1,1,0],[1,-1,
     projection([1,0,1],[1,0,-1]),projection([1,0,-1],[1,0,1]),...
     projection([0,1,1],[0,1,-1]),projection([0,1,-1],[0,1,1])};
 kun_sym_dir = [1,1,1,2,2,3,3];
-% proj = {projection([1,-1,0],[1,1,0]),projection([1,1,0],[1,-1,0])};
-% kun_sym_dir = [1,1];
+
+% selected directions:
+proj = {projection([1,-1,0],[1,1,0],'uoffset',[1,1,0])};
+kun_sym_dir = [1];
 
 %pr = projection([1,-1,0],[1,1,0]);
 dat = fullfile(pwd,'sqw','data','Fe_ei787.sqw');
@@ -83,7 +85,7 @@ for i=1:nfp
     bg_par.all_bg(i,valid)  = bp;
     bg_par.all_bge(i,valid) = bpsig;
 
-    save('bg_model_GN','bg_par');
+    save('bg_model_data_GN','bg_par');
 end
 acolor('b')
 errorbar(en,sv_ampl,fit_err)
