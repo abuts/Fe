@@ -51,12 +51,14 @@ classdef FCC_Igrid
             obj = build_Q1_grid_(obj);
             [obj.int_cell_,obj.cell_dir_] = import_Kun_2Q1();
         end
-        function [q_range,e_range,dir] = get_range(obj,n_sym,n_dir)
+        function [q_range,e_range,dir,center] = get_range(obj,n_sym,n_dir)
             sym = obj.p_{n_sym};
             ids = obj.int_cell_{n_sym};
             npt = size(ids{1},2);
             
-            e_range = ids{2}(:,1);
+            bc = ids{2}(:,1);
+            be = bc(2:end)-bc(1:end-1);
+            e_range = [bc(1)-0.5*be(1);be;bc(end)+0.5*be(end)];
             npe = numel(e_range);
             de = (max(e_range) - min(e_range))/(npe-1);
             i = 0:npe-1;            
@@ -66,11 +68,13 @@ classdef FCC_Igrid
             
             q0  = q_dir(1,:);
             dir = q_dir(2,:)-q0;
-            q_step = dir/(npt-1);
+            q_step = dir/(npe-1);
+            center = 0.5*(q0+q_dir(2,:));
+            %start = q0-center;
             
-            i = 0:npt-1;
+            %i = 0:npe-1;
             q_range = q0+q_step.*i';
-            q_var = 4*eps*rand(size(q_range));
+            q_var = 1.e-12*2*(rand(size(q_range))-0.5);
             q_range = q_range+q_var;
         end
         function disp = calc_sqw(obj,qh,qk,ql,en)

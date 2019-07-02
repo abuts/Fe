@@ -8,22 +8,42 @@ u=[1,0,0];
 v = [0,1,0];
 psi = 0;
 
-
 fcc = FCC_Igrid();
 
 sym_list = [1,2,3,4,5];
 dir_list = [1,1,1,1,1];
 %sqw_obj = repmat(sqw(),1,numel(sym_list));
-Ei = 801;
+Ei = 805;
 for i=1:numel(sym_list)
-    [q_range,e_range,dir] = fcc.get_range(sym_list(i),dir_list(i));
-    sqqw =fake_sqw(e_range,q_range,'',Ei,1, alatt, angdeg,...
-        u, v, psi, 0, 0, 0, 0);
-    sqqw = sqw_eval(sqqw{1},@disp_kun_calc,[1,0,sym_list(i),dir_list(i)]);
+    [q_range,e_range,dir,start] = fcc.get_range(sym_list(i),dir_list(i));
+    [v,u,~,Ld] = build_ort(dir);
     
-    [u,v] = build_ort(dir);
+    sqqw =fake_sqw(e_range,q_range,'',Ei,1, alatt, angdeg,...
+        u, v, psi, 0, 0, 0, 0,[10,1,1,10]);
+    sqqw  = sqqw{1};
+
+    pix_base = sqqw.data.pix(1:4,:);
+    u_to_rlu = sqqw.data.u_to_rlu(1:3,1:3);
+    [~,ind] = sort(pix_base(4,:));
+    pix_base  = pix_base(:,ind);
+    
+    quu =inv(u_to_rlu)\q_range';
+    n_en = numel(e_range);
+    for j=1:n_en-1
+        pix_base(1:3,n_en*(j-1)+1:n_en*(j))= quu;
+    end
+    sqqw.data.pix(1:4,:) = pix_base;    
+    sqqw = sqw_eval(sqqw,@disp_kun_calc,[1,0,sym_list(i),dir_list(i)]);
+    %sqqw  = cut_sqw(sqqw,[],[],[],[]);    
+    
+
     proj = struct('u',u,'v',v);
-    sqqw  = cut_sqw(sqqw,proj,[],[-0.1,0.1],[-0.1,0.1],[]);
+    sqqw  = cut_sqw(sqqw,proj,[-0.01,0.01,Ld+0.01],[-0.1,0.1],[-0.1,0.1],[0,8,805]);
+    
+    %sqqw = cut(sqqw,[],[],[],[]);
+    
+    
+    
     if i==1
         sqw_obj = repmat(sqqw,1,numel(sym_list));
     else
