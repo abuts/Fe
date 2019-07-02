@@ -49,9 +49,12 @@ fit_err = NaN*zeros(1,numel(en));
 bg_fit   = NaN*zeros(1,numel(en));
 bg_err   = NaN*zeros(1,numel(en));
 bg_par = struct();
-bg_par.all_bg = cell(1,numel(en));
-bg_par.all_bge = cell(1,numel(en));
-bg_par.en = NaN*zeros(1,numel(en));
+n_plots = numel(proj);
+bg_par.all_bg = NaN*zeros(numel(en),n_plots);
+bg_par.all_bge = NaN*zeros(numel(en),n_plots);
+bg_par.en = NaN*zeros(numel(en),1);
+
+
 fgs = fig_spread('-tight');
 for i=1:nfp
     cut2fit = cell(1,numel(proj));
@@ -76,8 +79,9 @@ for i=1:nfp
     bg_err(i) = bg_er;
     %
     bg_par.en(i) = en(i);
-    bg_par.all_bg{i} = bp;
-    bg_par.all_bge{i} = bpsig;
+    bg_par.all_bg(i,valid)  = bp;
+    bg_par.all_bge(i,valid) = bpsig;
+
     save('bg_model_PN','bg_par');
 end
 acolor('b')

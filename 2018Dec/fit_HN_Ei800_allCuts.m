@@ -9,13 +9,14 @@ Dqk = [-0.1,0.1];
 Dql = [-0.1,0.1];
 
 
-proj = {projection([1,0,1],[0,1,0],'uoffset',[1,0,0]),projection([1,0,-1],[0,1,0],'uoffset',[1,0,0]),...
+proj = {projection([-1,1,0],[1,1,0],'uoffset',[1,0,0]),projection([1,1,0],[1,-1,0],'uoffset',[1,0,0]),...
+        projection([-1,-1,0],[1,-1,0],'uoffset',[0,1,0]),projection([1,1,0],[1,-1,0],'uoffset',[0,1,0]),...
+    projection([1,0,1],[0,1,0],'uoffset',[1,0,0]),projection([1,0,-1],[0,1,0],'uoffset',[1,0,0]),...
     projection([0,1,1],[1,0,0],'uoffset',[1,0,0]),projection([0,1,-1],[1,0,0],'uoffset',[1,0,0]),...
     projection([0,1,1],[1,0,0],'uoffset',[0,1,0]),projection([0,1,-1],[1,0,0],'uoffset',[0,1,0]),...
-    projection([1,0,1],[0,1,0],'uoffset',[0,1,0]),projection([1,0,-1],[0,1,0],'uoffset',[0,1,0]),...
-    projection([-1,1,0],[1,1,0],'uoffset',[1,0,0]),projection([1,1,0],[1,-1,0],'uoffset',[1,0,0]),...};
-    projection([-1,-1,0],[1,-1,0],'uoffset',[0,1,0]),projection([1,1,0],[1,-1,0],'uoffset',[0,1,0])};
-kun_sym_dir = [2,2,5,5,3,3,4,4  ,1,1,1,1];
+    projection([1,0,1],[0,1,0],'uoffset',[0,1,0]),projection([1,0,-1],[0,1,0],'uoffset',[0,1,0])
+    };
+kun_sym_dir = [1,1,1,1, 2,2,5,5,3,3,4,4];
 
 %pr = projection([1,-1,0],[1,1,0]);
 dat = fullfile(pwd,'sqw','data','Fe_ei787.sqw');
@@ -48,9 +49,13 @@ fit_err = NaN*zeros(1,numel(en));
 bg_fit   = NaN*zeros(1,numel(en));
 bg_err   = NaN*zeros(1,numel(en));
 bg_par = struct();
-bg_par.all_bg = cell(1,numel(en));
-bg_par.all_bge = cell(1,numel(en));
-bg_par.en = NaN*zeros(1,numel(en));
+n_plots = numel(proj);
+bg_par.all_bg = NaN*zeros(numel(en),n_plots);
+bg_par.all_bge = NaN*zeros(numel(en),n_plots);
+bg_par.en = NaN*zeros(numel(en),1);
+
+
+
 fgs = fig_spread('-tight');
 for i=1:nfp
     cut2fit = cell(1,numel(proj));
@@ -75,8 +80,9 @@ for i=1:nfp
     bg_err(i) = bg_er;
     %
     bg_par.en(i) = en(i);
-    bg_par.all_bg{i} = bp;
-    bg_par.all_bge{i} = bpsig;
+    bg_par.all_bg(i,valid)  = bp;
+    bg_par.all_bge(i,valid) = bpsig;
+
     save('bg_model_HN','bg_par');
 end
 acolor('b')

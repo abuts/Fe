@@ -26,9 +26,11 @@ for i=1:numel(proj)
     w2all{i} = set_sample_and_inst(w2all{i},sample,@maps_instrument_for_tests,'-efix',600,'S');
     plot(w2all{i});
     lz  0 1
+    ly  0 450    
     w2tha{i} = sqw_eval(w2all{i},@disp_kun_calc,[1,1,kun_sym,kun_sym_dir(i),Kun_width]);
     plot(w2tha{i});
     lz  0 1
+    ly  0 450
 end
 plot(w2all{1});
 lx -4.5 2.5
@@ -49,9 +51,10 @@ bg_fit   = NaN*zeros(1,numel(en));
 bg_err   = NaN*zeros(1,numel(en));
 %
 bg_par = struct();
-bg_par.all_bg = cell(1,numel(en));
-bg_par.all_bge = cell(1,numel(en));
-bg_par.en = NaN*zeros(1,numel(en));
+n_plots = numel(proj);
+bg_par.all_bg = NaN*zeros(numel(en),n_plots);
+bg_par.all_bge = NaN*zeros(numel(en),n_plots);
+bg_par.en = NaN*zeros(numel(en),1);
 
 fgs = fig_spread('-tight');
 for i=1:nfp
@@ -68,6 +71,7 @@ for i=1:nfp
     else
         cut2fit = cut2fit(valid);
         kun_sym_sel  = kun_sym_dir(valid);
+        bg_par.i_plot(i,valid) = i_plots(valid);        
     end
     [A,err,bg_val,bg_er,fgs,bp,bpsig]=fit_encut(cut2fit,fgs,kun_sym,kun_sym_sel,Kun_width);    
     sv_ampl(i) = A;
@@ -76,8 +80,9 @@ for i=1:nfp
     bg_err(i) = bg_er;
     %
     bg_par.en(i) = en(i);
-    bg_par.all_bg{i} = bp;
-    bg_par.all_bge{i} = bpsig;
+    bg_par.all_bg(i,valid)  = bp;
+    bg_par.all_bge(i,valid) = bpsig;
+
     save('bg_model_GN','bg_par');
 end
 acolor('b')
