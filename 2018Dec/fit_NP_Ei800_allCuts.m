@@ -21,6 +21,8 @@ kun_sym_dir = [1,1,1,1,3,3,3,3,2,2,2,2];
 %pr = projection([1,-1,0],[1,1,0]);
 dat = fullfile(pwd,'sqw','data','Fe_ei787.sqw');
 
+proj = {projection([0,0,1],[0,1,0],'uoffset',[1.5,0.5,0]),projection([0,1,0],[-1,0,0],'uoffset',[-0.5,1,0.5])};
+kun_sym_dir = [1,2];
 
 w2all = cell(1,numel(proj));
 w2tha = cell(1,numel(proj));
@@ -82,7 +84,7 @@ for i=1:nfp
     bg_par.all_bg(i,valid)  = bp;
     bg_par.all_bge(i,valid) = bpsig;
 
-    save('bg_model_PN','bg_par');
+    save('bg_model_data_PN','bg_par');
 end
 acolor('b')
 errorbar(en,sv_ampl,fit_err)

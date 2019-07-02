@@ -6,7 +6,7 @@ Kun_width = 0.1;
 
 Dqk = [-0.1,0.1];
 Dql = [-0.1,0.1];
-kun_sym  = [1,1,2,3,3,5,5,4,4];
+kun_sym  =    [1,1,2,3,3,5,5,4,4];
 kun_sym_dir = [1,2,1,3,3,1,2,1,1];
 proj = {projection([1,0,0],[0,1,0],'uoffset',[0,0,0]),projection([0,1,0],[-1,0,0],'uoffset',[0,2,0]),...
     projection([1,-1,0],[1,1,0],'uoffset',[1,1,0]),...
