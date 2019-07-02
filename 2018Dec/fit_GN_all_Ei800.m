@@ -4,11 +4,11 @@ dE   = 5;
 Efit_min = 50;
 Dqk = [0.9,1.1];
 Dql = [-0.1,0.1];
-
+%proj = {projection([1,-1,0],[1,1,0]),projection([1,1,0],[1,-1,0]),;
 pr = projection([1,-1,0],[1,1,0]);
 dat = fullfile(pwd,'sqw','data','Fe_ei787.sqw');
 
-w2s = cut_sqw(dat,pr,[-4.5,0.02,2.5],Dqk ,Dql ,[0,dE,Emax]);
+w2s = cut_sqw(dat,pr,[-4.5,0.02,4.5],Dqk ,Dql ,[0,dE,Emax]);
 bg = cut_sqw(dat,pr,[-4.5,-2.5],Dqk ,Dql,[0,dE,Emax]);
 if sum(bg.data.npix)>0
     bgc = replicate(bg,w2s );
@@ -30,7 +30,7 @@ keep_figure;
 sample=IX_sample(true,[1,0,0],[0,1,0],'cuboid',[0.04,0.03,0.02]);
 w2s = set_sample_and_inst(w2s,sample,@maps_instrument_for_tests,'-efix',600,'S');
 
-w2th = sqw_eval(w2s,@disp_dft_parameterized,[0.045,1]);
+w2th = sqw_eval(w2s,@disp_kun_calc,[0.045,1,2,1,0.2]);
 bg = cut_sqw(w2th,pr,[-4.5,-2.5],Dqk ,Dql,[0,dE,Emax]);
 bgc = replicate(bg,w2th);
 w2th = w2th - bgc;
@@ -75,9 +75,9 @@ function [A,err,bg_val,bg_err,fgs]=fit_encut(en_cut,fgs)
 acolor('k');
 fh= plot(en_cut);
 kk = tobyfit(en_cut );
-kk = kk.set_fun(@disp_dft_parameterized,[0.045,1],[0,0]);
+kk = kk.set_fun(@disp_kun_calc,[0.045,1,2,1,0.2],[1,0,0,0,0]);
 % set up its own initial background value for each background function
-kk = kk.set_bfun(@(x,par)(par(1)),0);
+kk = kk.set_bfun(@(x,par)(par(1)),1);
 
 kk = kk.set_mc_points(10);
 %profile on;
