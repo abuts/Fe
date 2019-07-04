@@ -83,7 +83,7 @@ for i=1:nfp
         kun_sym_sel = kun_sym_dir(valid);        
     end
     
-    [A,err,bg_val,bg_er,fgs,bp,bpsig]=fit_encut(cut2fit,fgs,kun_sym,kun_sym_sel,Kun_width);    
+    [A,err,bg_val,bg_er,fgs,bp,bpsig]=fit_encut(cut2fit,fgs,Kun_sym,kun_sym_sel,Kun_width);    
     sv_ampl(i) = A;
     fit_err(i) = err;
     bg_fit(i) = bg_val;

@@ -2,6 +2,7 @@ function fp_arr1 = fit_AllKun()
 
 dE   = 5;
 
+use_ff = 1;
 Kun_width = 0.1;
 
 Dqk = [-0.1,0.1];
@@ -28,28 +29,30 @@ for i=1:numel(proj)
     plot(w2all{i});
     ly 0 450
     lz  0 1
-    w2tha{i} = sqw_eval(w2all{i},@disp_kun_calc,[1,0,kun_sym(i),kun_sym_dir(i),Kun_width]);
+    w2tha{i} = sqw_eval(w2all{i},@disp_kun_calc,[1,use_ff,kun_sym(i),kun_sym_dir(i),Kun_width]);
     w2tha{i}.data.e = ones(size(w2tha{i}.data.s));
     plot(w2tha{i});
     keep_figure;
     ly 0 450
     lz  0 1
 end
+%            p: [0 8 0.6339 1.4573 0 51.6456 1.4097 -8.4474 -0.7469 0.6056]
+%          sig: [0 0 0.0175 0.0110 0 0.0193 0.0140 0.0066 0.0053 0.0122]
 
 % S(Q,w) model
-ff = 0; % 1
+ff = use_ff; % 1
 T = 8;  % 2
 %gamma = 10; % 3
-gamma = 0.6810;
-gap = 0;    % 5
-%Seff = 2;   % 4
-Seff = 1.4489;
+gamma = 0.6339; % 0.6810;
+gap = 0;    %
+%Seff = 2;   % 
+Seff = 1.4573;      %1.4489;
 %J1 = 40;    % 6
-J0 = 51.6079;
-J1 = 1.4083;
-J2 = -8.4407;
-J3 = -0.7448;
-J4 = 0.6047;
+J0 = 51.6456;       %51.6079;
+J1 = 1.4097;         %1.4083;
+J2 = -8.4474;       %-8.4407;
+J3 = -0.7469;       %-0.7448;
+J4 = 0.6056;        %0.6047;
 par = [ff, T, gamma, Seff, gap, J0, J1, J2, J3, J4];
 
 kk = tobyfit(w2tha{:});
@@ -57,11 +60,11 @@ kk = kk.set_fun(@sqw_iron,par,[0,0,1,1,0,1,1,1,1,1]);
 
 kk = kk.set_mc_points(10);
 %profile on;
-kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-2;60;1.e-3]);
+kk = kk.set_options('listing',2,'fit_control_parameters',[1.e-2;60;1.e-3]);
 %kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-4;20;1.e-4]);
 %profile on;
-%[w2D_arr1_tf,fp_arr1]=kk.fit;
-[w2D_arr1_tf,fp_arr1]=kk.simulate;
+[w2D_arr1_tf,fp_arr1]=kk.fit;
+%[w2D_arr1_tf,fp_arr1]=kk.simulate;
 
 for i=1:numel(w2D_arr1_tf)
     plot(w2D_arr1_tf{i});
