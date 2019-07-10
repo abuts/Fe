@@ -67,7 +67,7 @@ keep_figure
 % lz  0 0.05
 % lx 0 3
 %keep_figure
-sym_cut = com_cut
+sym_cut = com_cut;
 bg = func_eval(sym_cut,@(q,en,par)(par(1)*exp(-par(2)*(en-50))),[0.3866,0.0140]);
 disp = sym_cut-bg;
 plot(disp );
