@@ -24,6 +24,7 @@ for i=2:numel(en_cuts)
     pd(en_cuts{i});
 end
 kk = tobyfit(en_cuts{:});
+kk = kk.set_local_foreground;
 fg_arr = cell(1,numel(kun_sym_dir));
 fg_par = cell(1,numel(kun_sym_dir));
 fg_free = cell(1,numel(kun_sym_dir));
