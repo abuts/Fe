@@ -26,11 +26,17 @@ proj = {projection([1,0,0],[0,1,0],'uoffset',[1,1.5,0.5]),projection([1,0,0],[0,
     projection([0,0,1],[0,1,0],'uoffset',[1.5,1.5,0])}; %2.1213
 kun_sym_dir = [3,3,2,2, 1,1,2,2,3,3, 1];
 
+
+proj = {projection([0,1,0],[1,0,0],'uoffset',[2.5,-0.5,0.5]),projection([0,1,0],[1,0,0],'uoffset',[2.5,-0.5,-0.5]),...
+    projection([1,0,0],[0,1,0],'uoffset',[-0.5,2.5,0.5]),projection([1,0,0],[0,1,0],'uoffset',[-0.5,2.5,-0.5]),...
+    projection([0,0,1],[0,1,0],'uoffset',[2.5,-0.5,-0.5]),projection([0,0,1],[0,1,0],'uoffset',[2.5,0.5,-0.5]),...
+    projection([0,0,1],[0,1,0],'uoffset',[-0.5,2.5,-0.5]),projection([0,0,1],[0,1,0],'uoffset',[0.5,2.5,-0.5])};
+kun_sym_dir = [2,2,3,3,1,1,1,1];
+
+
 %pr = projection([1,-1,0],[1,1,0]);
 dat = fullfile(pwd,'sqw','data','Fe_ei787.sqw');
 
-% proj = {projection([0,0,1],[0,1,0],'uoffset',[1.5,0.5,0]),projection([0,1,0],[-1,0,0],'uoffset',[-0.5,1,0.5])};
-% kun_sym_dir = [1,2];
 
 w2all = cell(1,numel(proj));
 w2tha = cell(1,numel(proj));
