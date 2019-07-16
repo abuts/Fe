@@ -61,14 +61,31 @@ for i=1:numel(part_cuts)
 end
 plot(com_cut);
 lz  0 0.05
-keep_figure
-% sym_cut = symmetrise_sqw(com_cut,[1,1,0],[0,0,1],[3,0,0]);
+lb=cut_sqw(com_cut,proj{1},[-3,3],Dqk ,Dql ,[60,dE,300],'-nopix');
+en = lb.p{1};
+en = 0.5*(en(2:end)+en(1:end-1));
+s  = log(lb.s);
+par = polyfit(en,s,1);
+A = exp(par(2));
+Alpha = par(1);
+lb=cut_sqw(com_cut,proj{1},[-3,3],Dqk ,Dql ,[0,dE,600],'-nopix');
+ff = func_eval(lb,@(x,par)(A*exp(Alpha*x)),[]);
+acolor('k');
+plot(lb)
+acolor('r');
+pl(ff);
+
+% keep_figure
+% sym_cut = symmetrise_sqw(com_cut,[-1,1,0]/sqrt(2),[-1,-1,2]/sqrt(6),[2,1,1]);
 % plot(sym_cut);
-% lz  0 0.05
-% lx 0 3
-%keep_figure
+% lz  0 0.5
+% lx -3 3
+% keep_figure
 sym_cut = com_cut;
-bg = func_eval(sym_cut,@(q,en,par)(par(1)*exp(-par(2)*(en-50))),[0.3866,0.0140]);
+% good background removal values: [0.3866,0.0140]
+% [0.3274  0.02432] -- strange problem
+%bg = func_eval(sym_cut,@(q,en,par)(par(1)*exp(-par(2)*(en-50))),[0.3866,0.0140]);
+bg = func_eval(sym_cut,@(q,en,par)(par(1)*exp(-par(2)*(en))),[A,-Alpha]);
 disp = sym_cut-bg;
 plot(disp );
 lz  0 0.05
@@ -83,15 +100,20 @@ lx 0 1
 ly 0 500
 keep_figure
 
-com_cut= set_sample_and_inst(sym_cut,sample,@maps_instrument_for_tests,'-efix',600,'S');
+com_cut= set_sample_and_inst(sym_cut,sample,@maps_instrument_for_tests,'-efix',800,'S');
 w2_tha = sqw_eval(com_cut,@disp_kun_calc,[1,0,Kun_sym,kun_sym_dir(1),Kun_width]);
 plot(w2_tha);
 lz  0 1
 lx 0 3
 fp_arr1 = [];
+sym_cut = symmetrise_sqw(w2_tha,[-1,1,0]/sqrt(2),[-1,-1,2]/sqrt(6),[2,1,1]);
+plot(sym_cut);
+lz  0 0.5
+lx -3 3
+keep_figure
 
 % kk = tobyfit(com_cut);
-% kk = kk.set_fun(@disp_kun_calc,[0.3098,1,Kun_sym,kun_sym_dir(1),Kun_width],[1,0,0,0,0]);
+% kk = kk.set_fun(@disp_kun_calc,[0.3098,0,Kun_sym,kun_sym_dir(1),Kun_width],[1,0,0,0,0]);
 % kk = kk.set_bfun(@(q,en,par)(par(1)*exp(-par(2)*(en-50))),[0.3866,0.0140]);
 % 
 % kk = kk.set_mc_points(10);
@@ -101,8 +123,8 @@ fp_arr1 = [];
 % %profile on;
 % %[w2D_arr1_tf,fp_arr1]=kk.simulate;
 % [w2D_arr1_tf,fp_arr1]  =kk.fit;
-
-%plot(w2D_arr1_tf)
+% 
+% plot(w2D_arr1_tf)
 
 
 
