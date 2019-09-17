@@ -18,11 +18,25 @@ proj = {projection([0,0,1],[0,1,0],'uoffset',[1.5,0.5,0]),projection([0,0,1],[0,
     };
 kun_sym_dir = [1,1,1,1,3,3,3,3,2,2,2,2];
 
+proj = {projection([1,0,0],[0,1,0],'uoffset',[1,1.5,0.5]),projection([1,0,0],[0,1,0],'uoffset',[1,1.5,-0.5]),...    %1.8708
+    projection([0,1,0],[1,0,0],'uoffset',[1.5,1 ,0.5]),projection([0,1,0],[1,0,0],'uoffset',[1.5,1 ,-0.5]),...        %1.8708
+    projection([0,0,1],[0,1,0],'uoffset',[1.5,-0.5,-0.5]) ,projection([0,0,1],[0,1,0],'uoffset',[1.5,-0.5,-0.5]) ,...
+    projection([0,1,0],[1,0,0],'uoffset',[1.5,-0.5,0.5]) ,projection([0,1,0],[1,0,0],'uoffset',[1.5,-0.5,-0.5]),...  %1.6583
+    projection([1,0,0],[0,1,0],'uoffset',[-0.5,1.5,-0.5]),projection([1,0,0],[0,1,0],'uoffset',[-0.5,1.5,0.5]),...   %1.6583
+    projection([0,0,1],[0,1,0],'uoffset',[1.5,1.5,0])}; %2.1213
+kun_sym_dir = [3,3,2,2, 1,1,2,2,3,3, 1];
+
+
+proj = {projection([0,1,0],[1,0,0],'uoffset',[2.5,-0.5,0.5]),projection([0,1,0],[1,0,0],'uoffset',[2.5,-0.5,-0.5]),...
+    projection([1,0,0],[0,1,0],'uoffset',[-0.5,2.5,0.5]),projection([1,0,0],[0,1,0],'uoffset',[-0.5,2.5,-0.5]),...
+    projection([0,0,1],[0,1,0],'uoffset',[2.5,-0.5,-0.5]),projection([0,0,1],[0,1,0],'uoffset',[2.5,0.5,-0.5]),...
+    projection([0,0,1],[0,1,0],'uoffset',[-0.5,2.5,-0.5]),projection([0,0,1],[0,1,0],'uoffset',[0.5,2.5,-0.5])};
+kun_sym_dir = [2,2,3,3,1,1,1,1];
+
+
 %pr = projection([1,-1,0],[1,1,0]);
 dat = fullfile(pwd,'sqw','data','Fe_ei787.sqw');
 
-proj = {projection([0,0,1],[0,1,0],'uoffset',[1.5,0.5,0]),projection([0,1,0],[-1,0,0],'uoffset',[-0.5,1,0.5])};
-kun_sym_dir = [1,2];
 
 w2all = cell(1,numel(proj));
 w2tha = cell(1,numel(proj));
@@ -83,7 +97,7 @@ for i=1:nfp
     bg_par.en(i) = en(i);
     bg_par.all_bg(i,valid)  = bp;
     bg_par.all_bge(i,valid) = bpsig;
-
+    
     save('bg_model_data_PN','bg_par');
 end
 acolor('b')

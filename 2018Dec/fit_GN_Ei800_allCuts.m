@@ -25,7 +25,7 @@ sample=IX_sample(true,[1,0,0],[0,1,0],'cuboid',[0.04,0.03,0.02]);
 
 for i=1:numel(proj)
     w2all{i} = cut_sqw(dat,proj{i},[-4.5,0.02,4.5],Dqk ,Dql ,[0,dE,800]);
-    w2all{i} = set_sample_and_inst(w2all{i},sample,@maps_instrument_for_tests,'-efix',600,'S');
+    w2all{i} = set_sample_and_inst(w2all{i},sample,@maps_instrument_for_tests,'-efix',800,'S');
     plot(w2all{i});
     lz  0 1
     ly  0 450    
@@ -73,7 +73,6 @@ for i=1:nfp
     else
         cut2fit = cut2fit(valid);
         kun_sym_sel  = kun_sym_dir(valid);
-        bg_par.i_plot(i,valid) = i_plots(valid);        
     end
     [A,err,bg_val,bg_er,fgs,bp,bpsig]=fit_encut(cut2fit,fgs,kun_sym,kun_sym_sel,Kun_width);    
     sv_ampl(i) = A;
