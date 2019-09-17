@@ -29,7 +29,9 @@ for i=1:numel(proj)
     ly 0 400
     lz  0 1
     w2tha{i} = sqw_eval(w2all{i},@disp_kun_calc,[1,0,kun_sym(i),kun_sym_dir(i),Kun_width]);
+    invalid = w2tha{i}.data.npix==0;
     w2tha{i}.data.e = ones(size(w2tha{i}.data.s));
+    w2tha{i}.data.e(invalid) = 0;
     plot(w2tha{i});
     ly 0 400
     lz  0 1

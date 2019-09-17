@@ -44,17 +44,23 @@ if isempty(hi_grid)
     mi = MagneticIons('Fe0');
     magFF = mi.getFF_calculator(bm);
 end
-
+sz = size(qh);
 if min(size(qh)) ~= 1
-    sz = size(qh);
     do_reshape = true;
-    
-    qh = reshape(qh,numel(qh),1);
-    qk = reshape(qk,numel(qh),1);
-    ql = reshape(ql,numel(qh),1);
-    en = reshape(en,numel(qh),1);
+    nip = numel(qh);
+    qh = reshape(qh,nip,1);
+    qk = reshape(qk,nip,1);
+    ql = reshape(ql,nip,1);
+    if numel(en) == 1
+        en = repmat(en,nip,1);
+    else
+        en = reshape(en,numel(qh),1);
+    end
 else
     do_reshape = false;
+    if numel(en) == 1
+        en = repmat(en,numel(qh),1);        
+    end
 end
 qr = [qh,qk,ql];
 %
@@ -81,4 +87,7 @@ if do_reshape
     wdisp = reshape(wdisp,sz);
 end
 
+if numel(sz)>2 && ~do_reshape
+    wdisp = reshape(wdisp,sz);
+end
 
