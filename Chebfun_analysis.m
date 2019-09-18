@@ -1,10 +1,14 @@
-function Chebfun_analysis(qh0,qk0,e0)
+function Chebfun_analysis(qh0,qk0,e0,id)
 
 jn=@(N)(1:N);
 Xn =@(N)(0.5-0.5*cos((jn(N)-0.5)*pi/N));
 dp = fileparts(which('disp_dft_parameterized.m'));
 
 persistent in_dat
+if nargin > 3
+    in_dat = id;
+end
+
 e_max = 680;
 q0 = 1;
 qi = (0:q0/100:q0)';
@@ -27,6 +31,7 @@ if ~exist('qh0','var')
     e0 = 400;
 end
 in_line =  fhk_int(qh0,qk0,e0);
+%in_line  = ones(size(in_line));
 
 
 Nip = 21;

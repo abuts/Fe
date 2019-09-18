@@ -36,29 +36,31 @@ ind_e = @(e0)find(e0<ei,1);
 fhk_int = @(h,e0)squeeze(in_dat.dat(ind_q(h),:,:,ind_e(e0)));
 
 in_line =  fhk_int(qh0,e0);
+%in_line = repmat(in_line(1,:),size(in_line,1),1);
 surf(qix,qiy,in_line,'EdgeColor','none');
 %hold on
 
-Nip = 21;
-Mip = Nip-1;
+Nip = 81;
 Xj = Xn(Nip);
-Ci = zeros(Mip,Mip);
+Ci = zeros(Nip,Nip);
 ip_array = lin_interp(qi,in_line,Xj);
-for j=1:Mip
-    Tj = TN(Xj,j);
+for j=1:Nip
+    j0 = j-1;
+    Tj = TN(Xj,j0);
     Norm_j = Tj'*Tj;
-    for i=1:Mip
-        Ti = TN(Xj,i);
+    for i=1:Nip
+        i0 = i-1;
+        Ti = TN(Xj,i0);
         Norm_i = Ti'*Ti;
         T_mat = Tj'.*Ti/(Norm_i*Norm_j);
-        pcs = ip_array.*T_mat';                        
+        pcs = ip_array.*T_mat;                        
 
         Ci(i,j) = sum(sum(pcs));
     end
 end
-C0 = sum(sum(ip_array))/(Nip*Nip);
 
-sip = fhk_interp(qi,Mip,Ci,C0);
+
+sip = fhk_interp(qi,Nip,Ci');
 figure
 surf(qix,qiy,sip,'EdgeColor','none');
 %hold off
@@ -71,16 +73,16 @@ function rez = lin_interp(qi,inputs,qr)
 [qx,qy] = meshgrid(qr,qr);
 rez = interp2(qix,qiy,inputs,qx,qy);
 
-function rez = fhk_interp(q,Mip,Ci,C0)
+function rez = fhk_interp(q,Nip,Ci)
 
 nq = numel(q);
-jn = 1:Mip;
+jn = 0:Nip-1;
 tn = TN(q',jn);
 %rez = tn*Ci*tn'+C0;
 rez = zeros(nq);
 for j=1:nq
     for i=1:nq
-
-        rez(i,j) = sum(sum( Ci.*tn(i,:).*tn(j,:)'))+C0;
+        Tm = tn(i,:).*tn(j,:)';
+        rez(i,j) = sum(sum( Ci.*Tm));
     end
 end
