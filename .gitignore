@@ -10,3 +10,4 @@
 
 /Data/DFT/*.gz
 *.fig
+/sim_range.dat

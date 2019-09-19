@@ -45,4 +45,15 @@ plot(dist,disp_line{1},'r','LineWidth',2);
 disp_line_exp = disp_bcc_hfm(q_dir{:},par_exp);
 plot(dist,disp_line_exp{1},'r:','LineWidth',4);
 hold off
-
+% figure
+% qr = sqrt(q_dir{1}.*q_dir{1}+q_dir{2}.*q_dir{2}+q_dir{3}.*q_dir{3});
+% plot(qr,disp_line{1});
+% figure
+% plot(dist,qr)
+% hold on
+% qr = sqrt((q_dir{1}-0.5).*(q_dir{1}-0.5)+(q_dir{2}-0.5).*(q_dir{2}-0.5)+(q_dir{3}-0.5).*(q_dir{3}-0.5));
+% plot(dist,qr)
+% qr = sqrt((q_dir{1}-1).*(q_dir{1}-1)+(q_dir{2}).*(q_dir{2})+(q_dir{3}).*(q_dir{3}));
+% plot(dist,qr)
+% hold off
+% 
