@@ -37,6 +37,7 @@ pz = pz(valid);
 scatter3(px,py,pz);
 ly 0 1
 
+
 ort3 = cross([1,0,0],[0.5,0.5,0.5]);
 proj3 = ([px,py,pz])*ort3';
 valid = proj3<=0;
@@ -45,6 +46,10 @@ py = py(valid);
 pz = pz(valid);
 scatter3(px,py,pz);
 ly 0 1
+[pxp,pyp,pzp] = expand_sim_points(px,py,pz,Xj);
+scatter3(pxp,pyp,pzp);
+
+
 rG = dist2p(px,py,pz,0,0,0);
 rH = dist2p(px,py,pz,1,0,0);
 rP = dist2p(px,py,pz,0.5,0.5,0.5);
