@@ -1,5 +1,5 @@
 function  sym_points = min_sym_points4D(Np)
-
+close all
 jn=@(N)(1:N);
 Xn =@(N)(0.5-0.5*cos((jn(N)-0.5)*pi/N));
 
@@ -19,23 +19,37 @@ Xj = Xn(Nip);
 px = reshape(px,numel(px),1);
 py = reshape(py,numel(py),1);
 pz = reshape(pz,numel(pz),1);
+np = numel(pz);
+disp([' NP0: ',num2str(np)]);
+figure('Name',['Initial Points: Npoints: ',num2str(np)])
+scatter3(px,py,pz);
 
 ort1 = [1,-1,0];
 proj = [px,py,pz]*ort1';
-valid = proj>=0;
+valid = proj>=-1.e-6;
 px = px(valid);
 py = py(valid);
 pz = pz(valid);
-scatter3(px,py,pz);
+%---------------------------------------------------------
+np = numel(pz);
+%figure('Name',['NP1; transf 1, left ',num2str(np),' points'])
+%scatter3(px,py,pz);
+disp([' NP1: ',num2str(np)]);
+
 
 proj2 = ([px,py,pz]-[0.5,0.5,0])*[1;1;0];
-valid = proj2<=0 ;
+valid = proj2<=1.e-6 ;
 px = px(valid);
 py = py(valid);
 pz = pz(valid);
+%---------------------------------------------------------
+np = numel(pz);
+%figure('Name',['NP2; transf 2, left ',num2str(np),' points'])
+%scatter3(px,py,pz);
+%ly 0 1
+disp([' NP2: ',num2str(np)]);
 
-scatter3(px,py,pz);
-ly 0 1
+
 
 
 ort3 = cross([1,0,0],[0.5,0.5,0.5]);
@@ -44,10 +58,18 @@ valid = proj3<=0;
 px = px(valid);
 py = py(valid);
 pz = pz(valid);
+%---------------------------------------------------------
+np = numel(pz);
+figure('Name',['NP3; transf 3, left ',num2str(np),' points'])
 scatter3(px,py,pz);
 ly 0 1
+disp([' NP3: ',num2str(np)]);
+%-----------------------------------------------
 [pxp,pyp,pzp] = expand_sim_points(px,py,pz,Xj);
+figure('Name','Recovered all')
 scatter3(pxp,pyp,pzp);
+np = numel(pzp);
+disp([' NP_all_rec: ',num2str(np)]);
 
 
 rG = dist2p(px,py,pz,0,0,0);
