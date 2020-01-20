@@ -9,8 +9,8 @@ proj3 = [[0,0,0];ort3];
 ort3a = cross([-1/2,0,1/2],[-1/2,1/2,1/2]);
 ort3a = ort3a/sqrt(ort3a*ort3a');
 proj3a = [[1,0,0];ort3a];
-proj = {proj3,proj3a,proj2,proj1};
-rot0 = {{3,[0.5,0.5,0],90},{3,[0.5,0.5,0],180}};
+proj = {proj1,proj2};
+%rot0 = {{3,[0.5,0.5,0],90},{3,[0.5,0.5,0],180}};
 %proj = {proj2,proj1};
 if size(px,1) == 1
     px = px';
@@ -20,15 +20,15 @@ end
 np = numel(pz);
 disp([' NP_rec0: ',num2str(np)]);
 
-for i=1:numel(rot0)
-    %[pxe,pye,pze,retained]=reflect_points([px,py,pz],proj{i});
-    rota = rot0{i};
-    [pxe,pye,pze,retained]=rotate_points([px,py,pz],rota{:});
+for i=1:numel(proj)
+    [pxe,pye,pze,retained]=reflect_points([px,py,pz],proj{i});
+    %rota = rot0{i};
+    %[pxe,pye,pze,retained]=rotate_points([px,py,pz],rota{:});
     [px,py,pz,se] = expand_points(pxe,pye,pze,retained,px,py,pz,se);
     np = numel(pz);
-%    name = sprintf('Inv transf N%d; Recovered %d points',i,np);
-%    figure('Name',name)
-%    scatter3(px,py,pz);
+    name = sprintf('Inv transf N%d; Recovered %d points',i,np);
+    figure('Name',name)
+    scatter3(px,py,pz);
     disp([' NP_rec',num2str(i),': ',num2str(np)]);
 end
 
