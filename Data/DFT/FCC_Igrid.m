@@ -26,7 +26,7 @@ classdef FCC_Igrid
         
     end
     properties(Constant)
-          p_ = {...
+        p_ = {...
             {[0,0,0;1,0,0];[0,0,0;0,1,0];[0,0,0;0,0,1];...
             [1,1,0;0,1,0];[1,1,0;1,0,0];[1,1,0;1,1,1];...
             [1,0,1;0,0,1];[1,0,1;1,0,0];[1,0,1;1,1,1];...
@@ -34,7 +34,7 @@ classdef FCC_Igrid
             {[0,0,0;1,1,0];[0,0,0;1,0,1];[0,0,0;0,1,1];...
             [1,1,0;1,0,1];[1,1,0;0,1,1];[1,0,1;0,1,1]};... % All 2*GN (6)
             {[0,0,0;1,1,1];[1,1,0;0,0,1];...
-             [1,0,1;0,1,0];[0,1,1;1,0,0]};...  % All GP+PH  (4)
+            [1,0,1;0,1,0];[0,1,1;1,0,0]};...  % All GP+PH  (4)
             {[1,0,0;0,1,0];[1,0,0;0,0,1];...
             [0,1,0;0,0,1];[0,1,0;1,1,1];...
             [1,1,1;1,0,0];[1,1,1;0,0,1]};...   % All 2*HN (6)
@@ -79,7 +79,50 @@ classdef FCC_Igrid
             q_var = 1.e-12*2*(rand(size(q_range))-0.5);
             q_range = q_range+q_var;
         end
-        function disp = calc_sqw(obj,qh,qk,ql,en)
+        %
+        function [disp,close_enough] = calc_sqw_in_qube(obj,qr,enr)
+            % calculate the dispersion from vectors already placed in
+            % unit qube {[0,0,0];[1,1,1]}
+            disp = zeros(size(qr,1),1);
+            if isempty(obj.panel_dir)
+                error('FCC_Igrid:invalid_argument',...
+                    'the function needs pannel direction parameter to be set');
+            end
+            
+            for i=1:numel(obj.panel_dir)
+                sym = obj.p_{obj.panel_dir(i)};
+                
+                interpol_coeff = obj.int_cell_{obj.panel_dir(i)};
+                iX = interpol_coeff{1};
+                iY = interpol_coeff{2};
+                Z = interpol_coeff{3};
+                
+                if isempty(obj.equiv_sym)
+                    error('FCC_Igrid:invalid_argument',...
+                        'the function needs summetry direction parameter to be set');
+                else
+                    all_sym = sym(obj.equiv_sym);
+                end
+                for j=1:numel(all_sym)
+                    dir= all_sym{j};
+                    [e1,e2,e3,l1] = build_ort(dir(1,:),dir(2,:));
+                    
+                    q_dir = qr-dir(1,:);
+                    dist = sqrt((q_dir*e2').^2+(q_dir*e3').^2);
+                    close_enough = dist<=obj.cut_width_;
+                    e_line  = enr(close_enough);
+                    if isempty(e_line)
+                        continue
+                    end
+                    q_dir = q_dir(close_enough,:);
+                    q_line = q_dir*e1';
+                    
+                    disp(close_enough) = interpn(iX(1,:),iY(:,1),Z',q_line,e_line,'linear',0);
+                end
+            end
+        end
+        
+        function [disp,close_enough] = calc_sqw(obj,qh,qk,ql,en)
             qr = [qh,qk,ql];
             %
             % move all vectors into 0-1 quadrant where the interpolant is defined.
@@ -264,5 +307,3 @@ classdef FCC_Igrid
         end
     end
 end
-
-

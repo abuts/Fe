@@ -1,14 +1,16 @@
-function [pxs,pys,pzs,ses] = expand_sim_points(px,py,pz,se)
+function [pxs,pys,pzs,ses] = expand_sim_points(px,py,pz,se,visualize)
+
+if ~exist('visualize','var')
+    visualize = false;
+else
+    visualize = true;
+end
+[px,py,pz,se] = add_missing_points(px,py,pz,se);
+
+
 proj1 = [0,0,0;1/sqrt(2),-1/sqrt(2),0];
 proj2 = [0.5,0.5,0;1/sqrt(2),1/sqrt(2),0];
-ort3 = cross([1,0,0],[0.5,0.5,0.5]);
-ort3 = ort3/sqrt(ort3*ort3');
 
-
-proj3 = [[0,0,0];ort3];
-ort3a = cross([-1/2,0,1/2],[-1/2,1/2,1/2]);
-ort3a = ort3a/sqrt(ort3a*ort3a');
-proj3a = [[1,0,0];ort3a];
 proj = {proj1,proj2};
 %rot0 = {{3,[0.5,0.5,0],90},{3,[0.5,0.5,0],180}};
 %proj = {proj2,proj1};
@@ -26,9 +28,11 @@ for i=1:numel(proj)
     %[pxe,pye,pze,retained]=rotate_points([px,py,pz],rota{:});
     [px,py,pz,se] = expand_points(pxe,pye,pze,retained,px,py,pz,se);
     np = numel(pz);
-    name = sprintf('Inv transf N%d; Recovered %d points',i,np);
-    figure('Name',name)
-    scatter3(px,py,pz);
+    if visualize
+        name = sprintf('Inv transf N%d; Recovered %d points',i,np);
+        figure('Name',name)
+        scatter3(px,py,pz);
+    end
     disp([' NP_rec',num2str(i),': ',num2str(np)]);
 end
 
@@ -44,9 +48,11 @@ for i=1:numel(rot1)
     [pxe,pye,pze,retained]=rotate_points([px,py,pz],rota{:});
     [pxs,pys,pzs,ses] = expand_points(pxe,pye,pze,retained,pxs,pys,pzs,ses);
     np = numel(pzs);
-    name = sprintf('Inv transf N%d, Recovered %d points',i,np);
-    figure('Name',name)
-    scatter3(pxs,pys,pzs);
+    if visualize
+        name = sprintf('Inv transf N%d, Recovered %d points',i,np);
+        figure('Name',name)
+        scatter3(pxs,pys,pzs);
+    end
     disp([' NP_rec',num2str(i),': ',num2str(np)]);
 end
 
@@ -118,3 +124,19 @@ r_refl = pr-2*P*e1;
 pxe = r_refl(moved,1);
 pye = r_refl(moved,2);
 pze = r_refl(moved,3);
+
+function [px_s,py_s,pz_s,se_s] = add_missing_points(px,py,pz,se)
+%
+% generate reference points:
+[px_s,py_s,pz_s,Xj] = min_sym_pointsQ(21);
+% find what real points are present among reference points
+bin_size = min(Xj);
+nBins = max(floor(Xj/bin_size))+1;
+qr_r = [px_s,py_s,pz_s];
+bin_r  = floor(qr_r/bin_size)*[1;nBins;nBins*nBins];
+bin_s = floor([px,py,pz]/bin_size)*[1;nBins;nBins*nBins];
+present = ismember(bin_r,bin_s);
+% copy existing point values into expanded points
+se_s = cell(numel(pz_s),1);
+se_s(present) = se;
+
