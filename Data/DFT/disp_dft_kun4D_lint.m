@@ -17,6 +17,7 @@ function wdisp = disp_dft_kun4D_lint(qh,qk,ql,en,varargin)
 persistent magFF;
 persistent ses;
 persistent Interp_array;
+persistent en_pts;
 en_bin_size = 8; % step of the bin calculation
 A = varargin{1};
 
@@ -36,9 +37,9 @@ if isempty(magFF) && use_magff
     magFF = mi.getFF_calculator(bm);
 end
 %
-if isempty(ses)
+if isempty(ses) || isempty(Interp_array)
     [ses,~,en_pts,qxs,qys,qzs,ens]=read_add_sim_Kun(true);
-    Interp_array = build_ScattInt(qxs,qys,qzs,ens,ses);
+    Interp_array = build_ScattInt(en_pts,qxs,qys,qzs,ens,ses);
 end
 % if numel(A) > 2
 %     fcc_igrid.panel_dir = A(3);
@@ -57,9 +58,9 @@ brav = fix(qr);
 brav = brav+sign(brav);
 brav = (brav-rem(brav,2));
 %
-qr   = single(abs(qr-brav));
-enr  = single(en);
-wdisp = interpLintKun(qr,enr,Interp_array,en_bin_size);
+qr   = double(abs(qr-brav));
+enr  = double(en);
+wdisp = interpLintKun(qr,enr,Interp_array,en_pts,en_bin_size);
 % [wdisp,close_enourh] = fcc_igrid.calc_sqw_in_qube(qr,enr);
 
 if use_magff
@@ -72,15 +73,25 @@ end
 %     wdisp = reshape(wdisp,sz);
 % end
 
-function wdisp = interpLintKun(qr,enr,Interp_array,en_bin_size)
+function wdisp = interpLintKun(qr,enr,Interp_array,en_pts,en_bin_size)
 
-bin0 = floor(enr/en_bin_size)+1;
+e0 = en_pts(1);
+bin0 = floor((enr-e0)/en_bin_size)+1;
+out_min = bin0<1;
+bin0(out_min) = 1;
+all_bin = max(floor(en_pts/en_bin_size))+1;
+out_max = bin0>all_bin;
+if sum(out_max)>0
+    bin0(out_max) = all_bin;
+end
+
+
 bin_range = unique(bin0);
-wdisp = zeros(numel(enr));
+wdisp = zeros(numel(enr),1);
 for i=1:numel(bin_range)
     n_bin = bin_range(i);
     this_en = bin0 == n_bin;
-    e0 = n_bin*en_bin_size;
+    e0 = en_pts(n_bin);
     ei = enr(this_en);
     de = ei-e0;
     qri = qr(this_en,:);
@@ -88,7 +99,7 @@ for i=1:numel(bin_range)
     f2 = Interp_array{n_bin+1};    
     wd1 = f1(qri(:,1),qri(:,2),qri(:,3));
     wd2 = f2(qri(:,1),qri(:,2),qri(:,3));    
-    wd_lin = wd1 + (de/bin_size).*wd2;
+    wd_lin = wd1 + (de/en_bin_size).*wd2;
     wdisp(this_en) = wd_lin;
 end
 

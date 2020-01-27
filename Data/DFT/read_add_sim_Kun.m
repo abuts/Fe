@@ -23,7 +23,7 @@ en_pts = 8:8:800;
 ses = cellfun(@(cl)expand_sim(cl,en_pts),ses,'UniformOutput',false);
 ens = repmat(en_pts',numel(ses),1);
 
-expanded = ~isempty(ses);
+expanded = cellfun(@(cl)(~isempty(cl)),ses,'UniformOutput',true);
 
 ses = [ses{expanded}];
 ses = ses';
