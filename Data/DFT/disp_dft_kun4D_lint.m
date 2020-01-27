@@ -1,5 +1,6 @@
-function wdisp = disp_dft_kun4D(qh,qk,ql,en,varargin)
-% interpolate and expand numerical DFT data over whole q-dE space
+function wdisp = disp_dft_kun4D_lint(qh,qk,ql,en,varargin)
+% interpolate and expand numerical DFT data over whole q-dE space using
+% Matlab 
 %
 % Use this function as model for Tobyfit or sqw_eval or func_eval
 % algorithms.
@@ -13,12 +14,10 @@ function wdisp = disp_dft_kun4D(qh,qk,ql,en,varargin)
 %         parameter of the function
 
 
-persistent fcc_igrid;
 persistent magFF;
 persistent ses;
-persistent ChebCoef;
-persistent qx_pts;
-persistent en_pts;
+persistent Interp_array;
+en_bin_size = 8; % step of the bin calculation
 A = varargin{1};
 
 if numel(A)>1
@@ -38,19 +37,18 @@ if isempty(magFF) && use_magff
 end
 %
 if isempty(ses)
-    [ses,qx_pts,en_pts]=read_add_sim_Kun('Fe_add_sim_m.dat');
-    ChebCoef = ChebCoef3D(ses);
-    fcc_igrid = FCC_Igrid();
+    [ses,~,en_pts,qxs,qys,qzs,ens]=read_add_sim_Kun(true);
+    Interp_array = build_ScattInt(qxs,qys,qzs,ens,ses);
 end
-if numel(A) > 2
-    fcc_igrid.panel_dir = A(3);
-    fcc_igrid.equiv_sym = A(4);
-end
-if numel(A) > 4
-    fcc_igrid.cut_width = A(5);
-end
+% if numel(A) > 2
+%     fcc_igrid.panel_dir = A(3);
+%     fcc_igrid.equiv_sym = A(4);
+% end
+% if numel(A) > 4
+%     fcc_igrid.cut_width = A(5);
+% end
 %-------------------------------------------------------------------------
-do_reshape = false;
+%do_reshape = false;
 
 qr = [qh,qk,ql];
 %
@@ -61,7 +59,7 @@ brav = (brav-rem(brav,2));
 %
 qr   = single(abs(qr-brav));
 enr  = single(en);
-wdisp = interpn(qx_pts,qx_pts,qx_pts,en_pts,ses,qr(:,1),qr(:,2),qr(:,3),enr,'linear',0);
+wdisp = interpLintKun(qr,enr,Interp_array,en_bin_size);
 % [wdisp,close_enourh] = fcc_igrid.calc_sqw_in_qube(qr,enr);
 
 if use_magff
@@ -70,10 +68,27 @@ if use_magff
 else
     wdisp = wdisp*Amp;
 end
-if do_reshape
-    wdisp = reshape(wdisp,sz);
+% if do_reshape
+%     wdisp = reshape(wdisp,sz);
+% end
+
+function wdisp = interpLintKun(qr,enr,Interp_array,en_bin_size)
+
+bin0 = floor(enr/en_bin_size)+1;
+bin_range = unique(bin0);
+wdisp = zeros(numel(enr));
+for i=1:numel(bin_range)
+    n_bin = bin_range(i);
+    this_en = bin0 == n_bin;
+    e0 = n_bin*en_bin_size;
+    ei = enr(this_en);
+    de = ei-e0;
+    qri = qr(this_en,:);
+    f1 = Interp_array{n_bin};
+    f2 = Interp_array{n_bin+1};    
+    wd1 = f1(qri(:,1),qri(:,2),qri(:,3));
+    wd2 = f2(qri(:,1),qri(:,2),qri(:,3));    
+    wd_lin = wd1 + (de/bin_size).*wd2;
+    wdisp(this_en) = wd_lin;
 end
-
-
-
 

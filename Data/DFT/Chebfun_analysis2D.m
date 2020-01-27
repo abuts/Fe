@@ -35,15 +35,15 @@ ind_q = @(q0)find(q0<qi,1);
 ind_e = @(e0)find(e0<ei,1);
 fhk_int = @(h,e0)squeeze(in_dat.dat(ind_q(h),:,:,ind_e(e0)));
 
-in_line =  fhk_int(qh0,e0);
+base_matrix =  fhk_int(qh0,e0);
 %in_line = repmat(in_line(1,:),size(in_line,1),1);
-surf(qix,qiy,in_line,'EdgeColor','none');
+surf(qix,qiy,base_matrix,'EdgeColor','none');
 %hold on
 
 Nip = 81;
 Xj = Xn(Nip);
 Ci = zeros(Nip,Nip);
-ip_array = lin_interp(qi,in_line,Xj);
+ip_array = lin_interp(qi,base_matrix,Xj);
 for j=1:Nip
     j0 = j-1;
     Tj = TN(Xj,j0);

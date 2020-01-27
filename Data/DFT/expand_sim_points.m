@@ -1,4 +1,4 @@
-function [pxs,pys,pzs,ses] = expand_sim_points(px,py,pz,se,visualize)
+function [pxs,pys,pzs,ses] = expand_sim_points(px,py,pz,se,combine_with_1D,visualize)
 
 if ~exist('visualize','var')
     visualize = false;
@@ -6,6 +6,17 @@ else
     visualize = true;
 end
 [px,py,pz,se] = add_missing_points(px,py,pz,se);
+if combine_with_1D
+    [qx,qy,qz,Es] = read_allLin_Kun();
+    retained = true(size(qx));
+    [px,py,pz,se] = expand_points(px,py,pz,se,retained,qx,qy,qz,Es);    
+end
+
+% pxs = px;
+% pys = py;
+% pzs = pz;
+% ses = se;
+% return;
 
 
 proj1 = [0,0,0;1/sqrt(2),-1/sqrt(2),0];
@@ -26,7 +37,7 @@ for i=1:numel(proj)
     [pxe,pye,pze,retained]=reflect_points([px,py,pz],proj{i});
     %rota = rot0{i};
     %[pxe,pye,pze,retained]=rotate_points([px,py,pz],rota{:});
-    [px,py,pz,se] = expand_points(pxe,pye,pze,retained,px,py,pz,se);
+    [px,py,pz,se] = expand_points(pxe,pye,pze,se,retained,px,py,pz,se);
     np = numel(pz);
     if visualize
         name = sprintf('Inv transf N%d; Recovered %d points',i,np);
@@ -46,7 +57,7 @@ for i=1:numel(rot1)
     %[pxe,pye,pze,retained]=reflect_points([px,py,pz],proj{i});
     rota = rot1{i};
     [pxe,pye,pze,retained]=rotate_points([px,py,pz],rota{:});
-    [pxs,pys,pzs,ses] = expand_points(pxe,pye,pze,retained,pxs,pys,pzs,ses);
+    [pxs,pys,pzs,ses] = expand_points(pxe,pye,pze,ses,retained,pxs,pys,pzs,ses);
     np = numel(pzs);
     if visualize
         name = sprintf('Inv transf N%d, Recovered %d points',i,np);
@@ -68,18 +79,9 @@ pzs = pzs(ui);
 if ~isempty(ses)
     ses = ses(ui);
 end
+disp([' Finally retained',num2str(numel(pxs)),' : points, rejected ',num2str(np-numel(pxs)),' points']);
 
 
-function [pxe,pye,pze,sexp] = expand_points(pxe,pye,pze,retained,px,py,pz,se)
-pxe = [px;pxe];
-pye = [py;pye];
-pze = [pz;pze];
-if numel(se) == numel(px)
-    sexp = se(retained);
-    sexp = [se;sexp];
-else
-    sexp  = [];
-end
 
 
 

@@ -1,4 +1,4 @@
-function [cont,q_bg] = read_kun(file,IXd_format)
+function [cont,q_bg,q1,q2,q3,dE,s] = read_kun(file,IXd_format,zero_shift)
 
 Np = 100;
 
@@ -12,11 +12,17 @@ q2= reshape(q2,Np ,Ny);
 q3= reshape(q3,Np ,Ny);
 dE= reshape(dE,Np ,Ny);
 s = reshape(s, Np ,Ny);
-
-q1 = q1-q_bg(1);
-q2 = q2-q_bg(2);
-q3 = q3-q_bg(3);
-q = sqrt(q1.^2+q2.^2+q3.^2);
+if nargin<3
+    zero_shift = true;
+end
+if zero_shift
+    q1 = q1-q_bg(1);
+    q2 = q2-q_bg(2);
+    q3 = q3-q_bg(3);
+    q = sqrt(q1.^2+q2.^2+q3.^2);
+else
+    q = sqrt((q1-q_bg(1)).^2+(q2-q_bg(2)).^2+(q3-q_bg(3)).^2);
+end
 
 if ~exist('IXd_format','var')
     IXd_format = false;
