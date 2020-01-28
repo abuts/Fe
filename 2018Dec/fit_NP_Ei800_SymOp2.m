@@ -86,22 +86,22 @@ ly 0 500
 keep_figure
 
 com_cut= set_sample_and_inst(sym_cut,sample,@maps_instrument_for_tests,'-efix',800,'S');
-w2_tha = sqw_eval(com_cut,@disp_kun_calc,[0.0176,0,Kun_sym,kun_sym_dir(1),Kun_width]);
+w2_tha = sqw_eval(com_cut,@disp_kun_calc,[0.0176,1,Kun_sym,kun_sym_dir(1),Kun_width]);
 plot(w2_tha);
 lz  0 0.5
 lx -3 3
 fp_arr1 = [];
 
-kk = tobyfit(com_cut);
-kk = kk.set_fun(@disp_kun_calc,[0.2546,1,Kun_sym,kun_sym_dir(1),Kun_width],[1,0,0,0,0]);
-kk = kk.set_bfun(@(q,en,par)(par(1)*exp(-par(2)*(en-par(3)))),[A,-Alpha,0],[0,0,0]);
-% 
-kk = kk.set_mc_points(10);
-% %profile on;
-kk = kk.set_options('listing',2,'fit_control_parameters',[1.e-2;60;1.e-3]);
-% %kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-4;20;1.e-4]);
-% %profile on;
-[w2D_arr1_tf,fp_arr1]=kk.simulate;
-%[w2D_arr1_tf,fp_arr1]  =kk.fit;
-% 
-plot(w2D_arr1_tf)
+% kk = tobyfit(com_cut);
+% kk = kk.set_fun(@disp_kun_calc,[0.2546,1,Kun_sym,kun_sym_dir(1),Kun_width],[1,0,0,0,0]);
+% kk = kk.set_bfun(@(q,en,par)(par(1)*exp(-par(2)*(en-par(3)))),[A,-Alpha,0],[0,0,0]);
+% % 
+% kk = kk.set_mc_points(10);
+% % %profile on;
+% kk = kk.set_options('listing',2,'fit_control_parameters',[1.e-2;60;1.e-3]);
+% % %kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-4;20;1.e-4]);
+% % %profile on;
+% [w2D_arr1_tf,fp_arr1]=kk.simulate;
+% %[w2D_arr1_tf,fp_arr1]  =kk.fit;
+% % 
+% plot(w2D_arr1_tf)

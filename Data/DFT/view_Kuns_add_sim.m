@@ -2,7 +2,7 @@ function view_Kuns_add_sim
 % function to test Kun simulations loading and expansion
 % into {[0,0,0];[1,1,1]} square
 %
-[s,qx,en,pxs,pys,pzs]=read_add_sim_Kun('Fe_add_sim_m.dat',true);
+[s,qx,en,pxs,pys,pzs]=read_add_sim_Kun(false);
 
 if numel(size(s)) == 4
     [X,Y] = meshgrid(qx,qx);
@@ -32,10 +32,10 @@ else
     qq = 0:0.001:1;
     [X,Y] = meshgrid(qq,qq);
     
-    [x,y,v]=extract_in_plainZ(pxs,pys,pzs,en,s,8.1,0);    
+    [x,y,v]=extract_in_plainZ(pxs,pys,pzs,en,s,100,0);    
     F = scatteredInterpolant(x,y,v,'linear');
     S = F(X,Y);
-    surf(X,Y,S);
+    surf(X,Y,S,'EdgeColor','none');
     [x,y,v]=extract_in_plainZ(pxs,pys,pzs,en,s,40.1,0);
     F = scatteredInterpolant(x,y,v,'linear');
     S = F(X,Y);

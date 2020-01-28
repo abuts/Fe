@@ -35,12 +35,13 @@ sample=IX_sample(true,[1,0,0],[0,1,0],'cuboid',[0.04,0.03,0.02]);
 
 for i=1:numel(proj)
     w2all{i} = cut_sqw(dat,proj{i},[-2,0.05,3],Dqk ,Dql ,[0,dE,800]);
-    w2all{i} = set_sample_and_inst(w2all{i},sample,@maps_instrument_for_tests,'-efix',800,'S');
+    w2all{i} = set_sample_and_inst(w2all{i},sample,@maps_instrument,'-efix',800,'S');
     plot(w2all{i});
     keep_figure;
     ly 0 450
     lz  0 1
-    w2tha{i} = sqw_eval(w2all{i},@disp_kun_calc,[1,0,kun_sym(i),kun_sym_dir(i),Kun_width]);
+    %w2tha{i} = sqw_eval(w2all{i},@disp_kun_calc,[1,0,kun_sym(i),kun_sym_dir(i),Kun_width]);
+    w2tha{i} = sqw_eval(w2all{i},@disp_dft_kun4D_lint,[1,0,kun_sym(i),kun_sym_dir(i),Kun_width]);
     w2tha{i}.data.e = ones(size(w2tha{i}.data.s));
     plot(w2tha{i});
     

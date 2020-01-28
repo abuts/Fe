@@ -9,12 +9,11 @@ pz = [];
 Es = {};
 for i=1:numel(datasets)
     [~,~,qx,qy,qz,dE,Sig] = read_kun(datasets{i},false,false);
-    qx = qx(1,:)';
-    qy = qy(1,:)';
-    qz = qz(1,:)';
-    ss = arrayfun(@(i)([dE(:,i),Sig(:,i)]),1:size(dE,2),...
-        'UniformOutput',false);
-    ss = ss';
+    [qx,qy,qz,ss] = compact3D(reshape(dE,numel(dE),1),...
+        reshape(qx,numel(qx),1),...
+        reshape(qy,numel(qy),1),...
+        reshape(qz,numel(qz),1),...        
+        reshape(Sig,numel(Sig),1));
     
     retained = true(size(qx));
     [px,py,pz,Es] = expand_points(px,py,pz,Es,retained,qx,qy,qz,ss);

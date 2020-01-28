@@ -7,9 +7,9 @@ else
 end
 [px,py,pz,se] = add_missing_points(px,py,pz,se);
 if combine_with_1D
-    [qx,qy,qz,Es] = read_allLin_Kun();
-    retained = true(size(qx));
-    [px,py,pz,se] = expand_points(px,py,pz,se,retained,qx,qy,qz,Es);    
+    [qx1,qy1,qz1,Es1] = read_allLin_Kun();
+    retained = true(size(qx1));
+    [px,py,pz,se] = expand_points(px,py,pz,se,retained,qx1,qy1,qz1,Es1);    
 end
 
 % pxs = px;
@@ -72,12 +72,21 @@ bin_size = 0.0111379;
 n_bins = floor(1/bin_size)+1;
 bin3 = floor([pxs,pys,pzs]/bin_size)+1;
 bin  = bin3*[1;n_bins;n_bins*n_bins];
-[~,ui] = unique(bin);
+
+[bin,ui] = unique(bin);
 pxs = pxs(ui);
 pys = pys(ui);
 pzs = pzs(ui);
 if ~isempty(ses)
     ses = ses(ui);
+    if combine_with_1D
+        bin3_1 = floor([qx1,qy1,qz1]/bin_size)+1;        
+        bin1 = bin3_1*[1;n_bins;n_bins*n_bins];        
+        [bin1,uniqi] = unique(bin1);        
+        expanded = ismember(bin,bin1);
+
+        ses(expanded) = Es1(uniqi);
+    end
 end
 disp([' Finally retained',num2str(numel(pxs)),' : points, rejected ',num2str(np-numel(pxs)),' points']);
 
