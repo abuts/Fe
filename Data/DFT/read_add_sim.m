@@ -10,5 +10,5 @@ data = textscan(fh,'%f %f %f %f %f');
 qx=data{1};
 qy = data{2};
 qz = data{3};
-En = data{4};
+En = floor(data{4});
 Sig = data{5};

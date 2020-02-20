@@ -10,7 +10,7 @@ Ny = floor(numel(q1)/Np );
 q1= reshape(q1,Np ,Ny);
 q2= reshape(q2,Np ,Ny);
 q3= reshape(q3,Np ,Ny);
-dE= reshape(dE,Np ,Ny);
+dE= floor(reshape(dE,Np ,Ny));
 s = reshape(s, Np ,Ny);
 if nargin<3
     zero_shift = true;

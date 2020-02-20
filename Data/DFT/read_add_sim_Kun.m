@@ -46,7 +46,8 @@ if isempty(serr)
     return;
 end
 is = ismember(en_range,serr(:,1));
-sexp = zeros(numel(en_range),1);
+sexp = NaN(numel(en_range),1);
+%sexp = zeros(numel(en_range),1);
 if sum(is) ~=size(serr,1)
     return
 else
