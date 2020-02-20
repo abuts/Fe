@@ -7,17 +7,17 @@ if nargin<1
 else
     Nip = Np;
 end
-[px,py,pz,Xj] = min_sim_pointsQ(Nip,'visual');
+[px,py,pz,Xj] = min_sym_pointsQ(Nip,'visual');
 
 e_max = 800;
 q0 = 1;
 
 %-----------------------------------------------
-[pxp,pyp,pzp] = expand_sim_points(px,py,pz,Xj);
-figure('Name','Recovered all')
-scatter3(pxp,pyp,pzp);
-np = numel(pzp);
-disp([' NP_all_rec: ',num2str(np)]);
+% [pxp,pyp,pzp] = expand_sym_points(px,py,pz,{},false);
+% figure('Name','Recovered all')
+% scatter3(pxp,pyp,pzp);
+% np = numel(pzp);
+% disp([' NP_all_rec: ',num2str(np)]);
 
 
 rG = dist2p(px,py,pz,0,0,0);
@@ -80,9 +80,9 @@ plot(qqq,E_near_Pp(qqq));
 
 hold off
 
-[Gpp,Gd,EG_range] = E_rangeGp([px(isnear_Gp),py(isnear_Gp),pz(isnear_Gp)],E_near_Gp);
-[Hpp,Hd,EH_range] = E_rangeHp([px(isnear_Hp),py(isnear_Hp),pz(isnear_Hp)],E_near_Hp);
-[Ppp,Pd,EP_range] = E_rangePp([px(isnear_Pp),py(isnear_Pp),pz(isnear_Pp)],E_near_Pp);
+[Gpp,Gd,EG_range,EG_missing] = E_rangeGp([px(isnear_Gp),py(isnear_Gp),pz(isnear_Gp)],E_near_Gp);
+[Hpp,Hd,EH_range,EH_missing] = E_rangeHp([px(isnear_Hp),py(isnear_Hp),pz(isnear_Hp)],E_near_Hp);
+[Ppp,Pd,EP_range,EP_missing] = E_rangePp([px(isnear_Pp),py(isnear_Pp),pz(isnear_Pp)],E_near_Pp);
 figure
 hold on
 scatter(Gd,EG_range(:,1),'r');
@@ -94,6 +94,7 @@ scatter(Pd,EP_range(:,2),'b');
 hold off
 
 sym_points = [Gpp;Hpp;Ppp];
+miss_points = [EG_missing;EH_missing;EP_missing];
 
 file = 'sim_range.dat';
 fh = fopen(file,'w');
@@ -109,8 +110,33 @@ for i=1:size(sym_points,1)
     fprintf(fh,'\n');
 end
 
+file = 'sim_range_add.dat';
+fh = fopen(file,'w');
+clob = onCleanup(@()fclose(fh));
+for i=1:size(sym_points,1)
+    space_pt = sym_points(i,:);
+    mis_range = miss_points(i,:);
+    if mis_range(1)<=mis_range(2)
+        E_range = mis_range(1):8:mis_range(2);
+        for j=1:numel(E_range)
+            fprintf(fh,'%6.4f %6.4f %6.4f %6.1f\n',...
+                space_pt(1),space_pt(2),space_pt(3),E_range(j));
+        end
+    end
+    if mis_range(3)<=mis_range(4)
+        E_range = mis_range(3):8:mis_range(4);
+        for j=1:numel(E_range)
+            fprintf(fh,'%6.4f %6.4f %6.4f %6.1f\n',...
+                space_pt(1),space_pt(2),space_pt(3),E_range(j));
+        end
+    end
+    fprintf(fh,'\n');
+end
 
-function [rng,dist,Range] = E_rangePp(qp,f_dist)
+
+
+
+function [rng,dist,E_Range,E_missing] = E_rangePp(qp,f_dist)
 
 dist = dist2p(qp(:,1),qp(:,2),qp(:,3),0.5,0.5,0.5);
 E_avrg = f_dist(dist);
@@ -126,21 +152,17 @@ E_min(high) = 800;
 
 E_min = floor(E_min/8)*8;
 E_max = floor(E_max/8)*8;
-rng = [qp,E_min,E_max];
+E_missing = Get_missingRange(E_min,E_max);
+rng = [qp,E_min,E_max,E_missing];
+
 
 %[dist,ind] = unique(dist);
 %Range = [rng(ind,4),rng(ind,5)];
-Range = [rng(:,4),rng(:,5)];
+E_Range = [E_min,E_max];
 
 
-function Range = PpDist(dist)
 
-Range = 200*ones(size(dist));
-in_range = dist>=0.2 & dist<=0.45;
-
-Range(in_range) = Range(in_range)+((dist(in_range)-0.2)/(0.45-0.2))*150;
-
-function [rng,dist,Range] = E_rangeGp(qp,f_dist)
+function [rng,dist,E_Range,E_missing] = E_rangeGp(qp,f_dist)
 
 dist = dist2p(qp(:,1),qp(:,2),qp(:,3),0,0,0);
 E_avrg = f_dist(dist);
@@ -151,13 +173,16 @@ E_min(low) = 8;
 
 E_min = floor(E_min/8)*8;
 E_max = floor(E_max/8)*8;
-rng = [qp,E_min,E_max];
+E_missing = Get_missingRange(E_min,E_max);
+rng = [qp,E_min,E_max,E_missing];
+
 
 %[dist,ind] = unique(dist);
 %Range = [rng(ind,4),rng(ind,5)];
-Range = [rng(:,4),rng(:,5)];
+E_Range = [E_min,E_max];
 
-function [rng,dist,Range] = E_rangeHp(qp,f_dist)
+
+function [rng,dist,E_Range,E_missing] = E_rangeHp(qp,f_dist)
 
 dist = dist2p(qp(:,1),qp(:,2),qp(:,3),1,0,0);
 E_avrg = f_dist(dist);
@@ -168,14 +193,36 @@ E_max(high) = 800;
 
 E_min = floor(E_min/8)*8;
 E_max = floor(E_max/8)*8;
-rng = [qp,E_min,E_max];
+E_missing = Get_missingRange(E_min,E_max);
+rng = [qp,E_min,E_max,E_missing];
+
 
 %[dist,ind] = unique(dist);
 %Range = [rng(ind,4),rng(ind,5)];
-Range = [rng(:,4),rng(:,5)];
+E_Range = [E_min,E_max];
 
 
 
 
 function dist = dist2p(px,py,pz,p1,p2,p3)
 dist = sqrt((px-p1).*(px-p1)+(py-p2).*(py-p2)+(pz-p3).*(pz-p3));
+
+function E_missing = Get_missingRange(E_min,E_max)
+mmi1 = ones(size(E_min))*8;
+mmi2 = E_min-8;
+%valid = mmi1<=mmi2;
+%min_range = [mmi1(valid),mmi2(valid)];
+min_range = [mmi1,mmi2];
+mma1 = E_max+8;
+mma2 = ones(size(E_max))*800;
+%valid = mma1<=mma2;
+%max_range = [mma1(valid),mma2(valid)];
+max_range = [mma1,mma2];
+E_missing = [min_range,max_range];
+
+function Range = PpDist(dist)
+
+Range = 200*ones(size(dist));
+in_range = dist>=0.2 & dist<=0.45;
+
+Range(in_range) = Range(in_range)+((dist(in_range)-0.2)/(0.45-0.2))*150;

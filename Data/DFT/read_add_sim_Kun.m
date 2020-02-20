@@ -15,8 +15,8 @@ if ~exist('combine_with_1D','var')
 end
 
 %
-%[pxs,pys,pzs,ses] = expand_sim_points(qx,qy,qz,es,combine_with_1D,'visualize');
-[pxs,pys,pzs,ses] = expand_sim_points(qx,qy,qz,es,combine_with_1D);
+%[pxs,pys,pzs,ses] = expand_sym_points(qx,qy,qz,es,combine_with_1D,'visualize');
+[pxs,pys,pzs,ses] = expand_sym_points(qx,qy,qz,es,combine_with_1D);
 %
 qx_pts = sort(unique(round(pxs,11)));
 en_pts = 8:8:800;

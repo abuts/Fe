@@ -1,15 +1,15 @@
-function [pxs,pys,pzs,ses] = expand_sim_points(px,py,pz,se,combine_with_1D,visualize)
+function [pxs,pys,pzs,ses] = expand_sym_points(px,py,pz,se,combine_with_1D,visualize)
 
 if ~exist('visualize','var')
     visualize = false;
 else
     visualize = true;
 end
-[px,py,pz,se] = add_missing_points(px,py,pz,se);
+%[px,py,pz,se] = add_missing_points(px,py,pz,se);
 if combine_with_1D
     [qx,qy,qz,Es] = read_allLin_Kun();
     retained = true(size(qx));
-    [px,py,pz,se] = expand_points(px,py,pz,se,retained,qx,qy,qz,Es);    
+    [px,py,pz,se] = expand_points(px,py,pz,se,retained,qx,qy,qz,Es);
 end
 
 % pxs = px;
@@ -138,7 +138,10 @@ qr_r = [px_s,py_s,pz_s];
 bin_r  = floor(qr_r/bin_size)*[1;nBins;nBins*nBins];
 bin_s = floor([px,py,pz]/bin_size)*[1;nBins;nBins*nBins];
 present = ismember(bin_r,bin_s);
-% copy existing point values into expanded points
-se_s = cell(numel(pz_s),1);
-se_s(present) = se;
-
+if isempty(se)
+    se_s = {};
+else
+    % copy existing point values into expanded points
+    se_s = cell(numel(pz_s),1);
+    se_s(present) = se;
+end
