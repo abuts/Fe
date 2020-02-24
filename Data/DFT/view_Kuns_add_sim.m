@@ -2,7 +2,7 @@ function view_Kuns_add_sim
 % function to test Kun simulations loading and expansion
 % into {[0,0,0];[1,1,1]} square
 %
-[s,qx,en,pxs,pys,pzs]=read_add_sim_Kun(false);
+[s,qx,en,pxs,pys,pzs]=read_add_sim_Kun(true);
 
 if numel(size(s)) == 4
     [X,Y] = meshgrid(qx,qx);
@@ -29,32 +29,33 @@ if numel(size(s)) == 4
     surf(X,Y,s(:,:,15,80));
     
 else
+    method = 'nearest';
     qq = 0:0.001:1;
     [X,Y] = meshgrid(qq,qq);
     
     [x,y,v]=extract_in_plainZ(pxs,pys,pzs,en,s,100,0);    
-    F = scatteredInterpolant(x,y,v,'linear');
+    F = scatteredInterpolant(x,y,v,method );
     S = F(X,Y);
     surf(X,Y,S,'EdgeColor','none');
     [x,y,v]=extract_in_plainZ(pxs,pys,pzs,en,s,40.1,0);
-    F = scatteredInterpolant(x,y,v,'linear');
+    F = scatteredInterpolant(x,y,v,method);
     S = F(X,Y);
-    surf(X,Y,S);    
+    surf(X,Y,S,'EdgeColor','none');    
 
     [x,y,v]=extract_in_plainZ(pxs,pys,pzs,en,s,80.1,0);
-    F = scatteredInterpolant(x,y,v,'linear');
+    F = scatteredInterpolant(x,y,v,method );
     S = F(X,Y);
-    surf(X,Y,S);    
+    surf(X,Y,S,'EdgeColor','none');    
 
     [x,y,v]=extract_in_plainZ(pxs,pys,pzs,en,s,120.1,0);
-    F = scatteredInterpolant(x,y,v,'linear');
+    F = scatteredInterpolant(x,y,v,method );
     S = F(X,Y);
-    surf(X,Y,S);    
+    surf(X,Y,S,'EdgeColor','none');    
 
     [x,y,v]=extract_in_plainZ(pxs,pys,pzs,en,s,500.1,0);
-    F = scatteredInterpolant(x,y,v,'linear');
+    F = scatteredInterpolant(x,y,v,method );
     S = F(X,Y);
-    surf(X,Y,S);    
+    surf(X,Y,S,'EdgeColor','none');    
     
 end
 %qx = reshape(qr(:,1),21,21,21);

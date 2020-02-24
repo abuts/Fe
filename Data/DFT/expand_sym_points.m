@@ -9,6 +9,8 @@ end
 if combine_with_1D
     [qx1,qy1,qz1,Es1] = read_allLin_Kun();
     retained = true(size(qx1));
+    % remove energy scale from disp calculations
+    Es1  = cellfun(@(x)(x(:,2)),Es1,'UniformOutput',false);
     [px,py,pz,se] = expand_points(px,py,pz,se,retained,qx1,qy1,qz1,Es1);
 end
 

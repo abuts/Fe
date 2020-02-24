@@ -14,20 +14,29 @@ if ~exist('combine_with_1D','var')
     combine_with_1D = false;
 end
 
-%
-%[pxs,pys,pzs,ses] = expand_sym_points(qx,qy,qz,es,combine_with_1D,'visualize');
-[pxs,pys,pzs,ses] = expand_sym_points(qx,qy,qz,es,combine_with_1D);
-%
-qx_pts = sort(unique(round(pxs,11)));
 en_pts = 8:8:800;
-ses = cellfun(@(cl)expand_sim(cl,en_pts),ses,'UniformOutput',false);
-ens = repmat(en_pts',numel(ses),1);
+[ese,mis_range] = cellfun(@(cl)expand_sim(cl,en_pts),es,'UniformOutput',false);
+ne = cellfun(@(x)(~isempty(x)),mis_range,'UniformOutput',true);
+nex_tot = sum(ne);
+fprintf(' Total number of pints needing further calculations %d out of %d\n',...
+    nex_tot,numel(qx));
+%
+%[pxs,pys,pzs,ses] = expand_sym_points(qx,qy,qz,ese,combine_with_1D,'visualize');
+[pxs,pys,pzs,ses] = expand_sym_points(qx,qy,qz,ese,combine_with_1D);
+%
+
+
 
 expanded = cellfun(@(cl)(~isempty(cl)),ses,'UniformOutput',true);
+%regular = cellfun(@(cl)(size(cl,1)==100),ses(expanded),'UniformOutput',true);
+ens = repmat(en_pts',numel(ses(expanded)),1);
+%
+%ses = cellfun(@(cl)(cl'),ses,'UniformOutput',false);
 
 ses = [ses{expanded}];
 ses = ses';
 %
+qx_pts = sort(unique(round(pxs,11)));
 Nx = numel(qx_pts);
 if Nx*Nx*Nx == size(ses,1)
     ses = reshape(ses,Nx,Nx,Nx ,numel(en_pts));
@@ -40,16 +49,78 @@ end
 
 
 
-function sexp = expand_sim(serr,en_range)
-if isempty(serr)
-    sexp  = {};
+function [s_exp,mis_range] = expand_sim(se_clc,en_range)
+% Inputs:
+% se_clc 2D  -- array containing calulated enegry transfer and the DFT signal
+% en_range -- array with energy transfers to expand signal onto
+% outputs 
+% s_exp -- expanded signal
+%
+if isempty(se_clc)
+    s_exp  = {};
     return;
 end
-is = ismember(en_range,serr(:,1));
-sexp = NaN(numel(en_range),1);
+if all(se_clc(:,2)==0)
+    s_exp = {};
+    mis_range = {en_range};
+    return
+end
+plot(se_clc(:,1),se_clc(:,2),'*')
+is_calc = ismember(en_range,se_clc(:,1));
+s_exp = NaN(numel(en_range),1);
 %sexp = zeros(numel(en_range),1);
-if sum(is) ~=size(serr,1)
+if sum(is_calc) ~=size(se_clc,1)
+    warning('point rejected');
     return
 else
-    sexp(is) = serr(:,2);
+    s_exp(is_calc) = se_clc(:,2);
+    en_out = en_range(~is_calc);
+    sig_out = interp1(se_clc(:,1),se_clc(:,2),en_out,'linear','extrap');
+    s_exp(~is_calc) = sig_out;
+
+    if s_exp(1)>0 % signal in low energy range is not vanishing
+        % is it interpolated:
+        En_clc_start = se_clc(1,1);
+        if En_clc_start > en_range(1) % yes
+            % find interpolation range
+            ind = find(en_range == En_clc_start);
+            if s_exp(1) >= se_clc(1,2) % the function grows 
+                s_exp(1:ind-1) = 0;
+                mis_range = {en_range(1:ind-1)};
+            else % ok, let's lieve it as it is
+                mis_range = {};                            
+            end
+        else   %fine -- we calculated it
+            mis_range = {};            
+        end
+    else
+        mis_range = {};
+    end
+    if s_exp(end)>0 % signal in the high energy range is not vanishing
+        % is it interpolated?
+        En_clc_end = se_clc(end,1);
+        if En_clc_end < en_range(end) % yes
+            % find interpolation range
+            ind = find(en_range == En_clc_end);
+            if s_exp(end) >= se_clc(end,2) % the function grows 
+                s_exp(ind+1:end) = 0;
+                sub_range = en_range(ind+1:end);
+                if se_clc(end,2) > 0.5 % still ignore small signals from future calculations on the basis of the function shape
+                    mis_range = {[mis_range{:},sub_range]};
+                end
+            else % ok, let's lieve it as it is
+                %mis_range = {}; ;  The range remains unchanged                             
+            end
+        else   %fine -- we calculated it
+            %mis_range = {};  The range remains unchanged          
+        end
+    else
+        %mis_range = {}; % the range remains unchanged
+    end
+    
+    non_phys = s_exp<0;    
+    s_exp(non_phys) = 0;    
+    hold on
+    plot(en_range(~non_phys),s_exp(~non_phys))
+    hold off
 end

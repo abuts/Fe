@@ -6,7 +6,7 @@ function [qx,qy,qz,es] = compact3D(En,qx_all,qy_all,qz_all,Sig)
 % q-point
 
 dE = En(2:end)-En(1:end-1);
-eb_block_rngs = [0;find(dE<0);numel(dE)];
+eb_block_rngs = [0;find(dE<0);numel(En)];
 % e-ranges
 e_rngs = [eb_block_rngs(1:end-1),eb_block_rngs(2:end)];
 

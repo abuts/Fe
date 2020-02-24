@@ -14,7 +14,7 @@ for i=1:numel(datasets)
         reshape(qy,numel(qy),1),...
         reshape(qz,numel(qz),1),...        
         reshape(Sig,numel(Sig),1));
-    
+    %all_size = cellfun(@(x)size(x,1),ss,'UniformOutput',true);
     retained = true(size(qx));
     [px,py,pz,Es] = expand_points(px,py,pz,Es,retained,qx,qy,qz,ss);
 end
