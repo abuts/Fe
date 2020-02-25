@@ -17,7 +17,7 @@ for i=1:n_binv
     qx_bin = qx(in_bin);
     qy_bin = qy(in_bin);
     qz_bin = qz(in_bin);
-    Interp_array{i}= scatteredInterpolant(qx_bin,qy_bin,qz_bin,s_bin,'linear');
+    Interp_array{i}= scatteredInterpolant(qx_bin,qy_bin,qz_bin,s_bin,'natural');
 end
 if isempty(Interp_array{end})
     Interp_array{end} = Interp_array{end-1};

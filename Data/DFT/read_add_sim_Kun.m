@@ -15,7 +15,7 @@ if ~exist('combine_with_1D','var')
 end
 
 en_pts = 8:8:800;
-filler = nan; % 0 or NaN or negative
+filler = 0; % 0 or NaN or negative
 
 [ese,mis_range] = cellfun(@(cl)expand_sim(cl,en_pts,filler),es,'UniformOutput',false);
 ne = cellfun(@(x)(~isempty(x)),mis_range,'UniformOutput',true);
