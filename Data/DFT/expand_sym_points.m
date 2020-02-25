@@ -12,7 +12,15 @@ if combine_with_1D
     % remove energy scale from disp calculations
     Es1  = cellfun(@(x)(x(:,2)),Es1,'UniformOutput',false);
     [px,py,pz,se] = expand_points(px,py,pz,se,retained,qx1,qy1,qz1,Es1);
+    np = numel(pz);
 end
+if visualize
+    name = sprintf('Base image contains %d points',np);
+    figure('Name',name)
+    c = cellfun(@(cl)sum_valid(cl),se,'UniformOutput',true);
+    scatter3(px,py,pz,8,c);
+end
+
 
 % pxs = px;
 % pys = py;
@@ -44,13 +52,17 @@ for i=1:numel(proj)
     if visualize
         name = sprintf('Inv transf N%d; Recovered %d points',i,np);
         figure('Name',name)
-        scatter3(px,py,pz);
+        c = cellfun(@(cl)sum_valid(cl),se,'UniformOutput',true);
+        scatter3(px,py,pz,8,c);
     end
     disp([' NP_rec',num2str(i),': ',num2str(np)]);
 end
 
 rot1 = {{2,[0.5,0.5,0.5],90};{2,[0.5,0.5,0.5],-90};{2,[0.5,0.5,0.5],180};...
     {1,[0.5,0.5,0.5],90};{1,[0.5,0.5,0.5],-90}};
+rot2 = {{1,[0,0.5,0.5],90};{1,[0,0.5,0.5],90};{};...
+    {2,[0.5,0,0.5],90};{2,[0.5,0,0.5],90}};
+
 pxs = px;
 pys = py;
 pzs = pz;
@@ -58,13 +70,27 @@ ses = se;
 for i=1:numel(rot1)
     %[pxe,pye,pze,retained]=reflect_points([px,py,pz],proj{i});
     rota = rot1{i};
-    [pxe,pye,pze,retained]=rotate_points([px,py,pz],rota{:});
+    rotb = rot2{i};
+    
+    if isempty(rotb)
+        r_rot=rotate_points([px,py,pz],rota{:});
+    else
+        r_rot=rotate_points([px,py,pz],rota{:});
+        r_rot=rotate_points(r_rot,rotb{:});
+    end
+    [r_rot,retained]=remove_duplicates([px,py,pz],r_rot);
+    pxe = r_rot(:,1);
+    pye = r_rot(:,2);
+    pze = r_rot(:,3);
+    
+    
     [pxs,pys,pzs,ses] = expand_points(pxe,pye,pze,ses,retained,pxs,pys,pzs,ses);
     np = numel(pzs);
     if visualize
         name = sprintf('Inv transf N%d, Recovered %d points',i,np);
         figure('Name',name)
-        scatter3(pxs,pys,pzs);
+        c = cellfun(@(cl)sum_valid(cl),ses,'UniformOutput',true);
+        scatter3(pxs,pys,pzs,8,c);
     end
     disp([' NP_rec',num2str(i),': ',num2str(np)]);
 end
@@ -82,11 +108,11 @@ pzs = pzs(ui);
 if ~isempty(ses)
     ses = ses(ui);
     if combine_with_1D
-        bin3_1 = floor([qx1,qy1,qz1]/bin_size)+1;        
-        bin1 = bin3_1*[1;n_bins;n_bins*n_bins];        
-        [bin1,uniqi] = unique(bin1);        
+        bin3_1 = floor([qx1,qy1,qz1]/bin_size)+1;
+        bin1 = bin3_1*[1;n_bins;n_bins*n_bins];
+        [bin1,uniqi] = unique(bin1);
         expanded = ismember(bin,bin1);
-
+        
         ses(expanded) = Es1(uniqi);
     end
 end
@@ -95,8 +121,7 @@ disp([' Finally retained',num2str(numel(pxs)),' : points, rejected ',num2str(np-
 
 
 
-
-function [pxe,pye,pze,retained]=rotate_points(pr,dir,rot_cen,angdeg)
+function r_rot=rotate_points(pr,dir,rot_cen,angdeg)
 %
 rx =@(angdeg)( [1,0,0;0,cosd(angdeg),-sind(angdeg);0,sind(angdeg),cosd(angdeg)]);
 ry =@(angdeg)( [cosd(angdeg),0,sind(angdeg);0,1,0;-sind(angdeg),0,cosd(angdeg)]);
@@ -105,11 +130,7 @@ f_all = {rx,ry,rz};
 
 %pts = unique(sort(pr(:,1)));
 %bins = abs(pts(2:end)-pts(1:end-1));
-bin_size = 0.0111379;
 
-n_bins = floor(1/bin_size)+1;
-bin03 = floor(pr/bin_size);
-bin0  = bin03*[1;n_bins;n_bins*n_bins];
 %bin0 = sort(bin0);
 %dir = find(c_ax);
 
@@ -117,15 +138,24 @@ rf = f_all{dir};
 rm = rf(angdeg);
 r_rot = (pr-rot_cen)*rm+rot_cen;
 
-bin3 = floor(r_rot/bin_size);
+
+function [pr2r,retained]=remove_duplicates(pr1,pr2,bin_size)
+
+if ~exist('bin_size','var')
+    bin_size = 0.0111379;
+end
+
+n_bins = floor(1/bin_size)+1;
+bin03 = floor(pr1/bin_size);
+bin0  = bin03*[1;n_bins;n_bins*n_bins];
+
+bin3 = floor(pr2/bin_size);
 bin1  = bin3*[1;n_bins;n_bins*n_bins];
 %[bin1,ic] = sort(bin1);
 retained = ~ismember(bin1,bin0);
 rem = sum(~retained);
-disp([' Rotated ',num2str(numel(bin1)),' points Where : ',num2str(rem),' Coinside']);
-pxe = r_rot(retained,1);
-pye = r_rot(retained,2);
-pze = r_rot(retained,3);
+disp([' from transfornmed ',num2str(numel(bin1)),' points : ',num2str(rem),' removed']);
+pr2r = pr2(retained,:);
 
 function [pxe,pye,pze,moved]=reflect_points(pr,proj)
 e0 = proj(1,:);
@@ -156,3 +186,16 @@ else
     se_s = cell(numel(pz_s),1);
     se_s(present) = se;
 end
+function ss = sum_valid(Int)
+if isempty(Int)
+    ss = 0;
+    return;
+end
+valid = ~isnan(Int);
+if ~any(valid)
+    ss = 0;
+    return;
+end
+sig = Int(valid);
+%ss = sum(sig)/sum(valid);
+ss = max(sig);

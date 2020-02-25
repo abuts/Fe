@@ -15,7 +15,9 @@ if ~exist('combine_with_1D','var')
 end
 
 en_pts = 8:8:800;
-[ese,mis_range] = cellfun(@(cl)expand_sim(cl,en_pts),es,'UniformOutput',false);
+filler = nan; % 0 or NaN or negative
+
+[ese,mis_range] = cellfun(@(cl)expand_sim(cl,en_pts,filler),es,'UniformOutput',false);
 ne = cellfun(@(x)(~isempty(x)),mis_range,'UniformOutput',true);
 nex_tot = sum(ne);
 fprintf(' Total number of pints needing further calculations %d out of %d\n',...
@@ -46,14 +48,33 @@ else
     pzs = pzs(expanded);
     ens = ens(expanded);
 end
+if isnan(filler)
+    ses = ses';
+    szs = size(ses);
+    pxs = repmat(pxs,1,szs(1));
+    pys = repmat(pys,1,szs(1));
+    pzs = repmat(pzs,1,szs(1));
+    ses=reshape(ses,numel(ses),1);
+    pxs=reshape(pxs',numel(ses),1);
+    pys=reshape(pys',numel(ses),1);
+    pzs=reshape(pzs',numel(ses),1);
+    valid = ~isnan(ses);
+    pxs = pxs(valid);
+    pys = pys(valid);
+    pzs = pzs(valid);
+    ses = ses(valid);
+    en_pts = repmat(en_pts',1,szs(2));
+    en_pts = reshape(en_pts,numel(en_pts),1);
+    en_pts = en_pts(valid);
+end
 
 
 
-function [s_exp,mis_range] = expand_sim(se_clc,en_range)
+function [s_exp,mis_range] = expand_sim(se_clc,en_range,filler)
 % Inputs:
 % se_clc 2D  -- array containing calulated enegry transfer and the DFT signal
 % en_range -- array with energy transfers to expand signal onto
-% outputs 
+% outputs
 % s_exp -- expanded signal
 %
 if isempty(se_clc)
@@ -77,21 +98,21 @@ else
     en_out = en_range(~is_calc);
     sig_out = interp1(se_clc(:,1),se_clc(:,2),en_out,'linear','extrap');
     s_exp(~is_calc) = sig_out;
-
+    
     if s_exp(1)>0 % signal in low energy range is not vanishing
         % is it interpolated:
         En_clc_start = se_clc(1,1);
         if En_clc_start > en_range(1) % yes
             % find interpolation range
             ind = find(en_range == En_clc_start);
-            if s_exp(1) >= se_clc(1,2) % the function grows 
-                s_exp(1:ind-1) = 0;
+            if s_exp(1) >= se_clc(1,2) % the function grows
+                s_exp(1:ind-1) = filler;
                 mis_range = {en_range(1:ind-1)};
             else % ok, let's lieve it as it is
-                mis_range = {};                            
+                mis_range = {};
             end
         else   %fine -- we calculated it
-            mis_range = {};            
+            mis_range = {};
         end
     else
         mis_range = {};
@@ -102,24 +123,24 @@ else
         if En_clc_end < en_range(end) % yes
             % find interpolation range
             ind = find(en_range == En_clc_end);
-            if s_exp(end) >= se_clc(end,2) % the function grows 
-                s_exp(ind+1:end) = 0;
+            if s_exp(end) >= se_clc(end,2) % the function grows
+                s_exp(ind+1:end) = filler;
                 sub_range = en_range(ind+1:end);
                 if se_clc(end,2) > 0.5 % still ignore small signals from future calculations on the basis of the function shape
                     mis_range = {[mis_range{:},sub_range]};
                 end
             else % ok, let's lieve it as it is
-                %mis_range = {}; ;  The range remains unchanged                             
+                %mis_range = {}; ;  The range remains unchanged
             end
         else   %fine -- we calculated it
-            %mis_range = {};  The range remains unchanged          
+            %mis_range = {};  The range remains unchanged
         end
     else
         %mis_range = {}; % the range remains unchanged
     end
     
-    non_phys = s_exp<0;    
-    s_exp(non_phys) = 0;    
+    non_phys = s_exp<0;
+    s_exp(non_phys) = filler;
     hold on
     plot(en_range(~non_phys),s_exp(~non_phys))
     hold off

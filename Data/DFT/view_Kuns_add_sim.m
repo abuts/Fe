@@ -29,33 +29,33 @@ if numel(size(s)) == 4
     surf(X,Y,s(:,:,15,80));
     
 else
-    method = 'nearest';
+    method = 'natural';
     qq = 0:0.001:1;
     [X,Y] = meshgrid(qq,qq);
     
-    [x,y,v]=extract_in_plainZ(pxs,pys,pzs,en,s,100,0);    
+    [x,y,v]=extract_in_plainZ(pxs,pys,pzs,en,s,100,0);
     F = scatteredInterpolant(x,y,v,method );
     S = F(X,Y);
     surf(X,Y,S,'EdgeColor','none');
     [x,y,v]=extract_in_plainZ(pxs,pys,pzs,en,s,40.1,0);
     F = scatteredInterpolant(x,y,v,method);
     S = F(X,Y);
-    surf(X,Y,S,'EdgeColor','none');    
-
+    surf(X,Y,S,'EdgeColor','none');
+    
     [x,y,v]=extract_in_plainZ(pxs,pys,pzs,en,s,80.1,0);
     F = scatteredInterpolant(x,y,v,method );
     S = F(X,Y);
-    surf(X,Y,S,'EdgeColor','none');    
-
+    surf(X,Y,S,'EdgeColor','none');
+    
     [x,y,v]=extract_in_plainZ(pxs,pys,pzs,en,s,120.1,0);
     F = scatteredInterpolant(x,y,v,method );
     S = F(X,Y);
-    surf(X,Y,S,'EdgeColor','none');    
-
+    surf(X,Y,S,'EdgeColor','none');
+    
     [x,y,v]=extract_in_plainZ(pxs,pys,pzs,en,s,500.1,0);
     F = scatteredInterpolant(x,y,v,method );
     S = F(X,Y);
-    surf(X,Y,S,'EdgeColor','none');    
+    surf(X,Y,S,'EdgeColor','none');
     
 end
 %qx = reshape(qr(:,1),21,21,21);
@@ -68,5 +68,16 @@ inz = pzs>=z0-dq & pzs<z0+dq;
 x = pxs(inz);
 y = pys(inz);
 %indE = floor(en/dT);
-iT0 = floor(T0/dT);
-ss = s(inz,iT0);
+if size(s,2) > 1
+    iT0 = floor(T0/dT);
+    ss = s(inz,iT0);
+else
+    ss = s(inz);
+    en = en(inz);
+    ine = en>=T0-0.5*dT & en < T0+0.5*dT;
+    x = x(ine);
+    y = y(ine);
+    ss = ss(ine);
+end
+c = ss;
+scatter3(x,y,ss,8,c,'filled');
