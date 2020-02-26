@@ -37,6 +37,7 @@ if isempty(magFF) && use_magff
     magFF = mi.getFF_calculator(bm);
 end
 %
+
 if isempty(ses) || isempty(Interp_array)
     [ses,~,en_pts,qxs,qys,qzs,ens]=read_add_sim_Kun(true);
     Interp_array = build_ScattInt(en_pts,qxs,qys,qzs,ens,ses);
@@ -57,6 +58,7 @@ qr = [qh,qk,ql];
 brav = fix(qr);
 brav = brav+sign(brav);
 brav = (brav-rem(brav,2));
+%
 %
 qr   = double(abs(qr-brav));
 enr  = double(en);
