@@ -14,17 +14,20 @@ if ~exist('combine_with_1D','var')
     combine_with_1D = false;
 end
 
-en_pts = 8:8:800;
-filler = nan; % 0 or NaN or negative
 
-[ese,mis_range] = cellfun(@(cl)expand_sim(cl,en_pts,filler),es,'UniformOutput',false);
+en_pts = 8:8:800;
+filler = NaN; % 0 or NaN or negative
+visualize = false;
+
+[ese,mis_range] = cellfun(@(cl)expand_sim(cl,en_pts,filler,visualize),es,'UniformOutput',false);
 ne = cellfun(@(x)(~isempty(x)),mis_range,'UniformOutput',true);
 nex_tot = sum(ne);
 fprintf(' Total number of pints needing further calculations %d out of %d\n',...
     nex_tot,numel(qx));
 %
-%[pxs,pys,pzs,ses] = expand_sym_points(qx,qy,qz,ese,combine_with_1D,'visualize');
-[pxs,pys,pzs,ses] = expand_sym_points(qx,qy,qz,ese,combine_with_1D);
+%visualize = true;
+%combine_with_1D = 2; % kill volume info and look at the lines only (debugging)
+[pxs,pys,pzs,ses] = expand_sym_points(qx,qy,qz,ese,combine_with_1D,visualize);
 %
 
 
@@ -36,11 +39,11 @@ ens = repmat(en_pts',numel(ses(expanded)),1);
 %ses = cellfun(@(cl)(cl'),ses,'UniformOutput',false);
 
 ses = [ses{expanded}];
-ses = ses';
 %
 qx_pts = sort(unique(round(pxs,11)));
 Nx = numel(qx_pts);
 if Nx*Nx*Nx == size(ses,1)
+    ses = ses';    
     ses = reshape(ses,Nx,Nx,Nx ,numel(en_pts));
 else
     pxs = pxs(expanded);
@@ -49,7 +52,6 @@ else
     ens = ens(expanded);
 end
 if isnan(filler)
-    ses = ses';
     szs = size(ses);
     pxs = repmat(pxs,1,szs(1));
     pys = repmat(pys,1,szs(1));
@@ -70,7 +72,7 @@ end
 
 
 
-function [s_exp,mis_range] = expand_sim(se_clc,en_range,filler)
+function [s_exp,mis_range] = expand_sim(se_clc,en_range,filler,visualize)
 % Inputs:
 % se_clc 2D  -- array containing calulated enegry transfer and the DFT signal
 % en_range -- array with energy transfers to expand signal onto
@@ -86,7 +88,9 @@ if all(se_clc(:,2)==0)
     mis_range = {en_range};
     return
 end
-plot(se_clc(:,1),se_clc(:,2),'*')
+if visualize
+    plot(se_clc(:,1),se_clc(:,2),'*')
+end
 is_calc = ismember(en_range,se_clc(:,1));
 s_exp = NaN(numel(en_range),1);
 %sexp = zeros(numel(en_range),1);
@@ -141,7 +145,10 @@ else
     
     non_phys = s_exp<0;
     s_exp(non_phys) = filler;
-    hold on
-    plot(en_range(~non_phys),s_exp(~non_phys))
-    hold off
+    %
+    if visualize
+        hold on
+        plot(en_range(~non_phys),s_exp(~non_phys))
+        hold off
+    end
 end

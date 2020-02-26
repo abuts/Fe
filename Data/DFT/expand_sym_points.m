@@ -1,9 +1,7 @@
-function [pxs,pys,pzs,ses] = expand_sym_points(px,py,pz,se,combine_with_1D,visualize)
+function [pxs,pys,pzs,se_exp] = expand_sym_points(px,py,pz,se,combine_with_1D,visualize)
 
 if ~exist('visualize','var')
     visualize = false;
-else
-    visualize = true;
 end
 %[px,py,pz,se] = add_missing_points(px,py,pz,se);
 if combine_with_1D
@@ -11,6 +9,12 @@ if combine_with_1D
     retained = true(size(qx1));
     % remove energy scale from disp calculations
     Es1  = cellfun(@(x)(x(:,2)),Es1,'UniformOutput',false);
+    if combine_with_1D == 2
+        px = [];
+        py = [];
+        pz = [];
+        se = {};
+    end
     [px,py,pz,se] = expand_points(px,py,pz,se,retained,qx1,qy1,qz1,Es1);
     np = numel(pz);
 end
@@ -42,20 +46,23 @@ if size(px,1) == 1
 end
 np = numel(pz);
 disp([' NP_rec0: ',num2str(np)]);
-
+se_exp = se;
 for i=1:numel(proj)
     [pxe,pye,pze,retained]=reflect_points([px,py,pz],proj{i});
+    %[r_rot,retained]=remove_duplicates([px,py,pz],r_rot);            
     %rota = rot0{i};
     %[pxe,pye,pze,retained]=rotate_points([px,py,pz],rota{:});
-    [px,py,pz,se] = expand_points(pxe,pye,pze,se,retained,px,py,pz,se);
+    [px,py,pz,se_exp] = expand_points(px,py,pz,se_exp ,retained,pxe,pye,pze,se_exp);
+
     np = numel(pz);
     if visualize
         name = sprintf('Inv transf N%d; Recovered %d points',i,np);
         figure('Name',name)
-        c = cellfun(@(cl)sum_valid(cl),se,'UniformOutput',true);
+        c = cellfun(@(cl)sum_valid(cl),se_exp,'UniformOutput',true);
         scatter3(px,py,pz,8,c);
     end
     disp([' NP_rec',num2str(i),': ',num2str(np)]);
+
 end
 
 rot1 = {{2,[0.5,0.5,0.5],90};{2,[0.5,0.5,0.5],-90};{2,[0.5,0.5,0.5],180};...
@@ -66,7 +73,7 @@ rot2 = {{1,[0,0.5,0.5],90};{1,[0,0.5,0.5],90};{};...
 pxs = px;
 pys = py;
 pzs = pz;
-ses = se;
+ses = se_exp;
 for i=1:numel(rot1)
     %[pxe,pye,pze,retained]=reflect_points([px,py,pz],proj{i});
     rota = rot1{i};
@@ -78,18 +85,18 @@ for i=1:numel(rot1)
         r_rot=rotate_points([px,py,pz],rota{:});
         r_rot=rotate_points(r_rot,rotb{:});
     end
-    [r_rot,retained]=remove_duplicates([px,py,pz],r_rot);
+    [r_rot,retained]=remove_duplicates([pxs,pys,pzs],r_rot);
     pxe = r_rot(:,1);
     pye = r_rot(:,2);
     pze = r_rot(:,3);
     
     
-    [pxs,pys,pzs,ses] = expand_points(pxe,pye,pze,ses,retained,pxs,pys,pzs,ses);
+    [pxs,pys,pzs,se_exp] = expand_points(pxs,pys,pzs,se_exp,retained,pxe,pye,pze,ses);
     np = numel(pzs);
     if visualize
         name = sprintf('Inv transf N%d, Recovered %d points',i,np);
         figure('Name',name)
-        c = cellfun(@(cl)sum_valid(cl),ses,'UniformOutput',true);
+        c = cellfun(@(cl)sum_valid(cl),se_exp,'UniformOutput',true);
         scatter3(pxs,pys,pzs,8,c);
     end
     disp([' NP_rec',num2str(i),': ',num2str(np)]);
@@ -105,38 +112,21 @@ bin  = bin3*[1;n_bins;n_bins*n_bins];
 pxs = pxs(ui);
 pys = pys(ui);
 pzs = pzs(ui);
-if ~isempty(ses)
-    ses = ses(ui);
+if ~isempty(se_exp)
+    se_exp = se_exp(ui);
     if combine_with_1D
         bin3_1 = floor([qx1,qy1,qz1]/bin_size)+1;
         bin1 = bin3_1*[1;n_bins;n_bins*n_bins];
         [bin1,uniqi] = unique(bin1);
         expanded = ismember(bin,bin1);
         
-        ses(expanded) = Es1(uniqi);
+        se_exp(expanded) = Es1(uniqi);
     end
 end
 disp([' Finally retained',num2str(numel(pxs)),' : points, rejected ',num2str(np-numel(pxs)),' points']);
 
 
 
-
-function r_rot=rotate_points(pr,dir,rot_cen,angdeg)
-%
-rx =@(angdeg)( [1,0,0;0,cosd(angdeg),-sind(angdeg);0,sind(angdeg),cosd(angdeg)]);
-ry =@(angdeg)( [cosd(angdeg),0,sind(angdeg);0,1,0;-sind(angdeg),0,cosd(angdeg)]);
-rz =@(angdeg)( [cosd(angdeg),-sind(angdeg),0;sind(angdeg),cosd(angdeg),0;0,0,1;]);
-f_all = {rx,ry,rz};
-
-%pts = unique(sort(pr(:,1)));
-%bins = abs(pts(2:end)-pts(1:end-1));
-
-%bin0 = sort(bin0);
-%dir = find(c_ax);
-
-rf = f_all{dir};
-rm = rf(angdeg);
-r_rot = (pr-rot_cen)*rm+rot_cen;
 
 
 function [pr2r,retained]=remove_duplicates(pr1,pr2,bin_size)
@@ -160,7 +150,8 @@ pr2r = pr2(retained,:);
 function [pxe,pye,pze,moved]=reflect_points(pr,proj)
 e0 = proj(1,:);
 e1 = proj(2,:);
-P = (pr-e0)*e1';
+P = (pr-e0)*e1'; % projection on to the vector e1 in the coordinate
+%   system with center in e0
 moved = abs(P)>1.e-6;
 
 r_refl = pr-2*P*e1;
