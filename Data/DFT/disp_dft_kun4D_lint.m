@@ -37,8 +37,7 @@ if isempty(magFF) && use_magff
     magFF = mi.getFF_calculator(bm);
 end
 %
-
-if isempty(ses) || isempty(Interp_array)
+if isempty(ses) || isempty(Interp_array)    
     [ses,~,en_pts,qxs,qys,qzs,ens]=read_add_sim_Kun(true);
     Interp_array = build_ScattInt(en_pts,qxs,qys,qzs,ens,ses);
 end

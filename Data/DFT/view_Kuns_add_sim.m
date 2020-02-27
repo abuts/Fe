@@ -2,7 +2,7 @@ function view_Kuns_add_sim
 % function to test Kun simulations loading and expansion
 % into {[0,0,0];[1,1,1]} square
 %
-[s,qx,en,pxs,pys,pzs]=read_add_sim_Kun(true);
+[s,qx,~,pxs,pys,pzs,en]=read_add_sim_Kun(true);
 
 if numel(size(s)) == 4
     [X,Y] = meshgrid(qx,qx);

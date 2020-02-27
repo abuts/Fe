@@ -7,6 +7,6 @@ cut_path = fullfile(fileparts(this_path),'2017June');
 %test_tobyfit_init(2);
 cd(this_path);
 addpath(this_path);
-addpath(fullfile(this_path,'Utilities'));
+addpath(fullfile(this_path,'2017June','Utilities'));
 addpath(dft_path);
 addpath(cut_path);

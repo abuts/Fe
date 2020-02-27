@@ -16,7 +16,7 @@ end
 
 
 en_pts = 8:8:800;
-filler = NaN; % 0 or NaN or negative
+filler = 0; %NaN; % 0 or NaN or negative
 visualize = false;
 
 [ese,mis_range] = cellfun(@(cl)expand_sim(cl,en_pts,filler,visualize),es,'UniformOutput',false);
@@ -65,9 +65,10 @@ if isnan(filler)
     pys = pys(valid);
     pzs = pzs(valid);
     ses = ses(valid);
-    en_pts = repmat(en_pts',1,szs(2));
-    en_pts = reshape(en_pts,numel(en_pts),1);
-    en_pts = en_pts(valid);
+%     en_pts = repmat(en_pts',1,szs(2));
+%     en_pts = reshape(en_pts,numel(en_pts),1);
+%     en_pts = en_pts(valid);
+    ens = ens(valid);
 end
 
 
