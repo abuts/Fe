@@ -1,11 +1,11 @@
 hor_path = fileparts(which('horace_init.m'));
 this_path = fileparts(mfilename('fullpath'));
-dft_path = fullfile(fileparts(this_path),'Data','DFT');
-cut_path = fullfile(fileparts(this_path),'2017June');
+dft_path = fullfile(this_path,'Data','DFT');
+cut_path = fullfile(this_path,'2017June');
 %tf_path = fullfile(hor_path,'_work','TGP_work');
 %cd(tf_path);
 %test_tobyfit_init(2);
-cd(this_path);
+%cd(this_path);
 addpath(this_path);
 addpath(fullfile(this_path,'2017June','Utilities'));
 addpath(dft_path);

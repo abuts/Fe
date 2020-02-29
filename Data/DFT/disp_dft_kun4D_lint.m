@@ -77,13 +77,13 @@ end
 function wdisp = interpLintKun(qr,enr,Interp_array,en_pts,en_bin_size)
 
 e0 = en_pts(1);
-bin0 = floor((enr-e0)/en_bin_size)+1;
+bin0 = round((enr-e0)/en_bin_size)+1;
 out_min = bin0<1;
 bin0(out_min) = 1;
-all_bin = max(floor(en_pts/en_bin_size))+1;
-out_max = bin0>all_bin;
+nbin_max = numel(en_pts);
+out_max = bin0>nbin_max;
 if sum(out_max)>0
-    bin0(out_max) = all_bin;
+    bin0(out_max) = nbin_max;
 end
 
 
@@ -92,15 +92,11 @@ wdisp = zeros(numel(enr),1);
 for i=1:numel(bin_range)
     n_bin = bin_range(i);
     this_en = bin0 == n_bin;
-    e0 = en_pts(n_bin);
-    ei = enr(this_en);
-    de = ei-e0;
     qri = qr(this_en,:);
     f1 = Interp_array{n_bin};
-    f2 = Interp_array{n_bin+1};    
-    wd1 = f1(qri(:,1),qri(:,2),qri(:,3));
-    wd2 = f2(qri(:,1),qri(:,2),qri(:,3));    
-    wd_lin = wd1 + (de/en_bin_size).*wd2;
-    wdisp(this_en) = wd_lin;
+    %wd_lin = f1(qri(:,1),qri(:,2),qri(:,3));
+    %wd_lin = wd1 + (de/en_bin_size).*wd2;
+    %wd_lin = wd1 + (de/en_bin_size).*wd2;
+    wdisp(this_en) = f1(qri(:,1),qri(:,2),qri(:,3));
 end
 

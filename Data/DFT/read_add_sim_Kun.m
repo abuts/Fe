@@ -16,13 +16,13 @@ end
 
 
 en_pts = 8:8:800;
-filler = 0; %NaN; % 0 or NaN or negative
+filler = nan; %NaN; % 0 or NaN or negative
 visualize = false;
 
 [ese,mis_range] = cellfun(@(cl)expand_sim(cl,en_pts,filler,visualize),es,'UniformOutput',false);
 ne = cellfun(@(x)(~isempty(x)),mis_range,'UniformOutput',true);
 nex_tot = sum(ne);
-fprintf(' Total number of pints needing further calculations %d out of %d\n',...
+fprintf(' Total number of points needing further calculations %d out of %d\n',...
     nex_tot,numel(qx));
 %
 %visualize = true;
@@ -31,14 +31,15 @@ fprintf(' Total number of pints needing further calculations %d out of %d\n',...
 %
 
 
-
+% find the 
 expanded = cellfun(@(cl)(~isempty(cl)),ses,'UniformOutput',true);
 %regular = cellfun(@(cl)(size(cl,1)==100),ses(expanded),'UniformOutput',true);
-ens = repmat(en_pts',numel(ses(expanded)),1);
-%
-%ses = cellfun(@(cl)(cl'),ses,'UniformOutput',false);
 
-ses = [ses{expanded}];
+%
+% in this form, this is energy axis (100 elements)
+ens = en_pts';    
+%
+ses = [ses{expanded}]; % combine signal cellarray int 2D array
 %
 qx_pts = sort(unique(round(pxs,11)));
 Nx = numel(qx_pts);
@@ -49,7 +50,6 @@ else
     pxs = pxs(expanded);
     pys = pys(expanded);
     pzs = pzs(expanded);
-    ens = ens(expanded);
 end
 if isnan(filler)
     szs = size(ses);
@@ -65,9 +65,8 @@ if isnan(filler)
     pys = pys(valid);
     pzs = pzs(valid);
     ses = ses(valid);
-%     en_pts = repmat(en_pts',1,szs(2));
-%     en_pts = reshape(en_pts,numel(en_pts),1);
-%     en_pts = en_pts(valid);
+    ens = repmat(en_pts',1,szs(2));
+    ens = reshape(ens,numel(ens),1);
     ens = ens(valid);
 end
 
