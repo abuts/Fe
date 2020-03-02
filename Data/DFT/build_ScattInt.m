@@ -1,6 +1,11 @@
 function  Interp_array = build_ScattInt(en_pts,qx,qy,qz,en,ses)
 
-nIp = numel(en_pts);
+if all(size(en_pts) == size(qx))
+    en_pts = unique(sort(en_pts));
+    nIp = numel(en_pts);
+else
+    nIp = numel(en_pts);
+end
 if size(ses,2) > 1
     binned = true;
 else
@@ -8,9 +13,8 @@ else
 end
 Interp_array = cell(nIp,1);
 bin_size = 8;
-e_min = min(en_pts);
 
-e_ind = floor((en-e_min)/bin_size)+1;
+e_ind = floor(en/bin_size);
 n_empties = 0;
 n_binv = max(e_ind);
 for i=1:n_binv
