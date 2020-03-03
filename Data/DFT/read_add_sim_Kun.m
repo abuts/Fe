@@ -1,4 +1,4 @@
-function [ses,qx_pts,en_pts,pxs,pys,pzs,ens]=read_add_sim_Kun(combine_with_1D)
+function [ses,qx_pts,en_pts,pxs,pys,pzs,ens]=read_add_sim_Kun(combine_with_1D,build_grid)
 % read Kun's volume simulation data and expand these data into the whole
 % {[0,0,0];[1,1,1]} cuble
 % Outputs:
@@ -16,7 +16,7 @@ end
 
 
 en_pts = 8:8:800;
-filler = nan; %NaN; % 0 or NaN or negative
+filler = NaN; %NaN; % 0 or NaN or negative
 visualize = false;
 
 [ese,mis_range] = cellfun(@(cl)expand_sim(cl,en_pts,filler,visualize),es,'UniformOutput',false);
@@ -29,29 +29,27 @@ fprintf(' Total number of points needing further calculations %d out of %d\n',..
 %combine_with_1D = 2; % kill volume info and look at the lines only (debugging)
 [pxs,pys,pzs,ses] = expand_sym_points(qx,qy,qz,ese,combine_with_1D,visualize);
 %
+% at this stage, ens is an energy axis (100 elements)
+ens = en_pts';
+if build_grid
+    [ses,pxs,pys,pzs] = regrid_signal(pxs,pys,pzs,ses,21,en_pts);
+else
+    % find the
+    expanded = cellfun(@(cl)(~isempty(cl)),ses,'UniformOutput',true);
+    %regular = cellfun(@(cl)(size(cl,1)==100),ses(expanded),'UniformOutput',true);
+    ses = [ses{expanded}]; % combine signal cellarray int 2D array    
+end
 
 
-% find the 
-expanded = cellfun(@(cl)(~isempty(cl)),ses,'UniformOutput',true);
-%regular = cellfun(@(cl)(size(cl,1)==100),ses(expanded),'UniformOutput',true);
 
-%
-% in this form, this is energy axis (100 elements)
-ens = en_pts';    
-%
-ses = [ses{expanded}]; % combine signal cellarray int 2D array
 %
 qx_pts = sort(unique(round(pxs,11)));
-Nx = numel(qx_pts);
-if Nx*Nx*Nx == size(ses,1)
-    ses = ses';    
-    ses = reshape(ses,Nx,Nx,Nx ,numel(en_pts));
-else
-    pxs = pxs(expanded);
-    pys = pys(expanded);
-    pzs = pzs(expanded);
-end
-if isnan(filler)
+%Nx = numel(qx_pts);
+pxs = pxs(expanded);
+pys = pys(expanded);
+pzs = pzs(expanded);
+
+if isnan(filler) && ~build_grid
     szs = size(ses);
     pxs = repmat(pxs,1,szs(1));
     pys = repmat(pys,1,szs(1));
@@ -69,6 +67,89 @@ if isnan(filler)
     ens = reshape(ens,numel(ens),1);
     ens = ens(valid);
 end
+% if gen_grid
+%     ses = ses';
+%     %[pxg,pyg,pzg]= meshgrid(Xj,Xj,Xj);
+%     %ses = reshape(ses,Nx,Nx,Nx ,numel(en_pts));
+%     [ses,pxs,pys,pzs,ens] = regrid_signal(pxs,pys,pzs,ses,21);
+% end
+
+%
+function [sesg,pxsg,pysg,pzsg] = regrid_signal(pxs,pys,pzs,ses,Nip,en_pts)
+jn=@(N)(1:N);
+Xn =@(N)(0.5-0.5*cos((jn(N)-0.5)*pi/N));
+
+Xj = Xn(Nip);
+q_edges = [0,0.5*(Xj(1:end-1)+Xj(2:end)),1+eps];
+in = pxs>=q_edges;
+ibinx = sum(in,2);
+in = pys>=q_edges;
+ibiny = sum(in,2);
+in = pzs>=q_edges;
+ibinz = sum(in,2);
+ibin = sub2ind([Nip,Nip,Nip],ibinx,ibiny,ibinz);
+% sort signals over 3D bins
+[ibin,inds] = sort(ibin);
+ses = ses(inds);
+
+
+
+[full_ibin,ia] = unique(ibin);
+if numel(full_ibin)<Nip*Nip*Nip % empty bins are present
+    ir = jn(Nip);
+    [irx,iry,irz] = meshgrid(ir,ir,ir);
+    irx = reshape(irx,1,numel(irx));
+    iry = reshape(iry,1,numel(iry));    
+    irz = reshape(irz,1,numel(irz));        
+    all_bins = sub2ind([Nip,Nip,Nip],irx,iry,irz);    
+    missing = ~ismember(all_bins,full_ibin);
+    add_bins = all_bins(missing);
+    ses(end+1:end+numel(add_bins))=cell(1,numel(add_bins));
+    full_ibin = [full_ibin;add_bins'];
+    [full_ibin,inds] = sort(full_ibin);
+    ses = ses(inds);
+end
+iae = [ia;numel(inds)+1];
+bin_range = iae(2:end)-iae(1:end-1);
+
+
+cont_size = numel(en_pts);
+[pxsg,pysg,pzsg] =meshgrid(Xj,Xj,Xj);
+sesg = arrayfun(@(bl_ind,bl_size)combine_contents(ses,cont_size,bl_ind,bl_size),...
+    ia,bin_range,'UniformOutput',false);
+
+sesg  = [sesg{:}];
+sesg = sesg';
+sesg = reshape(sesg,Nip,Nip,Nip,cont_size);
+
+function cont = combine_contents(all_pts,cont_size,this_block,block_size)
+
+
+if block_size == 1    
+    cont = all_pts{this_block};
+    if isempty(cont)
+        cont = zeros(cont_size,1);
+    end
+    return;
+end
+
+cont = zeros(cont_size,1);
+weights = zeros(cont_size,1);
+st = ones(cont_size,1);
+for i=1:block_size
+    cl = all_pts{this_block+i-1};
+    if isempty(cl)
+        continue;
+    end
+    valid = ~isnan(cl);
+    cont(valid) = cont(valid) + cl(valid);
+    weights(valid) = weights(valid)+st(valid);
+end
+invalid = weights == 0;
+if any(invalid)
+end
+cont =  cont./weights;
+%cont = {cont};
 
 
 
@@ -79,25 +160,29 @@ function [s_exp,mis_range] = expand_sim(se_clc,en_range,filler,visualize)
 % outputs
 % s_exp -- expanded signal
 %
+s_exp = {};
+mis_range = {en_range};
+
 if isempty(se_clc)
-    s_exp  = {};
+    
     return;
 end
 if all(se_clc(:,2)==0)
-    s_exp = {};
-    mis_range = {en_range};
     return
 end
 if visualize
     plot(se_clc(:,1),se_clc(:,2),'*')
 end
+% what energy range from total range needs caclulations
 is_calc = ismember(en_range,se_clc(:,1));
+% expanded signal:
 s_exp = NaN(numel(en_range),1);
 %sexp = zeros(numel(en_range),1);
 if sum(is_calc) ~=size(se_clc,1)
     warning('point rejected');
     return
 else
+    % store existing signal:
     s_exp(is_calc) = se_clc(:,2);
     en_out = en_range(~is_calc);
     sig_out = interp1(se_clc(:,1),se_clc(:,2),en_out,'linear','extrap');
