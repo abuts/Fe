@@ -32,22 +32,23 @@ fprintf(' Total number of points needing further calculations %d out of %d\n',..
 % at this stage, ens is an energy axis (100 elements)
 ens = en_pts';
 if build_grid
-    [ses,pxs,pys,pzs] = regrid_signal(pxs,pys,pzs,ses,21,en_pts);
+    [ses,pxs,pys,pzs,qx_pts] = regrid_signal(pxs,pys,pzs,ses,21,en_pts);
 else
     % find the
     expanded = cellfun(@(cl)(~isempty(cl)),ses,'UniformOutput',true);
     %regular = cellfun(@(cl)(size(cl,1)==100),ses(expanded),'UniformOutput',true);
-    ses = [ses{expanded}]; % combine signal cellarray int 2D array    
+    ses = [ses{expanded}]; % combine signal cellarray int 2D array
+    %
+    qx_pts = sort(unique(round(pxs,11)));
+    %Nx = numel(qx_pts);
+    pxs = pxs(expanded);
+    pys = pys(expanded);
+    pzs = pzs(expanded);
+    
 end
 
 
 
-%
-qx_pts = sort(unique(round(pxs,11)));
-%Nx = numel(qx_pts);
-pxs = pxs(expanded);
-pys = pys(expanded);
-pzs = pzs(expanded);
 
 if isnan(filler) && ~build_grid
     szs = size(ses);
@@ -75,7 +76,7 @@ end
 % end
 
 %
-function [sesg,pxsg,pysg,pzsg] = regrid_signal(pxs,pys,pzs,ses,Nip,en_pts)
+function [sesg,pxsg,pysg,pzsg,Xj] = regrid_signal(pxs,pys,pzs,ses,Nip,en_pts)
 jn=@(N)(1:N);
 Xn =@(N)(0.5-0.5*cos((jn(N)-0.5)*pi/N));
 
@@ -99,15 +100,19 @@ if numel(full_ibin)<Nip*Nip*Nip % empty bins are present
     ir = jn(Nip);
     [irx,iry,irz] = meshgrid(ir,ir,ir);
     irx = reshape(irx,1,numel(irx));
-    iry = reshape(iry,1,numel(iry));    
-    irz = reshape(irz,1,numel(irz));        
-    all_bins = sub2ind([Nip,Nip,Nip],irx,iry,irz);    
+    iry = reshape(iry,1,numel(iry));
+    irz = reshape(irz,1,numel(irz));
+    all_bins = sub2ind([Nip,Nip,Nip],irx,iry,irz);
     missing = ~ismember(all_bins,full_ibin);
     add_bins = all_bins(missing);
     ses(end+1:end+numel(add_bins))=cell(1,numel(add_bins));
     full_ibin = [full_ibin;add_bins'];
     [full_ibin,inds] = sort(full_ibin);
     ses = ses(inds);
+    [~,ia] = unique(full_ibin);
+    if numel(ia) ~=numel(full_ibin)
+        warning('logical error');
+    end
 end
 iae = [ia;numel(inds)+1];
 bin_range = iae(2:end)-iae(1:end-1);
@@ -115,20 +120,34 @@ bin_range = iae(2:end)-iae(1:end-1);
 
 cont_size = numel(en_pts);
 [pxsg,pysg,pzsg] =meshgrid(Xj,Xj,Xj);
-sesg = arrayfun(@(bl_ind,bl_size)combine_contents(ses,cont_size,bl_ind,bl_size),...
+[sesg,mis_ind] = arrayfun(@(bl_ind,bl_size)combine_contents(ses,cont_size,bl_ind,bl_size),...
     ia,bin_range,'UniformOutput',false);
 
+
 sesg  = [sesg{:}];
-sesg = sesg';
+%sesg = sesg';
 sesg = reshape(sesg,Nip,Nip,Nip,cont_size);
+mis_ind = [mis_ind{:}];
+if ~isempty(mis_ind)
+    mis_ind = reshape(mis_ind,2,numel(mis_ind)/2)';
+    empty_bins = full_ibin(mis_ind(:,1));
+    [im,jm,km] = ind2sub([Nip,Nip,Nip],empty_bins);
+    fprintf('******  some grid bins are empty:\n')
+    for i = 1:numel(im)
+        fprintf(' Bin: %d %d %d  Q: %f %f %f \n',im(i),jm(i),km(i),...
+            pxsg(im(i),jm(i),km(i)), pysg(im(i),jm(i),km(i)), pzsg(im(i),jm(i),km(i)))
+    end
+end
 
-function cont = combine_contents(all_pts,cont_size,this_block,block_size)
 
+function [cont,mis_ind] = combine_contents(all_pts,cont_size,this_block,block_size)
 
-if block_size == 1    
+mis_ind = [];
+if block_size == 1
     cont = all_pts{this_block};
     if isempty(cont)
         cont = zeros(cont_size,1);
+        mis_ind = [this_block,1];
     end
     return;
 end
@@ -138,6 +157,8 @@ weights = zeros(cont_size,1);
 st = ones(cont_size,1);
 for i=1:block_size
     cl = all_pts{this_block+i-1};
+    plot(cl)
+    hold on
     if isempty(cl)
         continue;
     end
@@ -145,8 +166,14 @@ for i=1:block_size
     cont(valid) = cont(valid) + cl(valid);
     weights(valid) = weights(valid)+st(valid);
 end
+close all;
 invalid = weights == 0;
 if any(invalid)
+    weights(invalid) = 1;
+    cont(invalid) = 0;
+end
+if all(invalid)
+    mis_ind = [this_block,block_size];
 end
 cont =  cont./weights;
 %cont = {cont};
