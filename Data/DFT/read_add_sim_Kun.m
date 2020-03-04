@@ -32,7 +32,7 @@ fprintf(' Total number of points needing further calculations %d out of %d\n',..
 % at this stage, ens is an energy axis (100 elements)
 ens = en_pts';
 if build_grid
-    [ses,pxs,pys,pzs,qx_pts] = regrid_signal(pxs,pys,pzs,ses,21,en_pts);
+    [ses,pxs,pys,pzs,qx_pts] = regrid_signal(pxs,pys,pzs,ses,21,en_pts,visualize);
 else
     % find the
     expanded = cellfun(@(cl)(~isempty(cl)),ses,'UniformOutput',true);
@@ -76,11 +76,14 @@ end
 % end
 
 %
-function [sesg,pxsg,pysg,pzsg,Xj] = regrid_signal(pxs,pys,pzs,ses,Nip,en_pts)
+function [sesg,pxsg,pysg,pzsg,Xj] = regrid_signal(pxs,pys,pzs,ses,Nip,en_pts,visualize)
 jn=@(N)(1:N);
 Xn =@(N)(0.5-0.5*cos((jn(N)-0.5)*pi/N));
 
 Xj = Xn(Nip);
+[pxsg,pysg,pzsg] =meshgrid(Xj,Xj,Xj);
+
+
 q_edges = [0,0.5*(Xj(1:end-1)+Xj(2:end)),1+eps];
 in = pxs>=q_edges;
 ibinx = sum(in,2);
@@ -92,12 +95,19 @@ ibin = sub2ind([Nip,Nip,Nip],ibinx,ibiny,ibinz);
 % sort signals over 3D bins
 [ibin,inds] = sort(ibin);
 ses = ses(inds);
-
-
+if visualize
+    pxs = pxs(inds);
+    pys = pys(inds);
+    pzs = pzs(inds);
+    p_r = [pxs,pys,pzs];
+else
+    p_r = [];
+end
 
 [full_ibin,ia] = unique(ibin);
 if numel(full_ibin)<Nip*Nip*Nip % empty bins are present
-    ir = jn(Nip);
+    % add empty signals to empty bins;
+    ir = 1:Nip;
     [irx,iry,irz] = meshgrid(ir,ir,ir);
     irx = reshape(irx,1,numel(irx));
     iry = reshape(iry,1,numel(iry));
@@ -109,6 +119,14 @@ if numel(full_ibin)<Nip*Nip*Nip % empty bins are present
     full_ibin = [full_ibin;add_bins'];
     [full_ibin,inds] = sort(full_ibin);
     ses = ses(inds);
+    if visualize
+        pxs_a = pxsg(add_bins);
+        pys_a = pysg(add_bins);
+        pzs_a = pzsg(add_bins);        
+        pr_a = [pxs_a,pys_a,pzs_a];
+        p_r = [p_r;pr_a];
+        p_r  = p_r(inds,:);
+    end
     [~,ia] = unique(full_ibin);
     if numel(ia) ~=numel(full_ibin)
         warning('logical error');
@@ -119,13 +137,19 @@ bin_range = iae(2:end)-iae(1:end-1);
 
 
 cont_size = numel(en_pts);
-[pxsg,pysg,pzsg] =meshgrid(Xj,Xj,Xj);
-[sesg,mis_ind] = arrayfun(@(bl_ind,bl_size)combine_contents(ses,cont_size,bl_ind,bl_size),...
+if visualize
+    fh = figure('Name','Chebyshev''s grid');
+    scatter3(reshape(pxsg,numel(pxsg),1),reshape(pysg,numel(pxsg),1),reshape(pzsg,numel(pxsg),1),...
+        '.','MarkerFaceColor',[0 .75 .75]);      
+else
+   fh = [];
+end
+[sesg,mis_ind] = arrayfun(@(bl_ind,bl_size)combine_contents(ses,p_r,cont_size,bl_ind,bl_size,fh),...
     ia,bin_range,'UniformOutput',false);
 
 
 sesg  = [sesg{:}];
-%sesg = sesg';
+sesg = sesg';
 sesg = reshape(sesg,Nip,Nip,Nip,cont_size);
 mis_ind = [mis_ind{:}];
 if ~isempty(mis_ind)
@@ -140,7 +164,7 @@ if ~isempty(mis_ind)
 end
 
 
-function [cont,mis_ind] = combine_contents(all_pts,cont_size,this_block,block_size)
+function [cont,mis_ind] = combine_contents(all_pts,p_r,cont_size,this_block,block_size,fh)
 
 mis_ind = [];
 if block_size == 1
@@ -151,14 +175,27 @@ if block_size == 1
     end
     return;
 end
+visualize = ~isempty(fh);
+lh = [];
+
 
 cont = zeros(cont_size,1);
 weights = zeros(cont_size,1);
 st = ones(cont_size,1);
 for i=1:block_size
     cl = all_pts{this_block+i-1};
-    plot(cl)
-    hold on
+    if visualize 
+        if isempty(lh)
+            add_pp = p_r(this_block,:);
+            lh = figure('Name','Combined Scattering signal');
+        else
+            figure(lh);
+            hold on            
+            add_pp = [add_pp;p_r(this_block+i-1,:)];
+        end
+        plot(cl);    
+        
+    end
     if isempty(cl)
         continue;
     end
@@ -166,7 +203,13 @@ for i=1:block_size
     cont(valid) = cont(valid) + cl(valid);
     weights(valid) = weights(valid)+st(valid);
 end
-close all;
+if visualize
+    figure(fh);
+    hold on
+    scatter3(add_pp(:,1),add_pp(:,2),add_pp(:,3));
+    pause(1);
+    close(lh);
+end
 invalid = weights == 0;
 if any(invalid)
     weights(invalid) = 1;
