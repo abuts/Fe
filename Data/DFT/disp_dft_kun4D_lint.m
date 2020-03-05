@@ -38,7 +38,7 @@ if isempty(magFF) && use_magff
 end
 %
 if isempty(ses) || isempty(Interp_array)    
-    [ses,~,en_pts,qxs,qys,qzs,ens]=read_add_sim_Kun(true);
+    [ses,~,en_pts,qxs,qys,qzs,ens]=read_add_sim_Kun(true,false);
     Interp_array = build_ScattInt(en_pts,qxs,qys,qzs,ens,ses);
 end
 % if numel(A) > 2

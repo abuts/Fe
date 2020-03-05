@@ -172,6 +172,11 @@ if block_size == 1
     if isempty(cont)
         cont = zeros(cont_size,1);
         mis_ind = [this_block,1];
+        return;        
+    end    
+    invalid = isnan(cont);
+    if any(invalid)
+        cont(invalid) = 0;
     end
     return;
 end

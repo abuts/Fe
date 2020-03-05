@@ -13,12 +13,12 @@ function wdisp = disp_dft_kun4D(qh,qk,ql,en,varargin)
 %         parameter of the function
 
 
-persistent fcc_igrid;
+
 persistent magFF;
 persistent ses;
-persistent ChebCoef;
-persistent qx_pts;
+persistent Interp_array;
 persistent en_pts;
+en_bin_size = 8; % step of the bin calculation
 A = varargin{1};
 
 if numel(A)>1
@@ -37,20 +37,19 @@ if isempty(magFF) && use_magff
     magFF = mi.getFF_calculator(bm);
 end
 %
-if isempty(ses)
-    [ses,qx_pts,en_pts]=read_add_sim_Kun('Fe_add_sim_m.dat');
-    ChebCoef = ChebCoef3D(ses);
-    fcc_igrid = FCC_Igrid();
+if isempty(ses) || isempty(Interp_array)    
+    [ses,qx_pts,en_pts]=read_add_sim_Kun(true,true);
+    Interp_array = build_ChebInt(en_pts,qx_pts,ses);
 end
-if numel(A) > 2
-    fcc_igrid.panel_dir = A(3);
-    fcc_igrid.equiv_sym = A(4);
-end
-if numel(A) > 4
-    fcc_igrid.cut_width = A(5);
-end
+% if numel(A) > 2
+%     fcc_igrid.panel_dir = A(3);
+%     fcc_igrid.equiv_sym = A(4);
+% end
+% if numel(A) > 4
+%     fcc_igrid.cut_width = A(5);
+% end
 %-------------------------------------------------------------------------
-do_reshape = false;
+%do_reshape = false;
 
 qr = [qh,qk,ql];
 %
@@ -59,9 +58,10 @@ brav = fix(qr);
 brav = brav+sign(brav);
 brav = (brav-rem(brav,2));
 %
-qr   = single(abs(qr-brav));
-enr  = single(en);
-wdisp = interpn(qx_pts,qx_pts,qx_pts,en_pts,ses,qr(:,1),qr(:,2),qr(:,3),enr,'linear',0);
+%
+qr   = (double(abs(qr-brav))-0.5)*2;
+enr  = double(en);
+wdisp = interpChebyKun(qr,enr,Interp_array,en_pts,en_bin_size);
 % [wdisp,close_enourh] = fcc_igrid.calc_sqw_in_qube(qr,enr);
 
 if use_magff
@@ -70,10 +70,53 @@ if use_magff
 else
     wdisp = wdisp*Amp;
 end
-if do_reshape
-    wdisp = reshape(wdisp,sz);
+% if do_reshape
+%     wdisp = reshape(wdisp,sz);
+% end
+
+function wdisp = interpChebyKun(qr,enr,Interp_array,en_pts,en_bin_size)
+
+e0 = en_pts(1);
+bin0 = round((enr-e0)/en_bin_size)+1;
+out_min = bin0<1;
+bin0(out_min) = 1;
+nbin_max = numel(en_pts);
+out_max = bin0>nbin_max;
+if sum(out_max)>0
+    bin0(out_max) = nbin_max;
 end
 
 
+bin_range = unique(bin0);
+wdisp = zeros(numel(enr),1);
+for i=1:numel(bin_range)
+    n_bin = bin_range(i);
+    this_en = bin0 == n_bin;
+    qri = qr(this_en,:);
+    f1 = Interp_array{n_bin};
+    %wd_lin = f1(qri(:,1),qri(:,2),qri(:,3));
+    %wd_lin = wd1 + (de/en_bin_size).*wd2;
+    %wd_lin = wd1 + (de/en_bin_size).*wd2;
+    wdisp(this_en) = f1(qri(:,1),qri(:,2),qri(:,3));
+end
 
+function  Interp_array = build_ChebInt(en_pts,qx_pts,ses)
 
+if numel(qx_pts) ~= size(ses,1) || ...
+        numel(qx_pts) ~= size(ses,2) || numel(qx_pts) ~= size(ses,3)
+    error('DISP_DFT_KUN:runtime_error',...
+        'Invalid q-size of input data. q-axis size: %d, Data to interpolate size: [%d,%d,%d]',...
+        numel(qx_pts),size(ses,1),size(ses,2),size(ses,3))
+end
+if numel(en_pts) ~= size(ses,4)
+    error('DISP_DFT_KUN:runtime_error',...
+        'Invalid En-size of input data. En-axis size: %d,  Data to interpolate size: %d',...
+        numel(en_pts),size(ses,4));
+end
+nIp = numel(en_pts);
+Interp_array = cell(nIp,1);
+
+for i=1:nIp 
+    S = squeeze(ses(:,:,:,i));
+    Interp_array{i}= chebfun3(S,'splitting','on');
+end
