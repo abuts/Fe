@@ -1,12 +1,22 @@
-function fp_arr1 = fit_NP_Ei800_SymOp()
+function fp_arr1 = fit_NP_Ei800_SymOp2()
 Emax = 450;
 dE   = 5;
 Efit_min = 50;
 Kun_width = 0.1;
 Kun_sym = 5;
+dat = fullfile(fileparts(fileparts(mfilename('fullpath'))),'Data','sqw','Fe_ei787.sqw');
 
+Dqh = [-0.1+1,1+0.1];
 Dqk = [-0.1,0.1];
 Dql = [-0.1,0.1];
+w2e_b1 = cut_sqw(dat,struct('u',[1,0,0],'v',[0,1,0]),[-2,0.05,4],[-3,0.05,4] ,Dql ,[350-dE,350+dE]);
+plot(w2e_b1);
+lz 0 0.02
+keep_figure
+w2e_b2 = cut_sqw(dat,struct('u',[1,0,0],'v',[0,1,0]),Dqh,[-2,0.05,4],[-3,0.05,4] ,[150-dE,150+dE]);
+plot(w2e_b2);
+lz 0 0.02
+keep_figure
 
 
 
@@ -16,14 +26,14 @@ proj = {projection([1,0,0],[0,1,0],'uoffset',[1,1.5,0.5]),projection([1,0,0],[0,
     projection([0,1,0],[1,0,0],'uoffset',[1.5,-0.5,0.5]) ,projection([0,1,0],[1,0,0],'uoffset',[1.5,-0.5,-0.5]),...  %1.6583
     projection([1,0,0],[0,1,0],'uoffset',[-0.5,1.5,-0.5]),projection([1,0,0],[0,1,0],'uoffset',[-0.5,1.5,0.5]),...   %1.6583
     projection([0,0,1],[0,1,0],'uoffset',[1.5,1.5,0])}; %2.1213
-kun_sym_dir = [3,3,2,2, 1,1,2,2,3,3, 1];
+
 sym_op = { symop([1,0,0],[0,1,0],[0,0,0]),symop([0,0,1],90,[3/2,3/2,0]),...
     [symop([0,0,1],90,[3/2,3/2,0]),symop([1,0,0],[0,1,0],[0,0,0])]...
     };
 
 %
 %pr = projection([1,-1,0],[1,1,0]);
-dat = fullfile(fileparts(fileparts(mfilename('fullpath'))),'Data','sqw','Fe_ei787.sqw');
+
 
 % proj = {projection([0,0,1],[0,1,0],'uoffset',[1.5,0.5,0]),projection([0,1,0],[-1,0,0],'uoffset',[-0.5,1,0.5])};
 % kun_sym_dir = [1,2];

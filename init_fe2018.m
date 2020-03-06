@@ -6,7 +6,9 @@ end
 
 this_path = fileparts(mfilename('fullpath'));
 dft_path = fullfile(this_path,'Data','DFT');
-cut_path = fullfile(this_path,'2017June');
+cut1_path = fullfile(this_path,'2017June');
+cut2_path = fullfile(this_path,'2018Dec');
+cut3_path = fullfile(this_path,'2020April');
 util_path  = fullfile(this_path,'2017June','Utilities');
 cheby_path =fullfile(this_path,'Data','chebfun-master');
 
@@ -17,5 +19,7 @@ cheby_path =fullfile(this_path,'Data','chebfun-master');
 addpath(this_path);
 addpath(util_path);
 addpath(dft_path);
-addpath(cut_path);
+addpath(cut1_path);
+addpath(cut2_path);
+addpath(cut3_path);
 addpath(cheby_path);
