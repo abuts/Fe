@@ -1,5 +1,11 @@
+function fe2018_off(varargin)
 
-this_path = fileparts(mfilename('fullpath'));
+if nargin>0
+    this_path = varargin{1};
+else
+    this_path = fileparts(mfilename('fullpath'));
+end
+
 dft_path = fullfile(this_path,'Data','DFT');
 cut_path = fullfile(this_path,'2017June');
 util_path  = fullfile(this_path,'2017June','Utilities');
