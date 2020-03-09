@@ -2,7 +2,7 @@ function view_Kuns_add_sim
 % function to test Kun simulations loading and expansion
 % into {[0,0,0];[1,1,1]} square
 %
-[s,qx,en_pts,pxs,pys,pzs,ens]=read_add_sim_Kun(true,false);
+[s,qx,en_pts,pxs,pys,pzs,ens]=read_add_sim_Kun(true,true);
 
 E_l = 100;
 q_l = 0.02;
@@ -28,7 +28,7 @@ if numel(size(s)) == 4
     wdisp = disp_dft_kun4D(qh,qk,ql,en,[1,0]);
     S = reshape(wdisp,size(X));
     figure
-    surf(X,Y,S,'EdgeColor','none');
+    contourf(X,Y,S,'EdgeColor','none');
     
     %     surf(X,Y,s(:,:,1,10));
     %     surf(X,Y,squeeze(s(:,1,:,10)));
@@ -49,6 +49,20 @@ if numel(size(s)) == 4
     %     surf(X,Y,s(:,:,15,10));
     %     surf(X,Y,s(:,:,15,50));
     %     surf(X,Y,s(:,:,15,80));
+    pr = 0:0.01:pi;
+    r = 0.3;
+    qx = r*cos(pr);
+    qy = r*sin(pr);
+    qz = q_l*ones(size(qx));
+    En = E_l*ones(size(qx));
+    hold on
+    plot(qx,qy,'r');
+    
+    wdisp = disp_dft_kun4D_lint(qx,qy,qz,En,[1,0]);
+    id = IX_dataset_1d(pr,wdisp);
+    id.x_axis=' Angle (rad)';
+    id.s_axis='signal along angle';
+    pl(id);
     
 else
     method = 'natural';

@@ -50,7 +50,11 @@ end
 % end
 %-------------------------------------------------------------------------
 %do_reshape = false;
-
+if size(qh,2) > 1
+    qh = qh';
+    qk = qk';
+    ql = ql';
+end
 qr = [qh,qk,ql];
 %
 % move all vectors into 0-1 quadrant where the interpolant is defined.
