@@ -38,8 +38,6 @@ w2e_base = cut_sqw(dat,struct('u',[1,0,0],'v',[0,1,0]),[-2,0.05,4],[-3,0.05,4] ,
 plot(w2e_base);
 keep_figure
 
-%pr = projection([1,-1,0],[1,1,0]);
-
 
 
 w2all = cell(1,numel(proj));
@@ -52,23 +50,24 @@ for i=1:numel(proj)
     w2all{i} = cut_sqw(dat,proj{i},[-2,0.05,3],Dqk ,Dql ,[0,dE,800]);
     w2all{i} = set_sample_and_inst(w2all{i},sample,@maps_instrument,'-efix',600,'S');
     plot(w2all{i});
+%    keep_figure
     %bg = func_eval(w2all{i},@(q,en,par)(par(1)*exp(-par(2)*(en-50))),[0.3050,0.0226]);
     %disp = w2all{i}-bg;
     
     keep_figure
     ly 0 500
     lz  0 0.2
-%     w2tha{i} = sqw_eval(w2all{i},@disp_dft_kun4D_lint,[1,0]);
-%     plot(w2tha{i});
-%     keep_figure    
-%     ly 0 500
-%     lz  0 5
+%    w2tha{i} = sqw_eval(w2all{i},@disp_dft_kun4D_lint,[1,0]);
+%    plot(w2tha{i});
+%    keep_figure
+%    ly 0 500
+%    lz  0 5
 end
 com_cut = w2all{numel(proj)};
 kk = tobyfit(com_cut);
 kk = kk.set_fun(@disp_dft_kun4D_lint,[0.2546,0],[1,0]);
 kk = kk.set_bfun(@(q,en,par)(par(1)*exp(-par(2)*(en-50))),[0.3050,0.0226]);
-% 
+%
 kk = kk.set_mc_points(10);
 % %profile on;
 kk = kk.set_options('listing',2,'fit_control_parameters',[1.e-2;60;1.e-3]);
@@ -76,6 +75,7 @@ kk = kk.set_options('listing',2,'fit_control_parameters',[1.e-2;60;1.e-3]);
 % %profile on;
 [w2D_arr1_tf,fp_arr1]=kk.simulate;
 plot(w2D_arr1_tf)
+keep_figure
 
 
 
