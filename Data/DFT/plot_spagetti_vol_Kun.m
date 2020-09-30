@@ -1,4 +1,23 @@
-function [calc_arr,q_bg] = check_spagetti_vol_Kun(varargin)
+function [calc_arr,q_bg] = plot_spagetti_vol_Kun(varargin)
+% Script is used to build spagetty plot of Kun's DFT calculations
+% 
+% It can also be used to plot and verify various interpolation formulas, 
+% used for volume interpolations
+% 8 ACSII data files with high symmetry Kun calculations must be located 
+% in the same folder as this file. 
+%
+% Usage:
+% [calc_arr,q_bg] = check_spagetti_vol_Kun() -- plot high symmetry q-dE
+% spagetty plot using high symmetry data, produced by Kun.
+% [calc_arr,q_bg] = check_spagetti_vol_Kun(1) -- plot high symmetry q-dE
+%  data using chebyshev approximation.
+% 
+% Outpus:
+% calc_arr -- 8x1 array of IX_dataset_2d, containing data for all symmetry
+%             pannels of BCC lattices.
+% q_bg     -- The initial q points for every high symmetry pannel.
+%             
+
 labels   = {'H','P',' \Gamma','H','N',' \Gamma','P','N'};
 datasets = {'HP.dat','PG.dat','GH.dat','HN.dat','NG.dat','GP.dat','PN.dat'};
 
@@ -7,13 +26,15 @@ q_bg = zeros(3,numel(datasets));
 for i=1:numel(calc_arr)
     [calc_arr(i),q_bg(:,i),q1,q2,q3,dE] = read_kun(datasets{i},true);
     calc_arr(i).title = [labels{i},labels{i+1}];
-    szd = size(q1);
-    q1=reshape(q1,numel(q1),1);
-    q2=reshape(q2,numel(q2),1);
-    q3=reshape(q3,numel(q3),1);
-    dE= reshape(dE,numel(dE),1);
-    w_disp = disp_dft_kun4D(q1,q2,q3,dE,[1,0]);
-    calc_arr(i).signal = reshape(w_disp,szd);
+    if nargin>0
+        szd = size(q1);
+        q1=reshape(q1,numel(q1),1)+ q_bg(1,i);
+        q2=reshape(q2,numel(q2),1)+ q_bg(2,i);
+        q3=reshape(q3,numel(q3),1)+ q_bg(3,i);
+        dE= reshape(dE,numel(dE),1);
+        w_disp = disp_dft_kun4D(q1,q2,q3,dE,[1,0]);
+        calc_arr(i).signal = reshape(w_disp,szd);
+    end
 end
 
 spaghetti_plot(calc_arr,'labels',labels);
