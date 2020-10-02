@@ -1,4 +1,14 @@
 function [qx,qy,qz,En,Sig] = read_add_sim()
+% Read Kun's volume simulations and return them in the form, useful for 
+% further processing
+% The ASCII data file with simulated data must be located in the same
+% folder as this function.
+%
+% Outputs:
+% qx,qy,qz,En 1-D arrays of 4-D coordinates of the simuated points
+% Sig         calculated scattering intensity
+%
+%
 filename = 'Fe_add_sim_m.dat';
 %filename = 'sim_range.dat';
 fh = fopen(filename,'rt');

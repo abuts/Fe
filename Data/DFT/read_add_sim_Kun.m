@@ -1,14 +1,32 @@
-function [ses,qx_pts,en_pts,pxs,pys,pzs,ens]=read_add_sim_Kun(combine_with_1D,build_grid)
+function [ses,qx_pts,en_pts,pxs,pys,pzs,ens]=read_add_sim_Kun(combine_with_1D,...
+    build_grid,varargin)
 % read Kun's volume simulation data and expand these data into the whole
-% {[0,0,0];[1,1,1]} cuble
+% {[0,0,0];[1,1,1]} cube
+%
+% Inputs:
+% combine_with_1D -- combine both high quality 1D calculations with reduced
+%                    energy range volume calculations
+% build_grid      -- regrid all q-dE points int 3D chebyshev, linear energy
+%                    grid
+% expand_over_energy_range -- if true or missing epand energy range of 
+%
 % Outputs:
 % ses -- 4D array of calculated/extrapolated signals
 % qr  -- 3xnPoints combined array of qx,qy,qz points, corresponding to the
 %        q-axis of the simulated arra.
 % en  -- energy axis of the simulated array.
 %
+% Visualize intermediate results
+visualize = false;
+if nargin>2
+    expand_over_energy_range = varargin{1};
+else
+    expand_over_energy_range = true;
+end
+% read volume data
 [qx,qy,qz,En,Sig] = read_add_sim();
-
+% convert volume data into the form, suitable for applying symmetry
+% operations in Q-space.
 [qx,qy,qz,es] = compact3D(En,qx,qy,qz,Sig);
 if ~exist('combine_with_1D','var')
     combine_with_1D = false;
@@ -17,13 +35,20 @@ end
 
 en_pts = 8:8:800;
 filler = NaN; %NaN; % 0 or NaN or negative
-visualize = false;
 
-[ese,mis_range] = cellfun(@(cl)expand_sim(cl,en_pts,filler,visualize),es,'UniformOutput',false);
-ne = cellfun(@(x)(~isempty(x)),mis_range,'UniformOutput',true);
-nex_tot = sum(ne);
-fprintf(' Total number of points needing further calculations %d out of %d\n',...
-    nex_tot,numel(qx));
+if expand_over_energy_range
+    q3 = arrayfun(@(x,y,z)({x,y,z}),qx,qy,qz,'UniformOutput',false);
+    % build expanded signal using 1D linear interpolation/extrapolation of calculated energy range over the 
+    % whole requested energy range
+    [ese,mis_range] = cellfun(@(cl,qv)expand_sim(cl,qv,en_pts,filler,visualize),es,q3,'UniformOutput',false);
+    ne = cellfun(@(x)(~isempty(x)),mis_range,'UniformOutput',true);
+    nex_tot = sum(ne);
+    fprintf(' Total number of points needing further calculations %d out of %d\n',...
+        nex_tot,numel(qx));
+else
+    % expanded signal equal to caclulated signal
+    ese  = cellfun(@(x)(x(:,2)),es,'UniformOutput',false);
+end
 %
 %visualize = true;
 %combine_with_1D = 2; % kill volume info and look at the lines only (debugging)
@@ -34,7 +59,7 @@ ens = en_pts';
 if build_grid
     [ses,pxs,pys,pzs,qx_pts] = regrid_signal(pxs,pys,pzs,ses,21,en_pts,visualize);
 else
-    % find the
+    % find and reject q-points without energy signal
     expanded = cellfun(@(cl)(~isempty(cl)),ses,'UniformOutput',true);
     %regular = cellfun(@(cl)(size(cl,1)==100),ses(expanded),'UniformOutput',true);
     ses = [ses{expanded}]; % combine signal cellarray int 2D array
@@ -77,6 +102,7 @@ end
 
 %
 function [sesg,pxsg,pysg,pzsg,Xj] = regrid_signal(pxs,pys,pzs,ses,Nip,en_pts,visualize)
+% Build signal over Chebyshev grid
 jn=@(N)(1:N);
 Xn =@(N)(0.5-0.5*cos((jn(N)-0.5)*pi/N));
 
@@ -122,7 +148,7 @@ if numel(full_ibin)<Nip*Nip*Nip % empty bins are present
     if visualize
         pxs_a = pxsg(add_bins);
         pys_a = pysg(add_bins);
-        pzs_a = pzsg(add_bins);        
+        pzs_a = pzsg(add_bins);
         pr_a = [pxs_a,pys_a,pzs_a];
         p_r = [p_r;pr_a];
         p_r  = p_r(inds,:);
@@ -140,9 +166,9 @@ cont_size = numel(en_pts);
 if visualize
     fh = figure('Name','Chebyshev''s grid');
     scatter3(reshape(pxsg,numel(pxsg),1),reshape(pysg,numel(pxsg),1),reshape(pzsg,numel(pxsg),1),...
-        '.','MarkerFaceColor',[0 .75 .75]);      
+        '.','MarkerFaceColor',[0 .75 .75]);
 else
-   fh = [];
+    fh = [];
 end
 [sesg,mis_ind] = arrayfun(@(bl_ind,bl_size)combine_contents(ses,p_r,cont_size,bl_ind,bl_size,fh),...
     ia,bin_range,'UniformOutput',false);
@@ -172,8 +198,8 @@ if block_size == 1
     if isempty(cont)
         cont = zeros(cont_size,1);
         mis_ind = [this_block,1];
-        return;        
-    end    
+        return;
+    end
     invalid = isnan(cont);
     if any(invalid)
         cont(invalid) = 0;
@@ -189,16 +215,16 @@ weights = zeros(cont_size,1);
 st = ones(cont_size,1);
 for i=1:block_size
     cl = all_pts{this_block+i-1};
-    if visualize 
+    if visualize
         if isempty(lh)
             add_pp = p_r(this_block,:);
             lh = figure('Name','Combined Scattering signal');
         else
             figure(lh);
-            hold on            
+            hold on
             add_pp = [add_pp;p_r(this_block+i-1,:)];
         end
-        plot(cl);    
+        plot(cl);
         
     end
     if isempty(cl)
@@ -228,12 +254,12 @@ cont =  cont./weights;
 
 
 
-function [s_exp,mis_range] = expand_sim(se_clc,en_range,filler,visualize)
+function [s_exp,mis_range] = expand_sim(se_clc,q3,en_range,filler,visualize)
 % Inputs:
 % se_clc 2D  -- array containing calulated enegry transfer and the DFT signal
 % en_range -- array with energy transfers to expand signal onto
-% outputs
-% s_exp -- expanded signal
+% outputs:
+% s_exp -- celarray of expanded signal
 %
 s_exp = {};
 mis_range = {en_range};
@@ -308,7 +334,9 @@ else
     %
     if visualize
         hold on
-        plot(en_range(~non_phys),s_exp(~non_phys))
+        name = sprintf('q=[%4.2f %4.2f %4.2f]',q3{1},q3{2},q3{3});
+        legend(name)
+        plot(en_range(~non_phys),s_exp(~non_phys),'DisplayName',name)
         hold off
     end
 end

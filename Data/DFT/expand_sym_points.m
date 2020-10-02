@@ -85,7 +85,7 @@ for i=1:numel(rot1)
         r_rot=rotate_points([px,py,pz],rota{:});
         r_rot=rotate_points(r_rot,rotb{:});
     end
-    [r_rot,retained]=remove_duplicates([pxs,pys,pzs],r_rot);
+    [r_rot,retained]=remove_duplicates([pxs,pys,pzs],r_rot,0.005);
     pxe = r_rot(:,1);
     pye = r_rot(:,2);
     pze = r_rot(:,3);
@@ -130,7 +130,7 @@ disp([' Finally retained',num2str(numel(pxs)),' : points, rejected ',num2str(np-
 
 
 function [pr2r,retained]=remove_duplicates(pr1,pr2,bin_size)
-
+% remove duplicated points, fitting the same 3D bin 
 if ~exist('bin_size','var')
     bin_size = 0.0111379;
 end
