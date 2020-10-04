@@ -8,13 +8,25 @@ if combine_with_1D
     [qx1,qy1,qz1,Es1] = read_allLin_Kun();
     retained = true(size(qx1));
     % remove energy scale from disp calculations
-    Es1  = cellfun(@(x)(x(:,2)),Es1,'UniformOutput',false);
+    % Do consistent (row) arrays both for high-symmetry and volume
+    % calculations
+    if size(se{1},2) == 1 || size(se{1},1) == 1 
+        % input data are all normalized in the whole enery transfer range 
+        % which is equal to Es1 range. Remove energy axis from scattering
+        % intensity, as energy axis is equal for all points
+        if size(se{1},2)>   size(se{1},1)
+            Es1  = cellfun(@(x)(x(:,2)'),Es1,'UniformOutput',false);
+        else
+            Es1  = cellfun(@(x)(x(:,2)),Es1,'UniformOutput',false);
+        end
+    end
     if combine_with_1D == 2
         px = [];
         py = [];
         pz = [];
         se = {};
     end
+    
     [px,py,pz,se] = expand_points(px,py,pz,se,retained,qx1,qy1,qz1,Es1);
     np = numel(pz);
 end
@@ -49,11 +61,11 @@ disp([' NP_rec0: ',num2str(np)]);
 se_exp = se;
 for i=1:numel(proj)
     [pxe,pye,pze,retained]=reflect_points([px,py,pz],proj{i});
-    %[r_rot,retained]=remove_duplicates([px,py,pz],r_rot);            
+    %[r_rot,retained]=remove_duplicates([px,py,pz],r_rot);
     %rota = rot0{i};
     %[pxe,pye,pze,retained]=rotate_points([px,py,pz],rota{:});
     [px,py,pz,se_exp] = expand_points(px,py,pz,se_exp ,retained,pxe,pye,pze,se_exp);
-
+    
     np = numel(pz);
     if visualize
         name = sprintf('Inv transf N%d; Recovered %d points',i,np);
@@ -62,7 +74,7 @@ for i=1:numel(proj)
         scatter3(px,py,pz,8,c);
     end
     disp([' NP_rec',num2str(i),': ',num2str(np)]);
-
+    
 end
 
 rot1 = {{2,[0.5,0.5,0.5],90};{2,[0.5,0.5,0.5],-90};{2,[0.5,0.5,0.5],180};...
@@ -130,7 +142,7 @@ disp([' Finally retained',num2str(numel(pxs)),' : points, rejected ',num2str(np-
 
 
 function [pr2r,retained]=remove_duplicates(pr1,pr2,bin_size)
-% remove duplicated points, fitting the same 3D bin 
+% remove duplicated points, fitting the same 3D bin
 if ~exist('bin_size','var')
     bin_size = 0.0111379;
 end

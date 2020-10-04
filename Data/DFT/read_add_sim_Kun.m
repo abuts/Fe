@@ -8,10 +8,13 @@ function [ses,qx_pts,en_pts,pxs,pys,pzs,ens]=read_add_sim_Kun(combine_with_1D,..
 %                    energy range volume calculations
 % build_grid      -- regrid all q-dE points int 3D chebyshev, linear energy
 %                    grid
-% expand_over_energy_range -- if true or missing epand energy range of 
+% expand_over_energy_range -- if true or missing, epand calculated energy range
+%                   into range 8:8:800 using linear extrapolation over
+%                   out-of range points
 %
 % Outputs:
-% ses -- 4D array of calculated/extrapolated signals
+% ses -- 4D array of calculated/extrapolated signals or 100xnpoints array
+%        of signal at given energy
 % qr  -- 3xnPoints combined array of qx,qy,qz points, corresponding to the
 %        q-axis of the simulated arra.
 % en  -- energy axis of the simulated array.
@@ -26,7 +29,8 @@ end
 % read volume data
 [qx,qy,qz,En,Sig] = read_add_sim();
 % convert volume data into the form, suitable for applying symmetry
-% operations in Q-space.
+% operations in Q-space, i.e convert energy points int cellarray, of size(qx)
+% with cells containing {[energy trafer,signal]} blocks.
 [qx,qy,qz,es] = compact3D(En,qx,qy,qz,Sig);
 if ~exist('combine_with_1D','var')
     combine_with_1D = false;
@@ -38,21 +42,22 @@ filler = NaN; %NaN; % 0 or NaN or negative
 
 if expand_over_energy_range
     q3 = arrayfun(@(x,y,z)({x,y,z}),qx,qy,qz,'UniformOutput',false);
-    % build expanded signal using 1D linear interpolation/extrapolation of calculated energy range over the 
+    % build expanded signal using 1D linear interpolation/extrapolation of calculated energy range over the
     % whole requested energy range
-    [ese,mis_range] = cellfun(@(cl,qv)expand_sim(cl,qv,en_pts,filler,visualize),es,q3,'UniformOutput',false);
+    [sic,mis_range] = cellfun(@(cl,qv)expand_sim(cl,qv,en_pts,filler,visualize),es,q3,'UniformOutput',false);
     ne = cellfun(@(x)(~isempty(x)),mis_range,'UniformOutput',true);
     nex_tot = sum(ne);
     fprintf(' Total number of points needing further calculations %d out of %d\n',...
         nex_tot,numel(qx));
 else
-    % expanded signal equal to caclulated signal
-    ese  = cellfun(@(x)(x(:,2)),es,'UniformOutput',false);
+    % expanded signal into cellarray of caclulated signal cells
+    sic  = es; %
+    %enc  = cellfun(@(x)(x(:,1)'),es,'UniformOutput',false);
 end
 %
 %visualize = true;
 %combine_with_1D = 2; % kill volume info and look at the lines only (debugging)
-[pxs,pys,pzs,ses] = expand_sym_points(qx,qy,qz,ese,combine_with_1D,visualize);
+[pxs,pys,pzs,ses] = expand_sym_points(qx,qy,qz,sic,combine_with_1D,visualize);
 %
 % at this stage, ens is an energy axis (100 elements)
 ens = en_pts';
@@ -62,7 +67,12 @@ else
     % find and reject q-points without energy signal
     expanded = cellfun(@(cl)(~isempty(cl)),ses,'UniformOutput',true);
     %regular = cellfun(@(cl)(size(cl,1)==100),ses(expanded),'UniformOutput',true);
-    ses = [ses{expanded}]; % combine signal cellarray int 2D array
+    if size(ses{1},2) == 2 % separate energy axis/signal
+        ens = cellfun(@(x)(x(:,1)'),ses,'UniformOutput',false);
+        ses = cellfun(@(x)(x(:,2)'),ses,'UniformOutput',false);
+        ens = ens(expanded);
+    end
+    ses = [ses{expanded}]; % combine signal cellarray into 2D array
     %
     qx_pts = sort(unique(round(pxs,11)));
     %Nx = numel(qx_pts);
@@ -76,22 +86,35 @@ end
 
 
 if isnan(filler) && ~build_grid
-    szs = size(ses);
-    pxs = repmat(pxs,1,szs(1));
-    pys = repmat(pys,1,szs(1));
-    pzs = repmat(pzs,1,szs(1));
-    ses=reshape(ses,numel(ses),1);
-    pxs=reshape(pxs',numel(ses),1);
-    pys=reshape(pys',numel(ses),1);
-    pzs=reshape(pzs',numel(ses),1);
+    if expand_over_energy_range
+        szs = size(ses);
+        pxs = repmat(pxs,1,szs(1));
+        pys = repmat(pys,1,szs(1));
+        pzs = repmat(pzs,1,szs(1));
+        ses=reshape(ses,numel(ses),1);
+        pxs=reshape(pxs',numel(ses),1);
+        pys=reshape(pys',numel(ses),1);
+        pzs=reshape(pzs',numel(ses),1);        
+        ens = repmat(en_pts',1,szs(2));
+        ens = reshape(ens,numel(ens),1);
+        
+    else
+        ind = 1:numel(ens);
+        pxs  = arrayfun(@(x,i)repmat(x,1,numel(ens{i})),pxs,ind','UniformOutput',false);
+        pxs  = [pxs{:}];
+        pys  = arrayfun(@(x,i)repmat(x,1,numel(ens{i})),pys,ind','UniformOutput',false);
+        pys  = [pys{:}];
+        pzs  = arrayfun(@(x,i)repmat(x,1,numel(ens{i})),pzs,ind','UniformOutput',false);
+        pzs  = [pzs{:}];
+        ens = [ens{:}];
+    end
     valid = ~isnan(ses);
     pxs = pxs(valid);
     pys = pys(valid);
     pzs = pzs(valid);
     ses = ses(valid);
-    ens = repmat(en_pts',1,szs(2));
-    ens = reshape(ens,numel(ens),1);
     ens = ens(valid);
+    
 end
 % if gen_grid
 %     ses = ses';

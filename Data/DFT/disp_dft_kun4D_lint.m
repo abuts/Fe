@@ -83,7 +83,7 @@ end
 function wdisp = interpLintKun(qr,enr,Interp_array,en_pts,en_bin_size)
 
 e0 = en_pts(1);
-bin0 = round((enr-e0)/en_bin_size)+1;
+bin0 = floor((enr-e0)/en_bin_size)+1;
 out_min = bin0<1;
 bin0(out_min) = 1;
 nbin_max = numel(en_pts);
@@ -96,6 +96,7 @@ end
 bin_range = unique(bin0);
 wdisp = zeros(numel(enr),1);
 for i=1:numel(bin_range)
+    fprintf(' Step %d#%d\n',i,numel(bin_range))
     n_bin = bin_range(i);
     this_en = bin0 == n_bin;
     qri = qr(this_en,:);
