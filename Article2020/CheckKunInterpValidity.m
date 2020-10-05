@@ -1,13 +1,40 @@
 function CheckKunInterpValidity(varargin)
+% Plot range of constant energy cuts and overplot these cuts with 
+% points, where Kun's DFT calculations were performed.
+% 
+% Usage
+% CheckKunInterpValidity() -- plot sequence of the cuts in the range 40-800
+% CheckKunInterpValidity([40,60]) -- plot the sequence of plots within
+% range 40-60 mEv
+%
+% Hardcoded values: The name (and relative location) of the sqw file to use 
+%                   as the base for simulations.
+% expand_over_energy_range -- if false, plot only really calculated points,
+%                   if true, extrapolate caclulated pointso to the whole
+%                   energy transfer range [8-800] mEv
+% qxr = [1,0.05,5]; q-range to make cuts over
+% qyr = [-2,0.05,2];
+% qzr = [-0.1,0.1];       
+% proj           -- the direction of the cut.
+%
+%
 root_dir = fileparts(fileparts(mfilename('fullpath')));
 data = fullfile(root_dir,'Data','sqw','Fe_ei1371_base.sqw');
 
 persistent xyze_s;
 
-if isempty(xyze_s)
+if isempty(xyze_s) 
+    expand_over_energy_range = false;
+% -- if true, expand calculated energy range
+%    into range 8:8:800 using linear extrapolation over
+%    out-of range points    
     [ses,~,~,pxs,pys,pzs,ens]=read_add_sim_Kun(true,...
-        false,false);
-    xyze_s = [pxs',pys',pzs',ens',ses'];
+        false,expand_over_energy_range);
+    if size(ses,1)>size(ses,2)
+        xyze_s = [pxs,pys,pzs,ens,ses];        
+    else
+        xyze_s = [pxs',pys',pzs',ens',ses'];
+    end
 end
 
 if nargin>0
