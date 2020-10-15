@@ -1,5 +1,5 @@
 function fp_arr1 = fit_NP_Ei800_SymOp2()
-Emax = 450;
+Emax = 600;
 dE   = 5;
 Efit_min = 50;
 Kun_width = 0.1;
@@ -47,7 +47,7 @@ sym_op = { symop([1,0,0],[0,1,0],[0,0,0]),symop([0,0,1],90,[3/2,3/2,0]),...
 sample=IX_sample(true,[1,0,0],[0,1,0],'cuboid',[0.04,0.03,0.02]);
 
 
-[com_cut,part_cuts] = cut_sqw_sym(dat,proj{1},[-3,0.01,3],Dqk ,Dql ,[0,dE,600],sym_op);
+[com_cut,part_cuts] = cut_sqw_sym(dat,proj{1},[-3,0.01,3],Dqk ,Dql ,[0,dE,Emax],sym_op);
 for i=1:numel(part_cuts)
     plot(part_cuts(i));
     ly 0 500
