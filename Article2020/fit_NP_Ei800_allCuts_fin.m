@@ -1,6 +1,12 @@
 function [ampl,bg] = fit_NP_Ei800_allCuts_fin()
 
 data = fullfile(fileparts(fileparts(mfilename('fullpath'))),'Data','sqw','Fe_ei787.sqw');
+bg_types = containers.Map({'cut_at_edges',... % bg=[0.468004 0.015127]
+    'average_cut',...
+    'remote_cut'... %bad
+    },{{@bg_calc_fun1,[0.468004 0.015127]},...
+    {@bg_calc_fun2,[0.437546 0.014128]},...
+    {@bg_calc_fun3,[0.528612 0.016190]}});
 
 Emax = 500;
 dE   = 5;
@@ -11,7 +17,7 @@ kun_sym = 5;
 Dqk = [-0.1,0.1];
 Dql = [-0.1,0.1];
 eval_background = true;
-background_type = 1;
+background_type =  'average_cut';
 % view linear background substraction graphs for all cuts
 view_background = true;
 
@@ -60,14 +66,16 @@ bg_fun = @(en,par)(par(1)*exp(-par(2)*(en-50)));
 
 
 sample=IX_sample(true,[1,0,0],[0,1,0],'cuboid',[0.04,0.03,0.02]);
+bg = bg_types(background_type);
 if eval_background
-    bg_param = bg_calc_fun1(data,Dqk ,Dql,dE,bg_fun); % bg=[0.468004 0.015127]
+    bgf = bg{1};
+    bg_param = bgf(data,Dqk ,Dql,dE,bg_fun);
     fprintf(' Estimated background: [%f %f]\n',bg_param)
 else
     % buckground estimated for first sequence of cuts (along h or k)
     %bg_param = [0.3779 0.0129];
     % buckground estimated for second sequence of cuts (along l)
-    bg_param = [0.382479 0.012739];
+    bg_param = bg{2};
 end
 
 % select only some projections
@@ -81,10 +89,19 @@ for i=1:numel(proj_s )
     w2all{i} = set_sample_and_inst(w2all{i},sample,@maps_instrument,'-efix',600,'S');
     liny
     plot(w2all{i});
+    bg = func_eval(w2all{i},@(q,en,par)(par(1)*exp(-par(2)*(en-50))),bg_param);
+    disp = w2all{i}-bg;
+    plot(disp);
+    keep_figure
+    liny
+    
+    ly 0 500
+    lz  0 0.02
+    
     %
     if view_background
         bg_real1D = cut_sqw(w2all{i},proj_s{i},[-2,3],Dqk ,Dql ,[0,dE,Emax]);
-        bg_eval1D = sqw_eval(bg_real1D,bg_fun,bg_param);
+        bg_eval1D = func_eval(bg_real1D,bg_fun,bg_param);
         acolor('k');
         plot(bg_real1D)
         acolor('r')
@@ -93,18 +110,10 @@ for i=1:numel(proj_s )
         keep_figure;
     end
     %
-    bg = func_eval(w2all{i},@(q,en,par)(par(1)*exp(-par(2)*(en-50))),bg_param);
-    disp = w2all{i}-bg;
-    plot(disp);
-    keep_figure    
-    liny            
-
-    ly 0 500
-    lz  0 0.2    
     
     %
     %    keep_figure
-        
+    
     %    w2tha{i} = sqw_eval(w2all{i},@disp_dft_kun4D_lint,[1,0]);
     %    plot(w2tha{i});
     %    keep_figure
@@ -127,8 +136,15 @@ keep_figure;
 bg = func_eval(com_cut,@(q,en,par)(par(1)*exp(-par(2)*(en-50))),bg_param);
 dis_cut = com_cut -bg;
 plot(dis_cut)
+liny
 keep_figure;
-
+ly 0 500
+lz  0 0.02
+mff = MagneticIons('Fe0');
+wf = mff.correct_mag_ff(dis_cut);
+plot(wf)
+keep_figure;
+lz 0 0.5
 
 
 com_cut = w2all{numel(proj)};
@@ -205,35 +221,6 @@ acolor('r')
 bg = IX_dataset_1d(en,bg_fit,bg_err);
 pd(bg);
 
-function     bg_param = bg_calc_fun2(data,Dqk ,Dql,dE,bg_fun)
-% evaluate background by cutting the edges of l-cuts
-bg_param0 = [0.3779 0.0129];
-bg_proj = projection([0,0,1],[0,1,0],'uoffset',[0.5,2.5,-0.5]);
-bg_set1 = cut_sqw(data,bg_proj,[-2,0.05,3],Dqk ,Dql ,[0,dE,600]);
-plot(bg_set1);
-bg_set1a = cut_sqw(bg_set1,bg_proj,[-2,-1.5],Dqk ,Dql ,[50,dE,210]);
-bg_set1b = cut_sqw(bg_set1,bg_proj,[2.5,3],Dqk ,Dql ,[50,dE,210]);
-acolor('k')
-plot(bg_set1a);
-pp(bg_set1b);
-
-bg_proj = projection([0,0,1],[0,1,0],'uoffset',[-0.5,2.5,-0.5]);
-bg_set2 = cut_sqw(data,bg_proj,[-2,0.05,3],Dqk ,Dql ,[0,dE,600]);
-bg_set2a = cut_sqw(bg_set2,bg_proj,[-2,-1.5],Dqk ,Dql ,[50,dE,210]);
-bg_set2b = cut_sqw(bg_set2,bg_proj,[2.5,3],Dqk ,Dql ,[50,dE,210]);
-
-acolor('b')
-pp(bg_set2a);
-pp(bg_set2b);
-logy
-ft = multifit(bg_set1a,bg_set1b,bg_set2a,bg_set2b);
-ft = ft.set_fun(bg_fun);
-ft = ft.set_pin(bg_param0);
-[fit_fun,fit_con]= ft.fit();
-bg_param = fit_con.p;
-acolor('r');
-pl(fit_fun{1});
-keep_figure;
 
 
 function     bg_param = bg_calc_fun1(data,Dqk ,Dql,dE,bg_fun)
@@ -265,3 +252,55 @@ bg_param = fit_con.p;
 acolor('r');
 pl(fit_fun{1});
 keep_figure;
+
+function     bg_param = bg_calc_fun3(data,Dqk ,Dql,dE,bg_fun)
+% evaluate background by averaging over a cut
+bg_param0 = [0.3779 0.0129];
+bg_proj = projection([0,0,1],[0,1,0],'uoffset',[0.5,4.5,-0.5]);
+bg_set = cut_sqw(data,bg_proj,[-1,0.05,2],Dqk ,Dql ,[0,dE,650]);
+plot(bg_set);
+bg_set1 = cut_sqw(bg_set,bg_proj,[0,1],Dqk ,Dql ,[0,dE,600]);
+acolor('k')
+plot(bg_set1);
+bg_set1a = cut_sqw(bg_set,bg_proj,[-2,3],Dqk ,Dql ,[35,dE,210]);
+logy
+
+ft = multifit(bg_set1a);
+ft = ft.set_fun(bg_fun);
+ft = ft.set_pin(bg_param0);
+[fit_fun,fit_con]= ft.fit();
+bg_param = fit_con.p;
+acolor('r');
+pl(fit_fun);
+keep_figure;
+
+function     bg_param = bg_calc_fun2(data,Dqk ,Dql,dE,bg_fun)
+% evaluate background by cutting the edges of l-cuts
+bg_param0 = [0.3779 0.0129];
+bg_proj = projection([0,0,1],[0,1,0],'uoffset',[0.5,2.5,-0.5]);
+bg_set1 = cut_sqw(data,bg_proj,[-2,0.05,3],Dqk ,Dql ,[0,dE,600]);
+plot(bg_set1);
+bg_set1 = cut_sqw(data,bg_proj,[-2,3],Dqk ,Dql ,[0,dE,600]);
+acolor('k')
+plot(bg_set1);
+bg_set1a = cut_sqw(bg_set1,bg_proj,[-2,3],Dqk ,Dql ,[35,dE,230]);
+
+bg_proj = projection([0,0,1],[0,1,0],'uoffset',[-0.5,2.5,-0.5]);
+bg_set2 = cut_sqw(data,bg_proj,[-2,3],Dqk ,Dql ,[0,dE,600]);
+acolor('b')
+pp(bg_set2);
+bg_set2a = cut_sqw(data,bg_proj,[-2,3],Dqk ,Dql ,[35,dE,230]);
+
+logy
+ft = multifit(bg_set1a,bg_set2a);
+ft = ft.set_fun(bg_fun);
+ft = ft.set_pin(bg_param0);
+[fit_fun,fit_con]= ft.fit();
+bg_param = fit_con.p;
+acolor('r');
+pl(fit_fun{1});
+keep_figure;
+ly 0.005 1
+
+
+
