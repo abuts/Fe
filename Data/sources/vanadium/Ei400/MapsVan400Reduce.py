@@ -19,20 +19,20 @@ class MAPSReduction(ReductionWrapper):
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
        prop['incident_energy'] = [400]
-       prop['energy_bins'] =[-0.1,0.005,0.9]
+       prop['energy_bins'] =[-0.1,0.05,0.9]
 
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
-       prop['sample_run'] = 15135 # range(15135,15179) # [15052 - 15178]
+       prop['sample_run'] =15181 #'MAP21968.s01,MAP21968.s02,MAP21968.raw'  # 'MAP0000.raw'# [21384,21385]
        prop['wb_run'] = 15182
        #
        prop['sum_runs'] = False # set to true to sum everything provided to sample_run
        #                        # list
        # Absolute units reduction properties. Set prop['monovan_run']=None to do relative units
        prop['monovan_run'] = 15181 #21803  #  vanadium run in the same configuration as your sample 
-       prop['sample_mass'] = 166
-       prop['sample_rmm'] = 53.94
+       prop['sample_mass'] = 30.1
+       prop['sample_rmm'] = 50.9415
        return prop
 #------------------------------------------------------------------------------------#
    @AdvancedProperties
@@ -46,11 +46,14 @@ class MAPSReduction(ReductionWrapper):
            to work properly
       """
       prop = {}
+      #prop['map_file'] = "4to1.map"
       prop['map_file'] = "4to1_095.map"
       prop['monovan_mapfile'] = "4to1_mid_lowang.map"
-      #prop['hardmaskOnly']=maskfile # disable diag, use only hard mask
+      #prop['hardmaskOnly']="4to1_164.msk" # disable diag, use only hard mask
       prop['hard_mask_file'] = "4to1_095.msk"
+      prop['run_diagnostics'] = True
       prop['bkgd_range'] = [15000,19000]
+      prop['normalise_method']='current'
 
       prop['monovan_lo_frac'] = -0.5 # default is -0.6
       #prop['monovan_hi_frac'] = 0.7 # default is 0.7, no need to change
@@ -124,9 +127,9 @@ class MAPSReduction(ReductionWrapper):
        ReductionWrapper.__init__(self,'MAP',web_var)
 #---------------------------------------------------------------------------------------------------------------------------
 # settings necessary to use in old iliad interface.  Comment ehse to use this reduction file only
-#rd = MAPSReduction()  
-#rd.def_advanced_properties()
-#rd.def_main_properties()
+rd = MAPSReduction()  
+rd.def_advanced_properties()
+rd.def_main_properties()
 
 def iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,sum_runs=False,**kwargs):
     """Helper function, allowing to run MAPS_Reduction in old functional (iliad) form
@@ -165,20 +168,27 @@ def iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,sum_ru
         prop_man.monovan_run=monovan
     else:
         prop_man.monovan_run=None
-     #-----------------------------------------
+    #-----------------------------------------
+    #
+    filename_present = False;
     for key,val in kwargs.items():
         if key == 'save_file_name':
+            filename_present = True;
             if isinstance(runno, (list, tuple)) or isinstance(ei,(list, tuple)) :
-                  print("**************************************************************************************")
-                  print("*** WARNING: you can not set up single file name for list of files or list of energies")
-                  print("*** change ''set_custom_output_filename'' function, which returns lamda function used ")
-                  print("*** to calculate file name as function of each incident energy and run number.")
-                  print("**************************************************************************************")
+                  print "**************************************************************************************"
+                  print "*** WARNING: you can not set up single file name for list of files or list of energies"
+                  print "*** change ''set_custom_output_filename'' function, which returns lamda function used "
+                  print "*** to calculate file name as function of each incident energy and run number."
+                  print "**************************************************************************************"                  
                   continue
         if key == 'wait_for_file':
             rd.wait_for_file = kwargs['wait_for_file']
-            continue                 
-        setattr(prop_man,key,val)        
+            continue
+        setattr(prop_man,key,val)
+    #
+    if not filename_present: # clear previous filename which may stuck in modules and does not allow
+        # auto filename to run
+        setattr(prop_man,'save_file_name',None);        
     rd.reducer.prop_man = prop_man
     
     #    
@@ -210,9 +220,8 @@ def iliad_maps_powder(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,sum_run
     rd.reducer.prop_man.map_file='MAPS_rings.map'
     iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,sum_runs,**kwargs)
        
-print(__name__)
 
-if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution":
+if __name__ == "__main__":
 #------------------------------------------------------------------------------------#
 # SECTION USED TO RUN REDUCTION FROM MANTID SCRIPT WINDOW #
 #------------------------------------------------------------------------------------#
@@ -220,18 +229,16 @@ if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution"
     # It can be done here or from Mantid GUI:
     #      File->Manage user directory ->Browse to directory
     # Folder where map and mask files are located:
-    # map_mask_dir = '/usr/local/mprogs/Libisis/InstrumentFiles/maps'
-    map_mask_dir = 'e:/SHARE/Fe/Data/sources'
+    map_mask_dir = '/usr/local/mprogs/InstrumentFiles/maps'
     # folder where input data can be found
-    # data_dir = '/home/maps/maps_data'
-    data_dir  = 'e:/SHARE/Fe/Data/sources/SPE_EI401'
+    data_dir = '/home/maps/maps_data'
     # auxiliary folder with results
     #ref_data_dir = '/isisdatar55/ndxmaps/Instrument/data/cycle_09_05' 
     # Set input search path to values, specified above
-    # config.setDataSearchDirs('{0};{1}'.format(data_dir,map_mask_dir))
+    #config.setDataSearchDirs('{0};{1}'.format(data_dir,map_mask_dir))
     # use appendDataSearch directory to add more locations to existing Mantid 
     # data search path
-    config.appendDataSearchDir('{0};{1}'.format(data_dir,map_mask_dir))
+    #config.appendDataSearchDir('{0};{1}'.format(data_dir,map_mask_dir))
     # folder to save resulting spe/nxspe files.
     #config['defaultsave.directory'] = '/home/maps/maps_users/Hutchings/March2015/SPE' #data_dir 
 
