@@ -1,6 +1,6 @@
 function wdisp = disp_dft_kun4D_lint(qh,qk,ql,en,varargin)
 % interpolate and expand numerical DFT data over whole q-dE space using
-% Matlab 
+% Matlab's 3D-scattered interpolant.
 %
 % Use this function as model for Tobyfit or sqw_eval or func_eval
 % algorithms.
@@ -18,7 +18,7 @@ persistent magFF;
 persistent ses;
 persistent Interp_array;
 persistent en_pts;
-en_bin_size = 8; % step of the bin calculation
+en_bin_size = 8; % step of the energy bin calculation
 A = varargin{1};
 
 if numel(A)>1
@@ -36,9 +36,11 @@ if isempty(magFF) && use_magff
     mi = MagneticIons('Fe0');
     magFF = mi.getFF_calculator(bm);
 end
+
 %
-if isempty(ses) || isempty(Interp_array)    
-    [ses,~,en_pts,qxs,qys,qzs,ens]=read_add_sim_Kun(true,false);
+if isempty(ses) || isempty(Interp_array)
+    %
+    [ses,~,en_pts,qxs,qys,qzs,ens]=read_add_sim_Kun(true,false,true);
     Interp_array = build_ScattInt(en_pts,qxs,qys,qzs,ens,ses);
 end
 % if numel(A) > 2
@@ -50,7 +52,11 @@ end
 % end
 %-------------------------------------------------------------------------
 %do_reshape = false;
-
+if size(qh,2) > 1
+    qh = qh';
+    qk = qk';
+    ql = ql';
+end
 qr = [qh,qk,ql];
 %
 % move all vectors into 0-1 quadrant where the interpolant is defined.
@@ -77,7 +83,7 @@ end
 function wdisp = interpLintKun(qr,enr,Interp_array,en_pts,en_bin_size)
 
 e0 = en_pts(1);
-bin0 = round((enr-e0)/en_bin_size)+1;
+bin0 = floor((enr-e0)/en_bin_size)+1;
 out_min = bin0<1;
 bin0(out_min) = 1;
 nbin_max = numel(en_pts);
@@ -90,6 +96,7 @@ end
 bin_range = unique(bin0);
 wdisp = zeros(numel(enr),1);
 for i=1:numel(bin_range)
+    fprintf(' Step %d#%d\n',i,numel(bin_range))
     n_bin = bin_range(i);
     this_en = bin0 == n_bin;
     qri = qr(this_en,:);

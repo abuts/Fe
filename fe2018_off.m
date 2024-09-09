@@ -1,7 +1,15 @@
+function fe2018_off(varargin)
 
-this_path = fileparts(mfilename('fullpath'));
+if nargin>0
+    this_path = varargin{1};
+else
+    this_path = fileparts(mfilename('fullpath'));
+end
+
 dft_path = fullfile(this_path,'Data','DFT');
-cut_path = fullfile(this_path,'2017June');
+cut1_path = fullfile(this_path,'2017June');
+cut2_path = fullfile(this_path,'2018Dec');
+cut3_path = fullfile(this_path,'2020April');
 util_path  = fullfile(this_path,'2017June','Utilities');
 cheby_path =fullfile(this_path,'Data','chebfun-master');
 
@@ -12,5 +20,7 @@ cheby_path =fullfile(this_path,'Data','chebfun-master');
 rmpath(this_path);
 rmpath(util_path);
 rmpath(dft_path);
-rmpath(cut_path);
+rmpath(cut1_path);
+rmpath(cut2_path);
+rmpath(cut3_path);
 rmpath(cheby_path);

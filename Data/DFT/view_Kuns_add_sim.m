@@ -2,7 +2,7 @@ function view_Kuns_add_sim
 % function to test Kun simulations loading and expansion
 % into {[0,0,0];[1,1,1]} square
 %
-[s,qx,en_pts,pxs,pys,pzs,ens]=read_add_sim_Kun(true,false);
+[s,qx,en_pts,pxs,pys,pzs,ens]=read_add_sim_Kun(true,true);
 
 E_l = 100;
 q_l = 0.02;
@@ -28,7 +28,7 @@ if numel(size(s)) == 4
     wdisp = disp_dft_kun4D(qh,qk,ql,en,[1,0]);
     S = reshape(wdisp,size(X));
     figure
-    surf(X,Y,S,'EdgeColor','none');
+    contourf(X,Y,S,'EdgeColor','none');
     
     %     surf(X,Y,s(:,:,1,10));
     %     surf(X,Y,squeeze(s(:,1,:,10)));
@@ -101,9 +101,35 @@ else
     %
     w = disp_dft_kun4D_lint(qh,qk,ql,en,[1,0]);
     S = reshape(w,size(X));
-    figure
-    surf(X,Y,S,'EdgeColor','none');
+    %     figure
+    %     surf(X,Y,S,'EdgeColor','none');
+    contourf(X,Y,S,'EdgeColor','none');
+    hold on
 end
+
+
+
+
+pr = 0:0.05:pi;
+r = 0.31;
+qx = r*cos(pr);
+qy = r*sin(pr);
+qz = q_l*ones(size(qx));
+En = E_l*ones(size(qx));
+fh = fopen('PoinstOnSphere.dat','w');
+for i = 1:numel(qx)    
+    fprintf(fh,'%6.4f  %6.4f  %6.4f  %6.4f\n',qx(i),qy(i),qz(i),En(i));    
+end
+fclose(fh);
+hold on
+plot(qx,qy,'r');
+
+wdisp = disp_dft_kun4D_lint(qx,qy,qz,En,[1,0]);
+id = IX_dataset_1d(pr,wdisp);
+id.x_axis=' Angle (rad)';
+id.s_axis='signal along angle';
+pl(id);
+
 %qx = reshape(qr(:,1),21,21,21);
 %qy = reshape(qr(:,2),21,21,21);
 %qz = reshape(qr(:,3),21,21,21);

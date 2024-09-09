@@ -1,5 +1,6 @@
 function  Interp_array = build_ScattInt(en_pts,qx,qy,qz,en,ses)
-
+% build function to use 
+%
 if all(size(en_pts) == size(qx))
     en_pts = unique(sort(en_pts));
     nIp = numel(en_pts);

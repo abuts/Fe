@@ -1,5 +1,6 @@
 function wdisp = disp_kun_calc(qh,qk,ql,en,varargin)
 % interpolate and expand numerical DFT data over whole q-dE space
+% the basis of the interpolation is 
 %
 % Use this function as model for Tobyfit or sqw_eval or func_eval
 % algorithms.

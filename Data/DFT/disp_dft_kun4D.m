@@ -1,5 +1,6 @@
 function wdisp = disp_dft_kun4D(qh,qk,ql,en,varargin)
 % interpolate and expand numerical DFT data over whole q-dE space
+% using Chebyshev polinomial approximation
 %
 % Use this function as model for Tobyfit or sqw_eval or func_eval
 % algorithms.
