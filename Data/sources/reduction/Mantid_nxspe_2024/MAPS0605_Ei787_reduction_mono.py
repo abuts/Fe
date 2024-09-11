@@ -1,24 +1,13 @@
-""" Cycle 06/05 Iron data
-    MAPS reduction script to use pre-calculated vanadium integral for absolute units conversion 
-    Absolute units vanadium integral is calculated  by neighbouring MAPS_Ei787_reduction_mono.py script.
-
-"""
+""" Reduction script to calculate vanadium integrals for main enenrgy Ei ~ 800meV"""
 # Two rows necessary to run script outside of the mantid. You need also set up 
 # appropriate python path-es
+
 import os
-import numpy as np
 #
 from mantid import *
 from Direct.ReductionWrapper import *
 from fe_utilities import *
 
-
-# Define all runs used by the program
-runs = list(range(11014,11061))+list(range(11063,11202))
-# Define list of angles runs used by the program
-phi  = list(np.arange(0,-23.5,-0.5))+list(np.arange(-23.5,-27.5,-0.5))+list(np.arange(-27.5,-34,-0.5))+list(np.arange(-34.,-93,-0.5))
-# Map angles to run numbers
-phi_on_run = {runs[i]: phi[i] for i in range(len(phi))}
 class MAPSReduction(ReductionWrapper):
 #------------------------------------------------------------------------------------#
    @MainProperties
@@ -31,15 +20,15 @@ class MAPSReduction(ReductionWrapper):
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
-       prop['incident_energy'] = 785
-       prop['energy_bins'] =[-100,4,780]
+       prop['incident_energy'] = 787.8+5.2 # estimated to get elastic line at the centre 
+       prop['energy_bins'] =[-100,4,750]   # binning behind the ranges but fine for mono
 
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
        #ws = mtd['w1']
-       prop['sample_run'] = 11014 #
-       prop['wb_run']     = 10962
+       prop['sample_run'] = 11270 # Monovanadium
+       prop['wb_run']     = 11276
        #
        prop['sum_runs'] = False # set to true to sum everything provided to sample_run
        #                        # list
@@ -60,9 +49,9 @@ class MAPSReduction(ReductionWrapper):
            to work properly
       """
       prop = {}
-      prop['map_file'] = "4to1_065.map"
+      prop['map_file'] = "mid-tubes_065.map"
       prop['monovan_mapfile'] = "mid-tubes_065.map"
-      prop['hardmaskOnly']="4to1_065.msk" #maskfile # disable diag, use only hard mask
+      #prop['hardmaskOnly']="4to1_065.msk" #maskfile # disable diag, use only hard mask
       prop['hard_mask_file'] = ""
       prop['bkgd_range'] = [15000,19000]
       prop['fix_ei'] = True
@@ -77,14 +66,14 @@ class MAPSReduction(ReductionWrapper):
       prop['wb_integr_range'] = [20,100] 
       
       #prop['det_cal_file'] = "11060" what about calibration?
-      prop['save_format'] = 'nxspe' # nxs or spe
+      prop['save_format'] = 'nxs' # nxs,nxspe or spe
       prop['data_file_ext']='.raw' # if two input files with the same name and
                                     #different extension found, what to prefer.
-      #prop['run_diagnostics'] = False
-      #prop['norm-mon1-spec'] = 578
-      #prop['norm-mon2-spec'] = 579
-      #prop['ei-mon1-spec'] = 578
-      #prop['ei-mon2-spec'] = 579
+      prop['run_diagnostics'] = False
+      prop['norm-mon1-spec'] = 578
+      prop['norm-mon2-spec'] = 579
+      prop['ei-mon1-spec'] = 578
+      prop['ei-mon2-spec'] = 579
       
       return prop
       #
@@ -96,7 +85,6 @@ class MAPSReduction(ReductionWrapper):
           Overload only if custom reduction is needed or 
           special features are requested
       """
-      #
       results = ReductionWrapper.reduce(self,input_file,output_directory)
       #SaveNexus(ws,Filename = 'MARNewReduction.nxs')
       return results
@@ -117,7 +105,7 @@ class MAPSReduction(ReductionWrapper):
             if 'rings' in map_file:
                 ftype = '_powder'
             else:
-                ftype = ''
+                ftype = ''             
 
             # Note -- properties have the same names as the list of advanced and
             # main properties
@@ -136,48 +124,19 @@ class MAPSReduction(ReductionWrapper):
       #return None
    #
    #
-   
-   def do_preprocessing(self,reducer,ws):
-        """ Custom function, applied to each run or every workspace, the run is divided to
-            in multirep mode
-            Applied after diagnostics but before any further reduction is invoked.
-                Inputs:
-                self    -- initialized instance of the instrument reduction class
-                reducer -- initialized instance of the reducer
-                           (DirectEnergyConversion class initialized for specific reduction)
-                ws         the workspace, describing the run or partial run in multirep mode
-                           to preprocess
-
-            By default, does nothing.
-            Add code to do custom preprocessing.
-            Must return pointer to the preprocessed workspace
-
-        """
-        anf_TGP = 54.7
-        print('*************************************************')
-        print('*** SETTING UP EXTERNAL MONO-CORRECTION FACTOR: *')
-        print('*** ',anf_TGP)
-        print('*************************************************')
-        PropertyManager.mono_correction_factor.set_val_to_cash(reducer.prop_man, anf_TGP)
-        run_num = PropertyManager.sample_run.run_number();
-        self.reducer.prop_man.psi = phi_on_run[run_num]
-        print('*** Run: ',run_num,' psi: ',self.reducer.prop_man.psi)
-        return ws
+   def validation_file_place(self):
+      """Redefine this to the place, where validation file, used in conjunction with
+         'validate_run' property, located. Here it defines the place to this script folder.
+          but if this function is disabled, by default it looks for/places it 
+          in a default save directory"""
+      return os.path.split(os.path.realpath(__file__))[0]
    
    def __init__(self,web_var=None):
        """ sets properties defaults for the instrument with Name"""
        ReductionWrapper.__init__(self,'MAP',web_var)
-       ##### Overload do_preprocessing function on reducer
-       Mt = MethodType(self.do_preprocessing, self.reducer)
-       DirectEnergyConversion.__setattr__(self.reducer,'do_preprocessing',Mt)
-       ##### Overload do_postprocessing function on reducer
-       #Mt = MethodType(self.do_postprocessing, self.reducer)
-       #DirectEnergyConversion.__setattr__(self.reducer,'do_postprocessing',Mt)
-
 #---------------------------------------------------------------------------------------------------------------------------
-#
 
-
+       
 if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution":
 #------------------------------------------------------------------------------------#
 # SECTION USED TO RUN REDUCTION FROM MANTID SCRIPT WINDOW #
@@ -185,9 +144,10 @@ if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution"
 ##### Here one sets up folders where to find input data and where to save results ####
     # It can be done here or from Mantid GUI:
     #      File->Manage user directory ->Browse to directory
-
-    #set_data_dir('ei787_plus_ei195_ei100_cycle06_05','ei787')
-
+    # Folder where map and mask files are located:
+    #import importlib
+    #importlib.reload(set_data_dir)
+    set_data_dir('ei787_plus_ei195_ei100_cycle06_05','cycle06_05','vanadium')    
 
 ###### Initialize reduction class above and set up reduction properties.        ######
 ######  Note no web_var in constructor.(will be irrelevant if factory is implemented)
@@ -207,7 +167,6 @@ if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution"
     #  if this value >0 the reduction waits until file appears on the data
     #  search path checking after time specified below.
     rd.wait_for_file = 0  # waiting time interval in seconds
-      
 
 ### Define a run number to validate reduction against future changes    #############
     # After reduction works well and all settings are done and verified, 
@@ -233,6 +192,7 @@ if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution"
    # 
     
     rd.run_reduction()
+    
+    Eel = estimate_elastic_line_en('SR_MAP011270_spe',(-100,1,150))
+    print('Elastic line energy deviation = {0}'.format(Eel))
 
-    Eel = estimate_elastic_line_en('SR_MAP011014_spe',(-100,1,150))
-    print('Eel = {0}'.format(Eel))

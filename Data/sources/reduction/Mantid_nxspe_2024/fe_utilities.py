@@ -30,13 +30,16 @@ def set_data_dir(source_folder,*args):
     save_dir = os.path.join(script_dir,*args)
     config['defaultsave.directory'] = save_dir #data_dir
     
-def estimate_elastic_line_en(ws_name,bin_range):
+def estimate_elastic_line_en(ws_name,bin_range,last_spectrum = None):
     # Calculate energy distribution around elastic line and evaluate correct elastic line position
     #
     # Input:
     #
     Rebin(InputWorkspace=ws_name, OutputWorkspace=ws_name+'_reb', Params=bin_range)
-    SumSpectra(InputWorkspace=ws_name+'_reb', OutputWorkspace=ws_name+'_sum', IncludeMonitors=False, RemoveSpecialValues=True, UseFractionalArea=False)
+    if last_spectrum is None:
+       SumSpectra(InputWorkspace=ws_name+'_reb', OutputWorkspace=ws_name+'_sum', IncludeMonitors=False, RemoveSpecialValues=True, UseFractionalArea=False)
+    else:
+       SumSpectra(InputWorkspace=ws_name+'_reb', OutputWorkspace=ws_name+'_sum', IncludeMonitors=False, RemoveSpecialValues=True, UseFractionalArea=False,EndWorkspaceIndex=last_spectrum)       
     ws = mtd[ws_name+'_sum']
     xp    = ws.readX(0)
     dist0 = ws.readY(0)

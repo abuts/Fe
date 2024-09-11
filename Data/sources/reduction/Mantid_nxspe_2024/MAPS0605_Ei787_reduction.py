@@ -34,7 +34,7 @@ class MAPSReduction(ReductionWrapper):
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
        prop['incident_energy'] = 785
-       prop['energy_bins'] =[-100,4,780]
+       prop['energy_bins'] =[-100,4,730] # Higher range picks next energy
 
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
@@ -188,7 +188,7 @@ if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution"
     # It can be done here or from Mantid GUI:
     #      File->Manage user directory ->Browse to directory
 
-    #set_data_dir('ei787_plus_ei195_ei100_cycle06_05','ei787')
+    set_data_dir('ei787_plus_ei195_ei100_cycle06_05','cycle06_05','ei800')
 
 
 ###### Initialize reduction class above and set up reduction properties.        ######
