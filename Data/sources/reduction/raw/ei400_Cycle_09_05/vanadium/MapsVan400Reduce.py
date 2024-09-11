@@ -18,22 +18,21 @@ class MAPSReduction(ReductionWrapper):
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
-       prop['incident_energy'] = 778
-       prop['energy_bins'] =[-100,4,750]
+       prop['incident_energy'] = [400]
+       prop['energy_bins'] =[-0.1,0.05,0.9]
 
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
-       #ws = mtd['w1']
-       prop['sample_run'] =11270 #
-       prop['wb_run'] = 11276
+       prop['sample_run'] =15181 #'MAP21968.s01,MAP21968.s02,MAP21968.raw'  # 'MAP0000.raw'# [21384,21385]
+       prop['wb_run'] = 15182
        #
        prop['sum_runs'] = False # set to true to sum everything provided to sample_run
        #                        # list
        # Absolute units reduction properties. Set prop['monovan_run']=None to do relative units
-       prop['monovan_run'] = 11270 #21803  #  vanadium run in the same configuration as your sample 
-       prop['sample_mass'] = 166
-       prop['sample_rmm'] = 53.94
+       prop['monovan_run'] = 15181 #21803  #  vanadium run in the same configuration as your sample 
+       prop['sample_mass'] = 30.1
+       prop['sample_rmm'] = 50.9415
        return prop
 #------------------------------------------------------------------------------------#
    @AdvancedProperties
@@ -47,14 +46,14 @@ class MAPSReduction(ReductionWrapper):
            to work properly
       """
       prop = {}
-      prop['map_file'] = "mid-tubes_065.map"
-      prop['monovan_mapfile'] = "mid-tubes_065.map"
-      #prop['hardmaskOnly']="4to1_065.msk" #maskfile # disable diag, use only hard mask
-      prop['hard_mask_file'] = ""
+      #prop['map_file'] = "4to1.map"
+      prop['map_file'] = "4to1_095.map"
+      prop['monovan_mapfile'] = "4to1_mid_lowang.map"
+      #prop['hardmaskOnly']="4to1_164.msk" # disable diag, use only hard mask
+      prop['hard_mask_file'] = "4to1_095.msk"
+      prop['run_diagnostics'] = True
       prop['bkgd_range'] = [15000,19000]
-      prop['fix_ei'] = False
-      prop['normalise_method'] = 'current'
-      prop['wb_for_monovan_run'] = 11276
+      prop['normalise_method']='current'
 
       prop['monovan_lo_frac'] = -0.5 # default is -0.6
       #prop['monovan_hi_frac'] = 0.7 # default is 0.7, no need to change
@@ -65,14 +64,8 @@ class MAPSReduction(ReductionWrapper):
       
       #prop['det_cal_file'] = "11060" what about calibration?
       prop['save_format'] = 'nxspe' # nxs or spe
-      prop['data_file_ext']='.raw' # if two input files with the same name and
+      prop['data_file_ext']='.nxs' # if two input files with the same name and
                                     #different extension found, what to prefer.
-      prop['run_diagnostics'] = False
-      prop['norm-mon1-spec'] = 578
-      prop['norm-mon2-spec'] = 579
-      prop['ei-mon1-spec'] = 578
-      prop['ei-mon2-spec'] = 579
-      
       return prop
       #
 #------------------------------------------------------------------------------------#
@@ -103,7 +96,7 @@ class MAPSReduction(ReductionWrapper):
             if 'rings' in map_file:
                 ftype = '_powder'
             else:
-                ftype = ''             
+                ftype = ''
 
             # Note -- properties have the same names as the list of advanced and
             # main properties
@@ -133,10 +126,102 @@ class MAPSReduction(ReductionWrapper):
        """ sets properties defaults for the instrument with Name"""
        ReductionWrapper.__init__(self,'MAP',web_var)
 #---------------------------------------------------------------------------------------------------------------------------
+# settings necessary to use in old iliad interface.  Comment ehse to use this reduction file only
+rd = MAPSReduction()  
+rd.def_advanced_properties()
+rd.def_main_properties()
 
+def iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,sum_runs=False,**kwargs):
+    """Helper function, allowing to run MAPS_Reduction in old functional (iliad) form
+      
+        Data reduced as crystal
+        The script assumes that crystal map and mask files and set up in the advanced properties. 
+        Check iliad_powder and iliad_crystal interoperations if this changes
+        
+     inputs: 
+        runno       -- one or list of run numbers to process
+        ei            -- incident energy or list of incident energies
+        wbvan      --  white beam vanadium run number or file name of the vanadium
+        rebin_pars -- the parameters, which define final file binning 
+        monovan  -- monochromatic vanadium run number or file name
+        sam_mass-- mass of the sample under investigation
+        sam_rmm -- rmm of sample under investigation
+        sum_runs -- if true, all runs provided in runno list should be added together
+        **kwargs -- list of any reduction properties, found in MARI_Parameters.xml file
+                         written in the form property=value
+        NOTE: to avoid duplication, all default parameters are set up within def_advanced properites
+                  and def_main properties functions. They of course may be overwritten here. 
+    """       
+    prop_man = rd.reducer.prop_man
+    
+    #assign input arguments:
+    prop_man.incident_energy=ei
+    prop_man.sum_runs        = sum_runs
+    prop_man.sample_run      = runno
+    prop_man.wb_run            = wbvan
+    #
+    prop_man.energy_bins=rebin_pars
+    
+    if ( sam_rmm!=0 and sam_mass!=0 ) :
+        prop_man.sample_mass=sam_mass
+        prop_man.sample_rmm=sam_rmm
+        prop_man.monovan_run=monovan
+    else:
+        prop_man.monovan_run=None
+    #-----------------------------------------
+    #
+    filename_present = False;
+    for key,val in kwargs.items():
+        if key == 'save_file_name':
+            filename_present = True;
+            if isinstance(runno, (list, tuple)) or isinstance(ei,(list, tuple)) :
+                  print "**************************************************************************************"
+                  print "*** WARNING: you can not set up single file name for list of files or list of energies"
+                  print "*** change ''set_custom_output_filename'' function, which returns lamda function used "
+                  print "*** to calculate file name as function of each incident energy and run number."
+                  print "**************************************************************************************"                  
+                  continue
+        if key == 'wait_for_file':
+            rd.wait_for_file = kwargs['wait_for_file']
+            continue
+        setattr(prop_man,key,val)
+    #
+    if not filename_present: # clear previous filename which may stuck in modules and does not allow
+        # auto filename to run
+        setattr(prop_man,'save_file_name',None);        
+    rd.reducer.prop_man = prop_man
+    
+    #    
+    rd.run_reduction()   
+        
+
+def iliad_maps_powder(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,sum_runs,**kwargs):
+    """Helper function, which allow to run MARI_Reduction in functional form
+    
+        Data reduced as powder
+        The script assumes that crystal map and mask files and set up in the advanced properties. 
+        Check iliad_powder and iliad_crystal interoperations if this changes
+    
+    inputs: 
+        runno       -- one or list of run numbers to process
+        ei            -- incident energy or list of incident energies
+        wbvan      --  white beam vanadium run number or file name of the vanadium
+        monovan  -- monochromatic vanadium run number or file name
+        sam_mass-- mass of the sample under investigation
+        sam_rmm -- rmm of sample under investigation
+        sum_runs -- if true, all runs provided in runno list should be added together
+        **kwargs -- list of any reduction properties, found in MARI_Parameters.xml file
+                         written in the form property=value
+        NOTE: to avoid duplication, all default parameters are set up within def_advanced properites
+                  and def_main properties functions. They of course may be overwritten here. 
+    """
+    
+    #rd.reducer.prop_man.map_file='parker_rings.map'
+    rd.reducer.prop_man.map_file='MAPS_rings.map'
+    iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,sum_runs,**kwargs)
        
 
-if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution":
+if __name__ == "__main__":
 #------------------------------------------------------------------------------------#
 # SECTION USED TO RUN REDUCTION FROM MANTID SCRIPT WINDOW #
 #------------------------------------------------------------------------------------#
@@ -144,16 +229,16 @@ if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution"
     # It can be done here or from Mantid GUI:
     #      File->Manage user directory ->Browse to directory
     # Folder where map and mask files are located:
-    map_mask_dir = 'e:/SHARE/Fe/Data/sources/InstumentFiles/maps'
+    map_mask_dir = '/usr/local/mprogs/InstrumentFiles/maps'
     # folder where input data can be found
-    data_dir = 'e:/SHARE/Fe/Data/sources/Spe_ei787_cycle_06_05/van'
+    data_dir = '/home/maps/maps_data'
     # auxiliary folder with results
     #ref_data_dir = '/isisdatar55/ndxmaps/Instrument/data/cycle_09_05' 
     # Set input search path to values, specified above
     #config.setDataSearchDirs('{0};{1}'.format(data_dir,map_mask_dir))
     # use appendDataSearch directory to add more locations to existing Mantid 
     # data search path
-    config.appendDataSearchDir('{0};{1}'.format(data_dir,map_mask_dir))
+    #config.appendDataSearchDir('{0};{1}'.format(data_dir,map_mask_dir))
     # folder to save resulting spe/nxspe files.
     #config['defaultsave.directory'] = '/home/maps/maps_users/Hutchings/March2015/SPE' #data_dir 
 

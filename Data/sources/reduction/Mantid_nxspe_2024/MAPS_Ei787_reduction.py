@@ -1,13 +1,20 @@
-""" MAPS reduction script to use precalculated vanadium integral for absolute units conversion 
-    Absolute units integral is calculated  by neigboring MAPSReduction_mono.py script.
+""" Cycle 06/05 Iron data
+    MAPS reduction script to use pre-calculated vanadium integral for absolute units conversion 
+    Absolute units vanadium integral is calculated  by neighbouring MAPS_Ei787_reduction_mono.py script.
+
 """
 # Two rows necessary to run script outside of the mantid. You need also set up 
 # appropriate python path-es
 import os
 import numpy as np
 #
+from fe_utilities import *
 from mantid import *
 from Direct.ReductionWrapper import *
+
+
+
+
 # Define all runs used by the program
 runs = list(range(11014,11061))+list(range(11063,11202))
 # Define list of angles runs used by the program
@@ -33,7 +40,7 @@ class MAPSReduction(ReductionWrapper):
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
        #ws = mtd['w1']
-       prop['sample_run'] = 11014 #runs #
+       prop['sample_run'] = runs #
        prop['wb_run']     = 10962
        #
        prop['sum_runs'] = False # set to true to sum everything provided to sample_run
@@ -180,19 +187,9 @@ if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution"
 ##### Here one sets up folders where to find input data and where to save results ####
     # It can be done here or from Mantid GUI:
     #      File->Manage user directory ->Browse to directory
-    # Folder where map and mask files are located:
-    map_mask_dir = 'e:/SHARE/Fe/Data/sources/InstumentFiles/maps'
-    # folder where input data can be found
-    data_dir = 'e:/SHARE/Fe/Data/sources/Spe_ei787_cycle_06_05'
-    # auxiliary folder with results
-    #ref_data_dir = '/isisdatar55/ndxmaps/Instrument/data/cycle_09_05' 
-    # Set input search path to values, specified above
-    #config.setDataSearchDirs('{0};{1}'.format(data_dir,map_mask_dir))
-    # use appendDataSearch directory to add more locations to existing Mantid 
-    # data search path
-    config.appendDataSearchDir('{0};{1}'.format(data_dir,map_mask_dir))
-    # folder to save resulting spe/nxspe files.
-    #config['defaultsave.directory'] = '/home/maps/maps_users/Hutchings/March2015/SPE' #data_dir 
+
+    #set_data_dir('ei787_plus_ei195_ei100_cycle06_05','ei787')
+
 
 ###### Initialize reduction class above and set up reduction properties.        ######
 ######  Note no web_var in constructor.(will be irrelevant if factory is implemented)
