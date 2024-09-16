@@ -36,13 +36,15 @@ def estimate_elastic_line_en(ws_name,bin_range,last_spectrum = None):
     # Input:
     #
     Rebin(InputWorkspace=ws_name, OutputWorkspace=ws_name+'_reb', Params=bin_range)
-    if last_spectrum is None:
-       SumSpectra(InputWorkspace=ws_name+'_reb', OutputWorkspace=ws_name+'_sum', IncludeMonitors=False, RemoveSpecialValues=True, UseFractionalArea=False)
-    else:
-       SumSpectra(InputWorkspace=ws_name+'_reb', OutputWorkspace=ws_name+'_sum', IncludeMonitors=False, RemoveSpecialValues=True, UseFractionalArea=False,EndWorkspaceIndex=last_spectrum)       
+    if not last_spectrum is None:
+        ExtractSpectra(InputWorkspace=ws_name+'_reb',OutputWorkspace=ws_name+'_reb', EndWorkspaceIndex=last_spectrum)
+        
+    SumSpectra(InputWorkspace=ws_name+'_reb', OutputWorkspace=ws_name+'_sum', IncludeMonitors=False, RemoveSpecialValues=True, UseFractionalArea=False)
     ws = mtd[ws_name+'_sum']
     xp    = ws.readX(0)
     dist0 = ws.readY(0)
     Norm  = np.sum(dist0[:-1])
     energy = 0.5*(xp[:-1]+xp[1:])
-    return np.sum(dist0*energy)/Norm
+    av_energy = np.sum(dist0*energy)/Norm
+    print('Average Energy = {0}'.format(av_energy))    
+    return av_energy

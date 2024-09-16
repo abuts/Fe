@@ -32,13 +32,13 @@ class MAPSReduction(ReductionWrapper):
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
        #ws = mtd['w1']
-       prop['sample_run'] = 15925 #
+       prop['sample_run'] = 15835 # <-- 0 deg, # 15925 # <-- 90 deg
        prop['wb_run']     = 15527
        #
        prop['sum_runs'] = False # set to true to sum everything provided to sample_run
        #                        # list
        # Absolute units reduction properties. Set prop['monovan_run']=None to do relative units
-       prop['monovan_run'] = 15532 #21803  #  vanadium run in the same configuration as your sample 
+       prop['monovan_run'] = 15532 #  vanadium run in the same configuration as your sample 
        prop['sample_mass'] = 166
        prop['sample_rmm']  = 53.94
        return prop
@@ -54,9 +54,9 @@ class MAPSReduction(ReductionWrapper):
            to work properly
       """
       prop = {}
-      prop['map_file'] = "4to1_102.map"
+      prop['map_file'] = "4to1_065.map"
       prop['monovan_mapfile'] = "mid-tubes_065.map"
-      prop['hardmaskOnly']="4to1_102.msk" #maskfile # disable diag, use only hard mask
+      prop['hardmaskPlus']="4to1_102.msk" 
       prop['hard_mask_file'] = ""
       prop['bkgd_range'] = [15000,19000]
       prop['fix_ei'] = True
@@ -70,7 +70,7 @@ class MAPSReduction(ReductionWrapper):
       prop['diag_remove_zero'] = False
       prop['wb_integr_range'] = [20,100] 
       
-      #prop['det_cal_file'] = "11060" what about calibration?
+      #prop['det_cal_file'] = "detector_102_libisis.nxs" 
       prop['save_format'] = 'nxs' # nxs or spe
       prop['data_file_ext']='.raw' # if two input files with the same name and
                                     #different extension found, what to prefer.
@@ -225,5 +225,5 @@ if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution"
     
     rd.run_reduction()
 
-    Eel = estimate_elastic_line_en('SR_MAP015925_spe',(-10,0.25,166))
-    print('Eel = {0}'.format(Eel))
+    Eel = estimate_elastic_line_en('SR_MAP015835_spe',(-10,0.25,166))
+

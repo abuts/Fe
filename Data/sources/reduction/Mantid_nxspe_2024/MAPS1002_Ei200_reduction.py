@@ -17,7 +17,7 @@ from Direct.ReductionWrapper import *
 
 # Define all runs used by the program. Runs 15949-15965 are contaminated by ice
 runs = list(range(15835,15966))
-# Define list of angles runs used by the program. Angles -1:-33 are contamintaed by ice
+# Define list of angles runs used by the program. Angles -1:-33 (last list) are contamintaed by ice
 phi  = list(np.arange(0,92,2))+list(np.arange(1,91,2))+list(np.arange(-2,-48,-2))+list(np.arange(-1.,-35,-2))
 # Map angles to run numbers
 phi_on_run = {runs[i]: phi[i] for i in range(len(phi))}
@@ -230,7 +230,7 @@ if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution"
    # and run reduction. Overriding would have form:
    # rd.reducer.prop_man.property_name (from the dictionary above) = new value e.g. 
    # rd.reducer.prop_man.energy_bins = [-40,2,40]
-   # or 
+   # or estimate_elastic_line_en('SR_MAP015835_spe',(-10,0.25,166))
    ## rd.reducer.prop_man.sum_runs = False
    # 
     
