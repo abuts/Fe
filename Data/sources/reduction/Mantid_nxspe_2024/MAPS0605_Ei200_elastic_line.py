@@ -25,8 +25,8 @@ class MAPSReduction(ReductionWrapper):
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
-       prop['incident_energy'] = 785
-       prop['energy_bins'] =[-100,4,780]
+       prop['incident_energy'] = 200
+       prop['energy_bins'] =[-20,0.25,200]
 
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
@@ -59,7 +59,7 @@ class MAPSReduction(ReductionWrapper):
       prop['hardmaskOnly']="4to1_065.msk" #maskfile # disable diag, use only hard mask
       prop['hard_mask_file'] = ""
       prop['bkgd_range'] = [15000,19000]
-      prop['fix_ei'] = True
+      prop['fix_ei'] = False
       prop['normalise_method'] = 'current'
       prop['wb_for_monovan_run'] = 11276
 
@@ -230,5 +230,5 @@ if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution"
     
     rd.run_reduction()
 
-    Eel = estimate_elastic_line_en('SR_MAP011014_spe',(-50,1,50))
+    Eel = estimate_elastic_line_en('SR_MAP011014_spe',(-15,0.25,15))
     print('Eel = {0}'.format(Eel))
