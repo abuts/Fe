@@ -1,7 +1,7 @@
 function [ampl,bg] = fit_GPPH_Ei800_allCuts()
 
-dat = fullfile(pwd,'sqw','data','Fe_ei787.sqw');
-Emax = 450;
+data = fullfile(fileparts(fileparts(mfilename('fullpath'))),'Data','sqw','Fe_ei787.sqw');
+Emax = 500;
 dE   = 5;
 Efit_min = 50;
 Kun_width = 0.1;
@@ -9,6 +9,19 @@ Kun_sym = 3;
 
 Dqk = [-0.1,0.1];
 Dql = [-0.1,0.1];
+w2u_base = cut_sqw(data,struct('u',[1,0,0],'v',[0,1,0]),[-2,0.05,4],[-3,0.05,4] ,[-0.1,0.1] ,[350-dE,350+dE]);
+%w2l_base = cut_sqw(data,struct('u',[1,0,0],'v',[0,1,0]),[-2,0.05,4],[-3,0.05,4] ,[-0.6,-0.4] ,[350-dE,350+dE]);
+br0 = [3,0;0,3];
+plot(w2u_base);
+keep_figure
+liny
+hold on
+scatter(br0(:,1),br0(:,2),'r');
+hold off
+
+
+%plot(w2l_base);
+%keep_figure
 
 proj = {projection([1,1,1],[1,-1,0],'uoffset',[0,0,0]),projection([-1,1,1],[1,1,0],'uoffset',[0,0,0]),...  !-1 !1
     projection([1,-1,1],[1,1,0],'uoffset',[0,0,0]),projection([1,1,-1],[1,-1,0],'uoffset',[0,0,0]),... !-1 !3
@@ -33,7 +46,10 @@ kun_sym_dir = [1,1,1,1,  2,2,2,2, 2,2, 1,1,1,1,1,1,1,1];
 %kun_sym_dir = [3,3];
 
 proj = {projection([-1,1,1],[1,1,0],'uoffset',[3,0,0]),projection([-1,-1,1],[1,-1,0],'uoffset',[3,0,0]),...
-       projection([-1, -1,1],[1,-1,0],'uoffset',[0,3,0]),projection([1, -1,1],[1,-1,0],'uoffset',[0,3,0]) };
+        projection([-1,1,-1],[-1,1,0],'uoffset',[3,0,0]),projection([-1,-1,-1],[1,-1,0],'uoffset',[3,0,0]),...    
+       projection([-1, -1,1],[1,-1,0],'uoffset',[0,3,0]),projection([1, -1,1],[1,-1,0],'uoffset',[0,3,0]),...
+       projection([-1, -1,-1],[1,1,0],'uoffset',[0,3,0]),projection([1, -1,-1],[1,-1,0],'uoffset',[0,3,0])...
+       };
 kun_sym_dir = [4,4,3,3];
 
 w2all = cell(1,numel(proj));
@@ -41,13 +57,18 @@ w2tha = cell(1,numel(proj));
 sample=IX_sample(true,[1,0,0],[0,1,0],'cuboid',[0.04,0.03,0.02]);
 
 for i=1:numel(proj)
-    w2all{i} = cut_sqw(dat,proj{i},[-2.5,0.05,2.5],Dqk ,Dql ,[0,dE,800]);
-    w2all{i} = set_sample_and_inst(w2all{i},sample,@maps_instrument_for_tests,'-efix',600,'S');
+    w2all{i} = cut_sqw(data,proj{i},[-2.5,0.05,2.5],Dqk ,Dql ,[0,dE,800]);
+    w2all{i} = set_sample_and_inst(w2all{i},sample,@maps_instrument,'-efix',600,'S');
     plot(w2all{i});
     ly 0 450
-    lz  0 1
-    w2tha{i} = sqw_eval(w2all{i},@disp_kun_calc,[1,0,Kun_sym,kun_sym_dir(i),Kun_width]);
+    lz  0 0.2
+    keep_figure
+    % this calls the function, interpolating DFT into volume assuming
+    % constant linar plain simulations expansion
+    %w2tha{i} = sqw_eval(w2all{i},@disp_kun_calc,[1,0,Kun_sym,kun_sym_dir(i),Kun_width]);
+    w2tha{i} = sqw_eval(w2all{i},@disp_dft_param_Kun,[0.2546,0]);    
     plot(w2tha{i});
+    keep_figure    
     ly 0 450
     lz  0 1
 end

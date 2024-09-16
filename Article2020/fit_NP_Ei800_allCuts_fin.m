@@ -101,7 +101,7 @@ if plot_final_result_only
         };
     %{symop([0,0,1],90),[symop([1,0,0],90),symop([0,0,1],90)]};
     sym_axis = {[1,0,0];[0,-1,0]; [2.5,-0.5,0]};
-    final_cut3 = cut_symop(data,proj{9},Dqk ,Dql ,[0,dE,Emax],bg_fun,bg_param,...
+    final_cut3 = cut_symop(data,proj{9},Dqk ,Dql ,[0,dE,Emax],[],[2.5,3],...
         sym_op,sym_axis,keep_only_last_plot );
     
     
@@ -299,55 +299,6 @@ keep_figure
 % acolor('r')
 % bg = IX_dataset_1d(en,bg_fit,bg_err);
 % pd(bg);
-
-function final_cut = cut_symop(data,proj0,Dqk ,Dql ,Erange,bg_fun,bg_param,...
-    sym_op,sym_axis,...
-    plot_final_result_only)
-% sum cuts to plot the part of the dispersion in  NP direction
-
-[com_cut,part_cuts] = cut_sqw_sym(data,proj0,[-2,0.05,3],Dqk ,Dql ,Erange,sym_op);
-% does not work. Bug in symcut?
-com_c1 = cut_sqw(com_cut,proj0,[-2,3],Dqk ,Dql ,Erange);
-%com_c1 = cut_sqw_sym(data,proj{9},[-2,3],Dqk ,Dql ,[0,dE,Emax],sym_op);
-bg_eval1D = func_eval(com_c1,bg_fun,bg_param);
-acolor('k');
-plot(com_c1)
-acolor('r')
-pl(bg_eval1D)
-logy
-keep_figure;
-bg = func_eval(com_cut,@(q,en,par)(par(1)*exp(-par(2)*(en-50))),bg_param);
-dis_cut = com_cut -bg;
-if plot_final_result_only
-    close all
-end
-
-plot(dis_cut)
-liny
-keep_figure;
-ly 0 500
-lz  0 0.02
-%
-mff = MagneticIons('Fe0');
-dis_cut_cor = mff.correct_mag_ff(dis_cut);
-plot(dis_cut_cor)
-keep_figure;
-lz 0 0.5
-
-v1=sym_axis{1}; v2=sym_axis{2}; v3=sym_axis{3};
-final_cut =symmetrise_sqw(dis_cut_cor,v1,v2,v3);
-plot(final_cut)
-lz 0 0.5
-keep_figure;
-final_cut = cut_sqw(final_cut,proj0,[0.5,0.01,1],Dqk ,Dql ,Erange);
-plot(final_cut)
-lz 0 0.5
-keep_figure;
-dis_cut_theor = sqw_eval(final_cut,@disp_dft_param_Kun,[1,1]);
-plot(dis_cut_theor)
-lz 0 0.3
-keep_figure;
-
 
 
 function     bg_param = bg_calc_fun1(data,Dqk ,Dql,dE,bg_fun)
