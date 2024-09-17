@@ -1,1 +1,0 @@
-LoadRaw(Filename="OFFSPEC00004622.raw",OutputWorkspace="wb_wksp")

@@ -20,7 +20,7 @@ class MAPSReduction(ReductionWrapper):
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
-       prop['incident_energy'] = 201.4 # estimated to get elastic line at the centre. Bining accuracy does not allow
+       prop['incident_energy'] = 201 # estimated to get elastic line at the centre. Bining accuracy does not allow
                                      # to identify elastic line position wich higher accuracy
        prop['energy_bins'] =[-20,0.25,180]
 
@@ -50,7 +50,7 @@ class MAPSReduction(ReductionWrapper):
            to work properly
       """
       prop = {}
-      prop['map_file'] = "4to1_102.map"
+      prop['map_file'] = "4to1_102.map"  # "parker_rings.map"
       prop['monovan_mapfile'] = "parker_rings.map"
       prop['hardmaskOnly']="4to1_102.msk" #maskfile # disable diag, use only hard mask
       prop['hard_mask_file'] = ""
@@ -188,8 +188,8 @@ if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution"
    ## rd.reducer.prop_man.sum_runs = False
    # 
     
-    rd.run_reduction()
+    red_vanadium_MAP15532 = rd.run_reduction()
     
-    Eel = estimate_elastic_line_en('SR_MAP015532_spe',(-20,1,200))
-    print('Eel = {0}'.format(Eel))
+    Eel = estimate_elastic_line_en(red_vanadium_MAP15532,(-20,1,200))
+
 

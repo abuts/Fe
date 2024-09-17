@@ -30,21 +30,36 @@ def set_data_dir(source_folder,*args):
     save_dir = os.path.join(script_dir,*args)
     config['defaultsave.directory'] = save_dir #data_dir
     
+def av_value(ws,spec_number,min_idx=None,max_idx=None):
+    """ Calculate average value defined by selected distribution """
+    xp    = ws.readX(spec_number)
+    dist0 = ws.readY(spec_number)
+    if min_idx is None:
+        min_idx=0
+    if max_idx is None:
+        max_idx = len(xp)
+    Norm   = np.sum(dist0[min_idx:max_idx-1])
+    energy = 0.5*(xp[min_idx:max_idx-1]+xp[min_idx+1:max_idx])
+    av_energy = np.sum(dist0[min_idx:max_idx-1]*energy)/Norm    
+    return av_energy
+    
+    
 def estimate_elastic_line_en(ws_name,bin_range,last_spectrum = None):
     # Calculate energy distribution around elastic line and evaluate correct elastic line position
     #
     # Input:
     #
-    Rebin(InputWorkspace=ws_name, OutputWorkspace=ws_name+'_reb', Params=bin_range)
+    if not isinstance(ws_name,str):
+        ws_name = ws_name.name()
+        
     if not last_spectrum is None:
-        ExtractSpectra(InputWorkspace=ws_name+'_reb',OutputWorkspace=ws_name+'_reb', EndWorkspaceIndex=last_spectrum)
+        ExtractSpectra(InputWorkspace=ws_name+'_reb',OutputWorkspace=ws_name+'_reb', EndWorkspaceIndex=last_spectrum)        
+    Rebin(InputWorkspace=ws_name, OutputWorkspace=ws_name+'_reb', Params=bin_range)
         
     SumSpectra(InputWorkspace=ws_name+'_reb', OutputWorkspace=ws_name+'_sum', IncludeMonitors=False, RemoveSpecialValues=True, UseFractionalArea=False)
     ws = mtd[ws_name+'_sum']
-    xp    = ws.readX(0)
-    dist0 = ws.readY(0)
-    Norm  = np.sum(dist0[:-1])
-    energy = 0.5*(xp[:-1]+xp[1:])
-    av_energy = np.sum(dist0*energy)/Norm
+    av_energy = av_value(ws,0)
     print('Average Energy = {0}'.format(av_energy))    
     return av_energy
+
+    
