@@ -25,8 +25,8 @@ class MAPSReduction(ReductionWrapper):
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
-       prop['incident_energy'] = 201
-       prop['energy_bins'] =[-20,0.25,166]
+       prop['incident_energy'] = 200
+       prop['energy_bins'] =[-20,0.25,199]
 
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
@@ -225,5 +225,5 @@ if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution"
     
     red_MAPS15835 = rd.run_reduction()
 
-    Eel = estimate_elastic_line_en(red_MAPS15835,(-10,0.25,166))
+    Eel = estimate_elastic_line_en(red_MAPS15835,(-10,0.25,199))
 

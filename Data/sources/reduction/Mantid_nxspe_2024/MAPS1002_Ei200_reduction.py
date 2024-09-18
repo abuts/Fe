@@ -33,7 +33,7 @@ class MAPSReduction(ReductionWrapper):
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
-       prop['incident_energy'] = 201.2
+       prop['incident_energy'] = 200.
        prop['energy_bins'] =[-20,1,166] # Higher range picks next energy
 
        # the range of files to reduce. This range ignored when deployed from autoreduction,
@@ -78,7 +78,7 @@ class MAPSReduction(ReductionWrapper):
       prop['diag_remove_zero'] = False
       prop['wb_integr_range'] = [20,100] 
       
-      #prop['det_cal_file'] = "11060" what about calibration?
+      prop['det_cal_file'] = "detector_102_libisis.nxs"
       prop['save_format'] = 'nxspe' # nxs or spe
       prop['data_file_ext']='.raw' # if two input files with the same name and
                                     #different extension found, what to prefer.
