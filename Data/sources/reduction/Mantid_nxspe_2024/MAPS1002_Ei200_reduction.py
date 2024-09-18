@@ -34,7 +34,7 @@ class MAPSReduction(ReductionWrapper):
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
        prop['incident_energy'] = 200.
-       prop['energy_bins'] =[-20,1,166] # Higher range picks next energy
+       prop['energy_bins'] =[-20,1,162] # Higher range picks next energy
 
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
