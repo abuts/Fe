@@ -70,7 +70,7 @@ class MAPSReduction(ReductionWrapper):
       prop['diag_remove_zero'] = False
       prop['wb_integr_range'] = [20,100] 
       
-      #prop['det_cal_file'] = "detector_102_libisis.nxs" 
+      prop['det_cal_file'] = "detector_102_libisis.nxs" 
       prop['save_format'] = 'nxs' # nxs or spe
       prop['data_file_ext']='.raw' # if two input files with the same name and
                                     #different extension found, what to prefer.
@@ -225,5 +225,5 @@ if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution"
     
     red_MAPS15835 = rd.run_reduction()
 
-    Eel = estimate_elastic_line_en(red_res,(-10,0.25,166))
+    Eel = estimate_elastic_line_en(red_MAPS15835,(-10,0.25,166))
 

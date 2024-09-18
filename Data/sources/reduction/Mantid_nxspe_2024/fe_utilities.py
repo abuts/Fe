@@ -32,6 +32,9 @@ def set_data_dir(source_folder,*args):
     
 def av_value(ws,spec_number,min_idx=None,max_idx=None):
     """ Calculate average value defined by selected distribution """
+    if isinstance(ws,str):
+        ws = mtd[ws]
+    
     xp    = ws.readX(spec_number)
     dist0 = ws.readY(spec_number)
     if min_idx is None:
@@ -62,4 +65,28 @@ def estimate_elastic_line_en(ws_name,bin_range,last_spectrum = None):
     print('Average Energy = {0}'.format(av_energy))    
     return av_energy
 
+def select_det_at_distance(ws,distance,delta):
+    """ Create workspace which contains spectras with detectors located at specific range of distances from sample
+        and add these spectra together
+    """
     
+    if isinstance(ws,mantid.dataobjects._dataobjects.Workspace2D):
+        ws_name = ws.name()
+    else:
+        ws_name = ws
+        ws = mtd[ws_name]
+    
+    det_table = CreateDetectorTable(InputWorkspace=ws)
+    ws_ids = []
+    for id in range(0,ws.getNumberHistograms()):
+        rw = det_table.row(id)
+        if np.abs(rw['R'] - distance)<=delta:
+            ws_ids.append(int(rw['Index']))
+    new_name = ws_name+'_extract'
+    ExtractSpectra(ws,WorkspaceIndexList= ws_ids,OutputWorkspace = new_name)
+    SumSpectra(InputWorkspace=new_name,OutputWorkspace = new_name+'_sum')
+    ws_sum = mtd[new_name+'_sum']
+    xval = ws_sum.readX(0)
+    bin_range = (xval[0],1,xval[-1])
+    Rebin(InputWorkspace=new_name+'_sum',Params=bin_range,OutputWorkspace=new_name+'_sum')
+    return mtd[new_name+'_sum']
