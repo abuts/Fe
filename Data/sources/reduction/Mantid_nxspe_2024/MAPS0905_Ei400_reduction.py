@@ -15,9 +15,9 @@ from Direct.ReductionWrapper import *
 
 
 
-# Define all runs used by the program. Runs 15949-15965 are contaminated by ice
+# Define all runs used by the program.
 runs = list(range(15052,15179))
-# Define list of angles runs used by the program. Angles -1:-33 (last list) are contamintaed by ice
+# Define list of angles runs used by the program.
 phi  = list(np.arange(0,92,2))+list(np.arange(1,91,2))+list(np.arange(-2,-48,-2))+list(np.arange(-1.,-27,-2))
 # Map angles to run numbers
 phi_on_run = {runs[i]: phi[i] for i in range(len(phi))}
@@ -33,7 +33,7 @@ class MAPSReduction(ReductionWrapper):
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
-       prop['incident_energy'] = 401 # estimated to get elastic line at the centre. Bining accuracy does not allow
+       prop['incident_energy'] = 401.1 # estimated to get elastic line at the centre. Bining accuracy does not allow
                                      # to identify elastic line position wich higher accuracy
        prop['energy_bins'] =[-20,2,344]
 
@@ -83,12 +83,7 @@ class MAPSReduction(ReductionWrapper):
       prop['save_format'] = 'nxspe' # nxs,nxspe or spe
       prop['data_file_ext']='.raw' # if two input files with the same name and
                                     #different extension found, what to prefer.
-      #prop['run_diagnostics'] = False
-      #prop['norm-mon1-spec'] = 578
-      #prop['norm-mon2-spec'] = 579
-      #prop['ei-mon1-spec'] = 578
-      #prop['ei-mon2-spec'] = 579
-      
+
       return prop
       #
 #------------------------------------------------------------------------------------#
