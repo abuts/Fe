@@ -25,8 +25,8 @@ class MAPSReduction(ReductionWrapper):
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
-       prop['incident_energy'] = 200
-       prop['energy_bins'] =[-20,0.25,200]
+       prop['incident_energy'] = 195
+       prop['energy_bins'] =[-20,0.25,195]
 
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
@@ -59,7 +59,7 @@ class MAPSReduction(ReductionWrapper):
       prop['hardmaskOnly']="4to1_065.msk" #maskfile # disable diag, use only hard mask
       prop['hard_mask_file'] = ""
       prop['bkgd_range'] = [15000,19000]
-      prop['fix_ei'] = False
+      prop['fix_ei'] = True
       prop['normalise_method'] = 'current'
       prop['wb_for_monovan_run'] = 11276
 
@@ -70,7 +70,7 @@ class MAPSReduction(ReductionWrapper):
       prop['diag_remove_zero'] = False
       prop['wb_integr_range'] = [20,100] 
       
-      #prop['det_cal_file'] = "11060" what about calibration?
+      prop['det_cal_file'] = "detector_065_libisis.nxs"
       prop['save_format'] = 'nxs' # nxs or spe
       prop['data_file_ext']='.raw' # if two input files with the same name and
                                     #different extension found, what to prefer.
@@ -102,30 +102,11 @@ class MAPSReduction(ReductionWrapper):
           In addition to that, example of accessing complex reduction properties
           Simple reduction properties can be accessed as e.g.: value= prop_man.sum_runs
       """
-      def custom_name(prop_man):
-            """Sample function which builds filename from
-              incident energy and run number and adds some auxiliary information
-              to it.
-            """
-            map_file = prop_man.map_file
-            if 'rings' in map_file:
-                ftype = '_powder'
-            else:
-                ftype = ''
-
-            # Note -- properties have the same names as the list of advanced and
-            # main properties
-            ei = PropertyManager.incident_energy.get_current()
-            # sample run is more then just list of runs, so we use
-            # the formalization below to access its methods
-            run_num = PropertyManager.sample_run.run_number()
-            name = "map{0}_ei{1:_<3.0f}meV{2}".format(run_num ,ei,ftype)
-            return name
        
       # Uncomment this to use custom filename function
       # Note: the properties are stored in prop_man class accessed as
         # below.
-      return lambda : custom_name(self.reducer.prop_man)
+      return lambda : custom_name(self.reducer.prop_man,PropertyManager)
       # Uncomment this to use standard file name generating function
       #return None
    #
@@ -147,7 +128,7 @@ class MAPSReduction(ReductionWrapper):
             Must return pointer to the preprocessed workspace
 
         """
-        anf_TGP = 54.7
+        anf_TGP = 4.6 # Calculated from Vanadium over Vanadium run
         print('*************************************************')
         print('*** SETTING UP EXTERNAL MONO-CORRECTION FACTOR: *')
         print('*** ',anf_TGP)
@@ -157,7 +138,7 @@ class MAPSReduction(ReductionWrapper):
         #self.reducer.prop_man.psi = phi_on_run[run_num]
         #print('*** Run: ',run_num,' psi: ',self.reducer.prop_man.psi)
         run_num = PropertyManager.sample_run.run_number()
-        self.reducer.prop_man.psi = 0        
+        self.reducer.prop_man.psi = 0
         return ws
    
    def __init__(self,web_var=None):
@@ -230,5 +211,5 @@ if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution"
     
     rd.run_reduction()
 
-    Eel = estimate_elastic_line_en('SR_MAP011014_spe',(-15,0.25,15))
-    print('Eel = {0}'.format(Eel))
+    red_MAPS11014 = rd.run_reduction()
+    Eel = estimate_elastic_line_en(red_MAPS11014,(-10,0.25,199))

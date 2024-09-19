@@ -5,6 +5,26 @@ import os
 import numpy as np
 from mantid import *
 
+def custom_name(instance,holder):
+      """Sample function which builds filename from
+        incident energy and run number and adds some auxiliary information
+        to it.
+      """
+      map_file = instance.map_file
+      if 'rings' in map_file:
+          ftype = '_powder'
+      else:
+          ftype = ''
+      # Note -- properties have the same names as the list of advanced and
+      # main properties
+      ei = holder.incident_energy.get_current()
+      # sample run is more then just list of runs, so we use
+      # the formalization below to access its methods
+      run_num = holder.sample_run.run_number()
+      name = "map{0}_ei{1:_<3.0f}meV{2}".format(run_num ,ei,ftype)
+      return name
+
+
 def set_data_dir(source_folder,*args):
     """ function sets common folders used by Fe reduction scripts
         assuming standard folder structure and location wrt the reduction script location

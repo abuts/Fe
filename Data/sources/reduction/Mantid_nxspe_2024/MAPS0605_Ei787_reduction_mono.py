@@ -20,8 +20,8 @@ class MAPSReduction(ReductionWrapper):
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
-       prop['incident_energy'] = 787.8+5.2 # estimated to get elastic line at the centre 
-       prop['energy_bins'] =[-100,4,750]   # binning behind the ranges but fine for mono
+       prop['incident_energy'] = 785 # estimated to get elastic line at the centre 
+       prop['energy_bins'] =[-100,4,750]  # binning behind the ranges but fine for mono
 
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
@@ -51,8 +51,8 @@ class MAPSReduction(ReductionWrapper):
       prop = {}
       prop['map_file'] = "mid-tubes_065.map"
       prop['monovan_mapfile'] = "mid-tubes_065.map"
-      #prop['hardmaskOnly']="4to1_065.msk" #maskfile # disable diag, use only hard mask
-      prop['hard_mask_file'] = ""
+      prop['hardmaskOnly']="4to1_065.msk" #maskfile # disable diag, use only hard mask
+      #prop['hard_mask_file'] = ""
       prop['bkgd_range'] = [15000,19000]
       prop['fix_ei'] = True
       prop['normalise_method'] = 'current'
@@ -65,7 +65,7 @@ class MAPSReduction(ReductionWrapper):
       prop['diag_remove_zero'] = False
       prop['wb_integr_range'] = [20,100] 
       
-      #prop['det_cal_file'] = "11060" what about calibration?
+      prop['det_cal_file'] = "detector_065_libisis.nxs"
       prop['save_format'] = 'nxs' # nxs,nxspe or spe
       prop['data_file_ext']='.raw' # if two input files with the same name and
                                     #different extension found, what to prefer.
@@ -95,42 +95,11 @@ class MAPSReduction(ReductionWrapper):
         
           In addition to that, example of accessing complex reduction properties
           Simple reduction properties can be accessed as e.g.: value= prop_man.sum_runs
-      """
-      def custom_name(prop_man):
-            """Sample function which builds filename from
-              incident energy and run number and adds some auxiliary information
-              to it.
-            """
-            map_file = prop_man.map_file
-            if 'rings' in map_file:
-                ftype = '_powder'
-            else:
-                ftype = ''             
-
-            # Note -- properties have the same names as the list of advanced and
-            # main properties
-            ei = PropertyManager.incident_energy.get_current()
-            # sample run is more then just list of runs, so we use
-            # the formalization below to access its methods
-            run_num = PropertyManager.sample_run.run_number()
-            name = "map{0}_ei{1:_<3.0f}meV{2}".format(run_num ,ei,ftype)
-            return name
-       
-      # Uncomment this to use custom filename function
-      # Note: the properties are stored in prop_man class accessed as
-        # below.
-      return lambda : custom_name(self.reducer.prop_man)
+      """        
+      return lambda : custom_name(self.reducer.prop_man,PropertyManager)
       # Uncomment this to use standard file name generating function
       #return None
    #
-   #
-   def validation_file_place(self):
-      """Redefine this to the place, where validation file, used in conjunction with
-         'validate_run' property, located. Here it defines the place to this script folder.
-          but if this function is disabled, by default it looks for/places it 
-          in a default save directory"""
-      return os.path.split(os.path.realpath(__file__))[0]
-   
    def __init__(self,web_var=None):
        """ sets properties defaults for the instrument with Name"""
        ReductionWrapper.__init__(self,'MAP',web_var)
@@ -191,8 +160,8 @@ if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution"
    ## rd.reducer.prop_man.sum_runs = False
    # 
     
-    rd.run_reduction()
     
-    Eel = estimate_elastic_line_en('SR_MAP011270_spe',(-100,1,150))
-    print('Elastic line energy deviation = {0}'.format(Eel))
-
+    red_MAP011270 = rd.run_reduction()
+    Eel = estimate_elastic_line_en(red_MAP011270,(-100,1,780))
+    
+   

@@ -96,34 +96,10 @@ class MAPSReduction(ReductionWrapper):
         
           In addition to that, example of accessing complex reduction properties
           Simple reduction properties can be accessed as e.g.: value= prop_man.sum_runs
-      """
-      def custom_name(prop_man):
-            """Sample function which builds filename from
-              incident energy and run number and adds some auxiliary information
-              to it.
-            """
-            map_file = prop_man.map_file
-            if 'rings' in map_file:
-                ftype = '_powder'
-            else:
-                ftype = ''
-
-            # Note -- properties have the same names as the list of advanced and
-            # main properties
-            ei = PropertyManager.incident_energy.get_current()
-            # sample run is more then just list of runs, so we use
-            # the formalization below to access its methods
-            run_num = PropertyManager.sample_run.run_number()
-            name = "map{0}_ei{1:_<3.0f}meV{2}".format(run_num ,ei,ftype)
-            return name
-       
-      # Uncomment this to use custom filename function
-      # Note: the properties are stored in prop_man class accessed as
-        # below.
-      return lambda : custom_name(self.reducer.prop_man)
+      """        
+      return lambda : custom_name(self.reducer.prop_man,PropertyManager)
       # Uncomment this to use standard file name generating function
       #return None
-   #
    #
    
    def do_preprocessing(self,reducer,ws):
@@ -224,6 +200,5 @@ if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution"
    # 
     
     red_MAPS15835 = rd.run_reduction()
-
     Eel = estimate_elastic_line_en(red_MAPS15835,(-10,0.25,199))
 
