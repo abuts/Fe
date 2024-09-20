@@ -131,7 +131,7 @@ class MAPSReduction(ReductionWrapper):
             Must return pointer to the preprocessed workspace
 
         """
-        anf_TGP = 4.6 # Calculated from Vanadium over Vanadium run
+        anf_TGP = 4.56 # Calculated from Vanadium over Vanadium run
         print('*************************************************')
         print('*** SETTING UP EXTERNAL MONO-CORRECTION FACTOR: *')
         print('*** ',anf_TGP)
@@ -177,7 +177,7 @@ if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution"
 #### uncomment rows below to generate web variables and save then to transfer to   ###
     ## web services.
     run_dir = os.path.dirname(os.path.realpath(__file__))
-    file = os.path.join(run_dir,'reduce_vars.py')
+    file = os.path.join(run_dir,'reduce_vars_Ei200_0605.py')
     rd.save_web_variables(file)
 
 #### Set up time interval (sec) for reducer to check for input data file.         ####

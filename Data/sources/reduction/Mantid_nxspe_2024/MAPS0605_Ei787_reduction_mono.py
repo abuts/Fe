@@ -21,7 +21,7 @@ class MAPSReduction(ReductionWrapper):
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
        prop['incident_energy'] = 785 # estimated to get elastic line at the centre 
-       prop['energy_bins'] =[-100,4,750]  # binning behind the ranges but fine for mono
+       prop['energy_bins'] =[-100,4,780]  # binning behind the ranges but fine for mono
 
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
@@ -60,7 +60,7 @@ class MAPSReduction(ReductionWrapper):
 
       prop['monovan_lo_frac'] = -0.5 # default is -0.6
       #prop['monovan_hi_frac'] = 0.7 # default is 0.7, no need to change
-      #prop['abs_units_van_range']=[-40,40] # specify energy range directly, to
+      prop['abs_units_van_range']=[-40,40] # specify energy range directly, to
                                      #override relative default energy range
       prop['diag_remove_zero'] = False
       prop['wb_integr_range'] = [20,100] 

@@ -20,7 +20,7 @@ class MAPSReduction(ReductionWrapper):
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
-       prop['incident_energy'] = 201 # estimated to get elastic line at the centre. Bining accuracy does not allow
+       prop['incident_energy'] = 200 # estimated to get elastic line at the centre. Bining accuracy does not allow
                                      # to identify elastic line position wich higher accuracy
        prop['energy_bins'] =[-20,0.25,180]
 

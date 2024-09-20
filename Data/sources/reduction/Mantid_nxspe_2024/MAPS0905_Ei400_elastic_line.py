@@ -120,7 +120,7 @@ class MAPSReduction(ReductionWrapper):
             Must return pointer to the preprocessed workspace
 
         """
-        anf_TGP = 31.65
+        anf_TGP = 30.17 # 31.65 -- inf range
         print('*************************************************')
         print('*** SETTING UP EXTERNAL MONO-CORRECTION FACTOR: *')
         print('*** ',anf_TGP)

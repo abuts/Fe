@@ -25,8 +25,8 @@ class MAPSReduction(ReductionWrapper):
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
-       prop['incident_energy'] = 785
-       prop['energy_bins'] =[-100,4,780]
+       prop['incident_energy'] = 788
+       prop['energy_bins'] =[-100,4,784]
 
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
@@ -124,7 +124,7 @@ class MAPSReduction(ReductionWrapper):
             Must return pointer to the preprocessed workspace
 
         """
-        anf_TGP = 54.7
+        anf_TGP = 42.9
         print('*************************************************')
         print('*** SETTING UP EXTERNAL MONO-CORRECTION FACTOR: *')
         print('*** ',anf_TGP)
@@ -208,5 +208,5 @@ if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution"
     rd.run_reduction()
 
     red_MAPS11014 = rd.run_reduction()
-    Eel = estimate_elastic_line_en(red_MAPS11014,(-50,2,780))
+    Eel = estimate_elastic_line_en(red_MAPS11014,(-50,2,784))
 

@@ -126,7 +126,7 @@ class MAPSReduction(ReductionWrapper):
             Must return pointer to the preprocessed workspace
 
         """
-        anf_TGP = 31.65
+        anf_TGP = 30.17 # 31.65 -- inf range
         print('*************************************************')
         print('*** SETTING UP EXTERNAL MONO-CORRECTION FACTOR: *')
         print('*** ',anf_TGP)
@@ -173,7 +173,7 @@ if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution"
 #### uncomment rows below to generate web variables and save then to transfer to   ###
     ## web services.
     run_dir = os.path.dirname(os.path.realpath(__file__))
-    file = os.path.join(run_dir,'reduce_vars.py')
+    file = os.path.join(run_dir,'reduce_vars_Ei400.py')
     rd.save_web_variables(file)
 
 #### Set up time interval (sec) for reducer to check for input data file.         ####

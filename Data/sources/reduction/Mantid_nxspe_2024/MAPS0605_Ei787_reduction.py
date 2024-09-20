@@ -33,8 +33,8 @@ class MAPSReduction(ReductionWrapper):
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
-       prop['incident_energy'] = 785
-       prop['energy_bins'] =[-100,4,720] # Higher range picks next energy 
+       prop['incident_energy'] = 788
+       prop['energy_bins'] =[-100,4,726] # Higher range picks next energy 
 
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
@@ -82,12 +82,7 @@ class MAPSReduction(ReductionWrapper):
       prop['save_format'] = 'nxspe' # nxs or spe
       prop['data_file_ext']='.raw' # if two input files with the same name and
                                     #different extension found, what to prefer.
-      #prop['run_diagnostics'] = False
-      #prop['norm-mon1-spec'] = 578
-      #prop['norm-mon2-spec'] = 579
-      #prop['ei-mon1-spec'] = 578
-      #prop['ei-mon2-spec'] = 579
-      
+     
       return prop
       #
 #------------------------------------------------------------------------------------#
@@ -131,7 +126,7 @@ class MAPSReduction(ReductionWrapper):
             Must return pointer to the preprocessed workspace
 
         """
-        anf_TGP = 54.51
+        anf_TGP = 42.9
         print('*************************************************')
         print('*** SETTING UP EXTERNAL MONO-CORRECTION FACTOR: *')
         print('*** ',anf_TGP)
@@ -177,7 +172,7 @@ if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution"
 #### uncomment rows below to generate web variables and save then to transfer to   ###
     ## web services.
     run_dir = os.path.dirname(os.path.realpath(__file__))
-    file = os.path.join(run_dir,'reduce_vars.py')
+    file = os.path.join(run_dir,'reduce_vars_Ei800.py')
     rd.save_web_variables(file)
 
 #### Set up time interval (sec) for reducer to check for input data file.         ####

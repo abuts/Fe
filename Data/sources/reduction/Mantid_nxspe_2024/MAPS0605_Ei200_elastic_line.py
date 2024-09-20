@@ -128,7 +128,7 @@ class MAPSReduction(ReductionWrapper):
             Must return pointer to the preprocessed workspace
 
         """
-        anf_TGP = 4.6 # Calculated from Vanadium over Vanadium run
+        anf_TGP = 4.56 # Calculated from Vanadium over Vanadium run
         print('*************************************************')
         print('*** SETTING UP EXTERNAL MONO-CORRECTION FACTOR: *')
         print('*** ',anf_TGP)
