@@ -68,19 +68,37 @@ def av_value(ws,spec_number,min_idx=None,max_idx=None):
     
     
 def estimate_elastic_line_en(ws_name,bin_range,last_spectrum = None):
-    # Calculate energy distribution around elastic line and evaluate correct elastic line position
-    #
-    # Input:
-    #
+    """ Calculate energy distribution around elastic line and evaluate correct elastic line position
+    
+       Input:
+        ws_name     -- workspace pointer or workspace name to process
+        bin_range   -- tuple with 3 elements defining requested bining ranges (min, step,max)
+        last_spectrum
+                    -- if present, define maximal number of spectra from input workspace to be included
+                       in the result. If absent, all input workspace spectra are included
+       Returns: 
+         Average value of input workspace x-coordinate. x_av = integral(f(x)*x*dx)/integral(f(x)*dx)
+           
+         Adds to ADS 2 workspaces:
+         one -- input workspace rebinned with parameters provided and limited
+                by the last_spectrum.
+                Name of the workspace is the name of the source workspace with suffix "_reb"
+         two -- a single spectra workspace containing sum of all spectra of the first workspace
+                Name of the second workspace is the name of the input workspace with suffix "_sum"
+                
+    """
     if not isinstance(ws_name,str):
         ws_name = ws_name.name()
-        
+     
+    target_ws_name = ws_name+'_reb'
+    sum_ws_name    = ws_name+'_sum'
     if not last_spectrum is None:
-        ExtractSpectra(InputWorkspace=ws_name+'_reb',OutputWorkspace=ws_name+'_reb', EndWorkspaceIndex=last_spectrum)        
-    Rebin(InputWorkspace=ws_name, OutputWorkspace=ws_name+'_reb', Params=bin_range)
+        ExtractSpectra(InputWorkspace=ws_name,OutputWorkspace=target_ws_name, EndWorkspaceIndex=last_spectrum)
+        ws_name  = target_ws_name
+    Rebin(InputWorkspace=ws_name, OutputWorkspace=target_ws_name, Params=bin_range)
         
-    SumSpectra(InputWorkspace=ws_name+'_reb', OutputWorkspace=ws_name+'_sum', IncludeMonitors=False, RemoveSpecialValues=True, UseFractionalArea=False)
-    ws = mtd[ws_name+'_sum']
+    SumSpectra(InputWorkspace=target_ws_name, OutputWorkspace=sum_ws_name, IncludeMonitors=False, RemoveSpecialValues=True, UseFractionalArea=False)
+    ws = mtd[sum_ws_name]
     av_energy = av_value(ws,0)
     print('Average Energy = {0}'.format(av_energy))    
     return av_energy
