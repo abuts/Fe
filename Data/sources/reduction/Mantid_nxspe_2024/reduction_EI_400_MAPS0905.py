@@ -72,12 +72,12 @@ class MAPSReduction(ReductionWrapper):
       prop['normalise_method'] = 'current'
       prop['wb_for_monovan_run'] = 15182
 
-      prop['monovan_lo_frac'] = -0.5 # default is -0.6
+      #prop['monovan_lo_frac'] = -0.5 # default is -0.6
       #prop['monovan_hi_frac'] = 0.7 # default is 0.7, no need to change
-      #prop['abs_units_van_range']=[-40,40] # specify energy range directly, to
+      prop['abs_units_van_range']=[-40,40] # specify energy range directly, to
                                      #override relative default energy range
-      prop['diag_remove_zero'] = False
-      prop['wb_integr_range'] = [20,100] 
+      #prop['diag_remove_zero'] = False
+      #prop['wb_integr_range'] = [20,100] 
       
       prop['det_cal_file'] = "detector_095_libisis.nxs"
       prop['save_format'] = 'nxspe' # nxs,nxspe or spe

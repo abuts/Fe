@@ -65,17 +65,17 @@ class MAPSReduction(ReductionWrapper):
       prop['map_file'] = "4to1_065.map"
       prop['monovan_mapfile'] = "mid-tubes_065.map"
       prop['hardmaskOnly']="4to1_065.msk" #maskfile # disable diag, use only hard mask
-      prop['hard_mask_file'] = ""
+      #prop['hard_mask_file'] = ""
       prop['bkgd_range'] = [15000,19000]
       prop['fix_ei'] = False
       prop['normalise_method'] = 'current'
       prop['wb_for_monovan_run'] = 11276
 
-      prop['monovan_lo_frac'] = -0.5 # default is -0.6
+      #prop['monovan_lo_frac'] = -0.5 # default is -0.6
       #prop['monovan_hi_frac'] = 0.7 # default is 0.7, no need to change
       #prop['abs_units_van_range']=[-40,40] # specify energy range directly, to
                                      #override relative default energy range
-      prop['diag_remove_zero'] = False
+      #prop['diag_remove_zero'] = False
       prop['wb_integr_range'] = [20,100] 
       
       prop['det_cal_file'] = "detector_065_libisis.nxs"

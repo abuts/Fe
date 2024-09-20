@@ -65,7 +65,7 @@ class MAPSReduction(ReductionWrapper):
       prop['map_file'] = "4to1_065.map"
       prop['monovan_mapfile'] = "mid-tubes_065.map"
       prop['hardmaskOnly']="4to1_065.msk" #maskfile # disable diag, use only hard mask
-      prop['hard_mask_file'] = ""
+      #prop['hard_mask_file'] = ""
       prop['bkgd_range'] = [15000,19000]
       prop['fix_ei'] = True
       prop['normalise_method'] = 'current'
@@ -177,7 +177,7 @@ if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution"
 #### uncomment rows below to generate web variables and save then to transfer to   ###
     ## web services.
     run_dir = os.path.dirname(os.path.realpath(__file__))
-    file = os.path.join(run_dir,'reduce_vars_Ei200.py')
+    file = os.path.join(run_dir,'reduce_vars_Ei200_1002.py')
     rd.save_web_variables(file)
 
 #### Set up time interval (sec) for reducer to check for input data file.         ####
