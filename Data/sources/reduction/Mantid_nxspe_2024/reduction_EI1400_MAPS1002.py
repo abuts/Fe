@@ -92,10 +92,10 @@ class MAPSReduction(ReductionWrapper):
       prop['normalise_method'] = 'current'
       prop['wb_for_monovan_run'] = 16154
 
-      prop['monovan_lo_frac'] = -0.5 # default is -0.6
+      #prop['monovan_lo_frac'] = -0.5 # default is -0.6
       #prop['monovan_hi_frac'] = 0.7 # default is 0.7, no need to change
-      #prop['abs_units_van_range']=[-40,40] # specify energy range directly, to
-                                     #override relative default energy range
+      prop['abs_units_van_range']=[-80,80] # not used here but was used in MAPS1002_EI1400_reduction_mono to calculate 
+      # value, used by this script
       prop['diag_remove_zero'] = False
       prop['wb_integr_range'] = [20,100] 
       
@@ -147,7 +147,7 @@ class MAPSReduction(ReductionWrapper):
             Must return pointer to the preprocessed workspace
 
         """
-        anf_TGP = 11.31
+        anf_TGP = 13.44
         print('*************************************************')
         print('*** SETTING UP EXTERNAL MONO-CORRECTION FACTOR: *')
         print('*** ',anf_TGP)

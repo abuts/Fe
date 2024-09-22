@@ -33,7 +33,7 @@ class MAPSReduction(ReductionWrapper):
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
-       prop['incident_energy'] = 788
+       prop['incident_energy'] = 787
        prop['energy_bins'] =[-100,4,726] # Higher range picks next energy 
 
        # the range of files to reduce. This range ignored when deployed from autoreduction,
@@ -67,7 +67,7 @@ class MAPSReduction(ReductionWrapper):
       prop['hardmaskOnly']="4to1_065.msk" #maskfile # disable diag, use only hard mask
       #prop['hard_mask_file'] = ""
       prop['bkgd_range'] = [15000,19000]
-      prop['fix_ei'] = False
+      prop['fix_ei'] = True
       prop['normalise_method'] = 'current'
       prop['wb_for_monovan_run'] = 11276
 
@@ -126,7 +126,7 @@ class MAPSReduction(ReductionWrapper):
             Must return pointer to the preprocessed workspace
 
         """
-        anf_TGP = 42.9
+        anf_TGP = 51.8
         print('*************************************************')
         print('*** SETTING UP EXTERNAL MONO-CORRECTION FACTOR: *')
         print('*** ',anf_TGP)

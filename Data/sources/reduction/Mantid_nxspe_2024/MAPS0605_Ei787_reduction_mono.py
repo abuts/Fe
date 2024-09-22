@@ -51,8 +51,8 @@ class MAPSReduction(ReductionWrapper):
       prop = {}
       prop['map_file'] = "mid-tubes_065.map"
       prop['monovan_mapfile'] = "mid-tubes_065.map"
-      prop['hardmaskOnly']="4to1_065.msk" #maskfile # disable diag, use only hard mask
-      #prop['hard_mask_file'] = ""
+      #prop['hardmaskOnly']="4to1_065.msk" #maskfile # disable diag, use only hard mask
+      prop['hard_mask_file'] = ""
       prop['bkgd_range'] = [15000,19000]
       prop['fix_ei'] = True
       prop['normalise_method'] = 'current'
@@ -60,7 +60,7 @@ class MAPSReduction(ReductionWrapper):
 
       prop['monovan_lo_frac'] = -0.5 # default is -0.6
       #prop['monovan_hi_frac'] = 0.7 # default is 0.7, no need to change
-      prop['abs_units_van_range']=[-40,40] # specify energy range directly, to
+      prop['abs_units_van_range']=[-80,80] # specify energy range directly, to
                                      #override relative default energy range
       prop['diag_remove_zero'] = False
       prop['wb_integr_range'] = [20,100] 
