@@ -73,7 +73,7 @@ class MAPSReduction(ReductionWrapper):
 
       #prop['monovan_lo_frac'] = -0.5 # default is -0.6
       #prop['monovan_hi_frac'] = 0.7 # default is 0.7, no need to change
-      #prop['abs_units_van_range']=[-40,40] # specify energy range directly, to
+      prop['abs_units_van_range']=[-80,80] # specify energy range directly, to
                                      #override relative default energy range
       #prop['diag_remove_zero'] = False
       prop['wb_integr_range'] = [20,100] 
