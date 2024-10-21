@@ -1,14 +1,13 @@
 %%=============================================================================
 %       Realign the crystal: Ei=200 meV
 % =============================================================================
-% Create sqw file for the Ei=1371meV Horace angle scan
+% Get access to sqw file for the Ei=200meV Horace angular scan
 root_dir = fileparts(fileparts(fileparts(fileparts(mfilename("fullpath")))));
 sqw_dir=fullfile(root_dir,'sqw','sqw2024'); 
 
 data_source =fullfile(sqw_dir,'Fe_ei200.sqw');
 
-proj.u=[1,0,0];
-proj.v=[0,1,0];
+proj = line_proj([1,0,0],[0,1,0],'type','aaa');
 
 
 % Check crystal orientation
@@ -24,7 +23,7 @@ plot(w2el)
 % ---------------------------------------
 % Get true Bragg peak positions for two or three in-plane Bragg peaks
 % Use peaks at large twotheta, so get sensitivity to out-of-plane alignment
-rlu=[4,0,0; 0,4,0];
+rlu=[4,0,0; 0,4,0; 3,3,0];
 
 % Get positions of Bragg peaks:
 radial_cut_length=0.1; radial_bin_width=0.002; radial_thickness=0.05;
