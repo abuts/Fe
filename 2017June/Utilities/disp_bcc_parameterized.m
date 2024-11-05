@@ -41,7 +41,7 @@ w=gap*ones(size(qh));
 q2 = qh.*qh+qk.*qk+ql.*ql;
 JS_p5p5p5 = var_j(q2,param,dir);
 err = interp1(param.q_sq,param.EvsQ_err{dir},q2);
-% Precompute some arrays used in more than one exchange pathway
+% Pre-compute some arrays used in more than one exchange pathway
 
 cos1h = cos(pi*qh);
 cos1k = cos(pi*qk);

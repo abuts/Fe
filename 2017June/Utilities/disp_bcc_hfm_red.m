@@ -45,7 +45,7 @@ end
 
 w=gap*ones(size(qh));
 
-% Precompute some arrays used in more than one exchange pathway
+% Pre-compute some arrays used in more than one exchange pathway
 if JS_p5p5p5~=0 || JS_3p5p5p5~=0
     cos1h = cos(pi*qh);
     cos1k = cos(pi*qk);
