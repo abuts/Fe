@@ -34,11 +34,16 @@ sqw_file_base=fullfile(sqw_dir,sqwname);        % output sqw file
 % Set incident energy, lattice parameters etc.
 efix=1372;
 emode=1;
-alatt=[2.87,2.87,2.87];
+%alatt=[2.87,2.87,2.87];
+%alatt=[2.8458,2.8458,2.8458]; % from fitting
+alatt = [2.844,2.844,2.844]; % from separate measurements and average values over all measurements
 angdeg=[90,90,90];
 u=[1,0,0];
 v=[0,1,0];
 omega=0;dpsi=0;gl=0;gs=0;
+%omega=0;dpsi=0.2570;gl=-0.3331;gs=0.7572; % alignment parameters from optimal lattice search
+%omega=0;dpsi=0.2725;gl=-0.3322;gs=0.7172; % alignment parameters with lattice defined
+
 
 % Create sqw file
 % Base temperature only

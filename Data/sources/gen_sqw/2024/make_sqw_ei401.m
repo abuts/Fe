@@ -24,11 +24,13 @@ sqw_file=fullfile(sqw_dir,sqwname);        % output sqw file
 % Set incident energy, lattice parameters etc.
 efix=401.1;
 emode=1;
-alatt=[2.87,2.87,2.87];
+alatt = [2.844,2.844,2.844]; % from separate measurements and average values over all measurements
 angdeg=[90,90,90];
 u=[1,0,0];
 v=[0,1,0];
 omega=0;dpsi=0;gl=0;gs=0;
+%omega=0;dpsi=-0.1638;gl=-0.1928;gs=0.5472; % alignment parameters from optimal lattice search
+
 
 % Create sqw file
 gen_sqw (spe_file,"", sqw_file, efix, emode, alatt, angdeg,...
