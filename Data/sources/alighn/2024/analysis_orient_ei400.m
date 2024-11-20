@@ -1,7 +1,7 @@
 %%=============================================================================
-%       Realign the crystal: Ei=196 meV
+%       Realign the crystal: Ei=400 meV
 % =============================================================================
-% Get access to sqw file for the Ei=200meV Horace angular scan
+% Get access to sqw file for the Ei=400meV Horace angular scan
 root_dir = fileparts(fileparts(fileparts(fileparts(mfilename("fullpath")))));
 sqw_dir=fullfile(root_dir,'sqw','sqw2024');
 

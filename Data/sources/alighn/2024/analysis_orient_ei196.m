@@ -42,7 +42,7 @@ opt={'gaussian'};
     radial_cut_length, radial_bin_width, radial_thickness,...
     trans_cut_length, trans_bin_width, trans_thickness, energy_window, opt{:});
 % View the results of the peak search
-%bragg_positions_view(wcut,wpeak)
+bragg_positions_view(wcut,wpeak)
 
 % Get first estimate of correct alignment
 % Choose to fix lattice angles, and retain all lattice parameters as equal,

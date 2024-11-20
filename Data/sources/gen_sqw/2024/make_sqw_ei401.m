@@ -28,8 +28,9 @@ alatt = [2.844,2.844,2.844]; % from separate measurements and average values ove
 angdeg=[90,90,90];
 u=[1,0,0];
 v=[0,1,0];
-omega=0;dpsi=0;gl=0;gs=0;
-%omega=0;dpsi=-0.1638;gl=-0.1928;gs=0.5472; % alignment parameters from optimal lattice search
+%omega=0;dpsi=0;gl=0;gs=0;
+%omega=0;dpsi=-0.1638;gl=-0.1928;gs=0.5472;  % alignment parameters from optimal lattice search
+omega=0; dpsi=-0.1621;gl=-0.0882;gs= 0.5719; % alignment parameters from fixed lattice
 
 
 % Create sqw file

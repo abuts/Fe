@@ -28,15 +28,15 @@ alatt = [2.844,2.844,2.844]; % from separate measurements and average values ove
 angdeg=[90,90,90];
 u=[1,0,0];
 v=[0,1,0];
-omega=0;dpsi=0;gl=0;gs=0;
+%omega=0;dpsi=0;gl=0;gs=0;
 
 %omega=0;dpsi=0.1774;gl=-0.0990;gs=0.3378; % alignment parameters from optimal lattice search
-%omega=0;dpsi=0.5752;gl=0.0059;gs=0.6388;  % alignment parameters with lattice defined   
-
+omega=0;dpsi=0.2206;gl=-0.0274;gs=0.2905;  % alignment parameters with lattice defined   
 %omega=0;dpsi=-0.1210;gl=0.1931;gs=0.3658; % alignment parameters from
 %optimal lattice search for Ei=800 (the same experiment, different rep)
-%omega=0;dpsi= 0.0662;gl=0.0946;gs=0.3723;  % alignment parameters with lattice defined
+%omega=0;dpsi= 0.0673;gl=0.0820;gs=0.3740;  % alignment parameters with lattice defined
 % for Ei=800 (the same experiment, different rep)
+
 
 % Create sqw file
 gen_sqw (spe_file,'',sqw_file, efix, emode, alatt, angdeg,...
