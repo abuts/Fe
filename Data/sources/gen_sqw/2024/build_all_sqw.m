@@ -11,6 +11,10 @@ for i = 1:numel(methods)
     t0 = tic;
     methods{i}();
     timings(i)= toc(t0);
+    
+    interv =  seconds(timings(i));
+    interv.Format = 'hh:mm:ss';    
+    fprintf('***** Time to run %s = %s\n',func2str(methods{i}),string(interv));    
 end
 for i=1:numel(methods)
     interv =  seconds(timings(i));
