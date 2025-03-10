@@ -7,18 +7,20 @@ sqw_dir=fullfile(root_dir,'sqw','sqw2024');
 
 data_src800 =fullfile(sqw_dir,'Fe_ei800_align.sqw');
 target = fullfile(sqw_dir,'Fe_ei800_no_bg_1D.sqw');
-src800 = sqw(data_src800);
+if ~isa('src800','var') || ~isa(src800,'sqw')
+    src800 = sqw(data_src800);
+end
 
 bg_file = 'w2_800_meV_bg.mat';
 if ~isfile(bg_file)
-    proj800 = kf_sphere_proj(787);
-    w2_8 = cut_sqw(src800,proj800,[0,20],[0,0.2,80],[-180,180],[-40,5,700],'-nopix');
+    proj800 = kf_sphere_proj();
+    w2_8 = cut_sqw(src800,proj800,[0,21],[0,0.2,80],[-180,180],5,'-nopix');
     save(bg_file,"w2_8");
 else
     load(bg_file);
 end
 w1_8 = cut(w2_8,[0,80],[-20,5,700]);
-%{
+%%{
 plot(w2_8);
 lz 0 1
 keep_figure;
