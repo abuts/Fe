@@ -34,7 +34,7 @@ class MAPSReduction(ReductionWrapper):
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
        prop['incident_energy'] = 787
-       prop['energy_bins'] =[-100,4,726] # Higher range picks next energy 
+       prop['energy_bins'] =[-100,4,780] # Higher range picks next energy 
 
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
@@ -64,7 +64,7 @@ class MAPSReduction(ReductionWrapper):
       prop = {}
       prop['map_file'] = "4to1_065.map"
       prop['monovan_mapfile'] = "mid-tubes_065.map"
-      prop['hardmaskOnly']="4to1_065.msk" #maskfile # disable diag, use only hard mask
+      prop['hardmaskOnly']="4to1_065.msk" #hardmaskOnly disable diag, use only hard mask. Diag does not work for grouped spectra
       #prop['hard_mask_file'] = ""
       prop['bkgd_range'] = [15000,19000]
       prop['fix_ei'] = True

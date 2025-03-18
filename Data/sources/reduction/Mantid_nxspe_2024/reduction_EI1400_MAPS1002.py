@@ -54,8 +54,8 @@ class MAPSReduction(ReductionWrapper):
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
        prop['incident_energy'] = 1372 # estimated to get elastic line at the centre. Bining accuracy does not allow
-                                           # to identify elastic line position wich higher accuracy
-       prop['energy_bins'] =[-100,2,1300]
+                                      # to identify elastic line position wich higher accuracy
+       prop['energy_bins'] =[-100,4,1350]
 
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
@@ -85,7 +85,7 @@ class MAPSReduction(ReductionWrapper):
       prop = {}
       prop['map_file'] = "4to1_102.map"  # "parker_rings.map"
       prop['monovan_mapfile'] = "parker_rings.map"
-      prop['hardmaskOnly']="4to1_102.msk" #maskfile # disable diag, use only hard mask
+      prop['hardmaskPlus']="4to1_102.msk" #maskfile # disable diag, use only hard mask
       #prop['hard_mask_file'] = ""
       prop['bkgd_range'] = [15000,19000]
       prop['fix_ei'] = True

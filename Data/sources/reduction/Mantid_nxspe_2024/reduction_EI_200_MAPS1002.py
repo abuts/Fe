@@ -64,7 +64,7 @@ class MAPSReduction(ReductionWrapper):
       prop = {}
       prop['map_file'] = "4to1_065.map"
       prop['monovan_mapfile'] = "mid-tubes_065.map"
-      prop['hardmaskOnly']="4to1_065.msk" #maskfile # disable diag, use only hard mask
+      prop['hardmaskPlus']="4to1_065.msk" #hardmaskOnly # disable diag, use only hard mask
       #prop['hard_mask_file'] = ""
       prop['bkgd_range'] = [15000,19000]
       prop['fix_ei'] = True
