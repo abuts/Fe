@@ -21,7 +21,7 @@ else
     load(bg_file);
 end
 w1_4 = cut(w2_4,[0,70],[-20,2,400]);
-%{
+%%{
 plot(w2_4);
 lz 0 4
 keep_figure;

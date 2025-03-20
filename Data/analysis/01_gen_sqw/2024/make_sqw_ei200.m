@@ -7,7 +7,7 @@ spe_dir=fullfile(root_dir,'sources','reduction','Mantid_nxspe_2024','cycle10_02'
 sqw_dir=fullfile(root_dir,'sqw','sqw2024'); 
 
 spename='MAP*_ei200meV.nxspe';    % template for spe file names
-sqwname='Fe_ei200.sqw';
+sqwname='Fe_ei200_align.sqw';
 %parname='4to1_065.par';
 
 % Create the spe file names and psi array (exclude runs contaminated by ice)
@@ -28,8 +28,8 @@ alatt = [2.844,2.844,2.844]; % from separate measurements and average values ove
 angdeg=[90,90,90];
 u=[1,0,0];
 v=[0,1,0];
-omega=0;dpsi=0;gl=0;gs=0;
-%omega=0;dpsi=-0.1104;gl=-0.2324;gs=0.7476;  % alignment parameters from optimal lattice search
+%omega=0;dpsi=0;gl=0;gs=0;
+omega=0;dpsi=-0.1104;gl=-0.2324;gs=0.7476;  % alignment parameters from optimal lattice search
    
 
 % Create sqw file

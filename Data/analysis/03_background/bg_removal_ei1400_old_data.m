@@ -1,21 +1,21 @@
 %%=============================================================================
-%       Calculate and remove background for Ei=400 meV
+%       Calculate and remove background for Ei=400 meV; 2011 data
 % =============================================================================
 % Get access to sqw file for the Ei=400meV Horace angular scan
 root_dir = fileparts(fileparts(fileparts(mfilename("fullpath"))));
-sqw_dir=fullfile(root_dir,'sqw','sqw2024');
+sqw_dir=fullfile(root_dir,'sqw','sqw2011');
 
-data_src1400 =fullfile(sqw_dir,'Fe_ei1400_align.sqw'); % it is aligned and generated with alignment data
-target = fullfile(sqw_dir,'Fe_ei1400_no_bg_2D.sqw');
+data_src1400 =fullfile(sqw_dir,'Fe_ei1371_base.sqw');
+target = fullfile(sqw_dir,'Fe_ei1400_2011_no_bg_2D.sqw');
 if ~isa('src1400','var') || ~isa(src1400,'sqw')
     src1400 = sqw(data_src1400);
 end
 
-bg_file = 'w2_1400_meV_bg.mat';
+bg_file = 'w2_1371_meV_bg.mat';
 if ~isfile(bg_file)
     proj1400 = kf_sphere_proj();
     proj1400.disable_pix_preselection = true;
-    w2_14 = cut_sqw(src1400,proj1400,[0,30],[0,0.2,70],[-180,180],4,'-nopix');
+    w2_14 = cut_sqw(src1400,proj1400,[0,30],[0,0.2,70],[-180,180],5,'-nopix');
     save(bg_file,'w2_14');
 else
     load(bg_file);
