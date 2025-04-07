@@ -1,7 +1,7 @@
 %%=============================================================================
-%       Calculate and remove background for Ei=400 meV
+%       Calculate and remove background for Ei=1400 meV
 % =============================================================================
-% Get access to sqw file for the Ei=400meV Horace angular scan
+% Get access to sqw file for the Ei=1400meV Horace angular scan
 root_dir = fileparts(fileparts(fileparts(mfilename("fullpath"))));
 sqw_dir=fullfile(root_dir,'sqw','sqw2024');
 

@@ -6,7 +6,7 @@ spe_dir=fullfile(root_dir,'sources','reduction','Mantid_nxspe_2024','cycle06_05'
 sqw_dir=fullfile(root_dir,'sqw','sqw2024'); 
 
 spename='MAP*_ei787meV.nxspe';    % template for spe file names
-sqwname='Fe_ei800.sqw';
+sqwname='Fe_ei800_align_hr.sqw';
 %parname='4to1_065.par';
 
 % Create the spe file names and psi array
@@ -32,4 +32,4 @@ v=[0,1,0];
 %omega=0;dpsi=-0.1210;gl=0.1931;gs=0.3658; % alignment parameters from optimal lattice search
 omega=0;dpsi= 0.0673;gl=0.0820;gs=0.3740;  % alignment parameters with lattice defined
 gen_sqw (spe_file,'',sqw_file, efix, emode, alatt, angdeg,...
-         u, v, psi, omega, dpsi, gl, gs);
+         u, v, psi, omega, dpsi, gl, gs,[100,100,100,100]);
