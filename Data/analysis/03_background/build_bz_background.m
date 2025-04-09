@@ -4,8 +4,8 @@ function data = build_bz_background(pageop_obj,r2_ignore)
 %
 data = pageop_obj.page_data;
 Q2 = data(1,:).*data(1,:)+data(2,:).*data(2,:)+data(3,:).*data(3,:);
-keep = Q2>=r2_ignore;
-%keep = Q2<r2_ignore;
+%keep = Q2>=r2_ignore;
+keep = Q2<r2_ignore;
 data = data(:,keep);
 if isempty(data)
     return;
