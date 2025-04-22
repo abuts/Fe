@@ -11,39 +11,58 @@ if ~isa('src800','var') || ~isa(src800,'sqw')
     src800 = sqw(data_src800);
 end
 
-bg_file = 'w4Bz_800_meV_bg.mat';
+bg_file = 'Bz4D_800meV_fg.mat';
 if ~isfile(bg_file)
     alatt= src800.data.alatt;
-    r_cut2 = (3*alatt(1))^2;
+    rlu = 2*pi./alatt;
+    r_cut2 = (3*rlu(1))^2;
     cutter = PageOp_sqw_binning();
     old_range = src800.data.img_range;
     cutter.new_binning = [40,40,40,100];
-    cutter.new_range = [0,0,0,old_range(1,4);2*alatt(1),2*alatt(2),2*alatt(3),old_range(2,4)];
-    sqw800meV_Bz_bg = sqw_op(src800, @build_bz_background, r_cut2,cutter,'-nopix');
-    save(bg_file,'sqw800meV_Bz_bg');
+    cutter.new_range = [0,0,0,old_range(1,4);2*rlu(1),2*rlu(2),2*rlu(3),old_range(2,4)];
+    sqw800meV_Bz_fg = sqw_op(src800, @build_bz_background, r_cut2,cutter,'-nopix');
+    sqw800meV_Bz_fg.filename = 'sqw800meV_Bz_fg';    
+    save(bg_file,'sqw800meV_Bz_fg');
 else
     load(bg_file);
 end
-w2_8bz = cut(sqw800meV_Bz_bg,[],[],[0,0.1*2.21],[-20,20]);
+
+w1bz800_dEbg = cut(sqw800meV_Bz_fg,2.209*[0,2],2.209*[0,2],2.209*[0,2],[]);
 %%{
-plot(w2_8bz);
-lz 0 1
-keep_figure;
-ds(w2_8bz)
-lz 0 1
+w2bz800_100bg = cut(sqw800meV_Bz_fg,[],[],2.209*[-0.1,0.1],[100-5,100+5]);
+plot(w2bz800_100bg);
+lx 0 4.41;ly 0 4.41;lz 0 1;
+grid on
 keep_figure;
 
-plot(w1_8);
+w2bz1400_100bgs = smooth(w2bz800_100bg,4,'hat');
+plot(w2bz1400_100bgs);
+lx 0 4.41;ly 0 4.41;lz 0 1;
+grid on
+keep_figure;
+
+w2bz800_0bg = cut(sqw800meV_Bz_fg,[],[],2.209*[-0.1,0.1],[300-5,300+5]);
+plot(w2bz800_0bg);
+lx 0 4.41;ly 0 4.41;lz 0 1;
+grid on
+keep_figure;
+
+plot(w1bz800_dEbg);
 keep_figure;
 %}
+if isfile(target)
+    sqw800_no_bg = sqw(target);
+else
 
-x1 = w2_4bz.p{1};
-x2 = w2_4bz.p{2};
-x1 = 0.5*(x1(1:end-1)+x1(2:end));
-x2 = 0.5*(x2(1:end-1)+x2(2:end));
+    x1 = w1bz800_dEbg.p{1};
+    %x2 = w2_4bz.p{2};
+    x1 = 0.5*(x1(1:end-1)+x1(2:end));
+    %x2 = 0.5*(x2(1:end-1)+x2(2:end));
 
-F = griddedInterpolant({x1,x2},w2_4bz.s);
-sqw800_no_bg = sqw_op(src800,@remove_background,{w2_4bz,F},'outfile',target);
+    %F = griddedInterpolant({x1,x2},w2_4bz.s);
+    F = griddedInterpolant(x1,w1bz800_dEbg.s);
+    sqw800_no_bg = sqw_op(src800,@remove_background,{sqw800meV_Bz_fg,F},'outfile',target);
+end
 
 %x1=w1_8.p{1};
 %x1 = 0.5*(x1(1:end-1)+x1(2:end));
@@ -59,7 +78,7 @@ plot(w2noBg)
 lz 0 5
 keep_figure
 prj = line_proj([-1,1,0],[1,1,0]);
-w2qEBg = cut(src800,prj,prj,[-2,0.04,6],[-0.1,0.1],[-0.1,0.1],[-10,5,500],'-nopix');
+w2qEBg = cut(src800,prj,[-2,0.04,6],[-0.1,0.1],[-0.1,0.1],[-10,5,500],'-nopix');
 plot(w2qEBg )
 lz 0 1
 keep_figure

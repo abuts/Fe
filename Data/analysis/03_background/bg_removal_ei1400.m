@@ -13,15 +13,13 @@ end
 
 bg_file = 'w2_1400_meV_bg.mat';
 if ~isfile(bg_file)
-    proj1400 = kf_sphere_proj();
-    proj1400.disable_pix_preselection = true;
-    w2_14 = cut_sqw(src1400,proj1400,[0,30],[0,0.2,70],[-180,180],4,'-nopix');
+    w2_14 = instrument_view_cut(src1400,[0,0.2,70],4);
     save(bg_file,'w2_14');
 else
     load(bg_file);
 end
 w1_14 = cut(w2_14,[0,70],[-20,5,800]);
-%%{
+%{
 plot(w2_14);
 lz 0 4
 keep_figure;
@@ -30,6 +28,7 @@ lz 0 4
 keep_figure;
 
 plot(w1_14);
+pl(w1_14);
 keep_figure;
 %}
 
@@ -77,7 +76,7 @@ plot(w2qEnoBg300)
 lz 0 0.1
 keep_figure
 
-w2Bg150 = cut(src400,line_proj,0.04,0.04,[-0.1,0.1],[150,170],'-nopix');
+w2Bg150 = cut(src1400,line_proj,0.04,0.04,[-0.1,0.1],[150,170],'-nopix');
 plot(w2Bg150)
 lz 0 0.5
 keep_figure

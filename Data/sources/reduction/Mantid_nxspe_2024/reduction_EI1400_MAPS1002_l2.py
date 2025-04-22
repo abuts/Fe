@@ -77,7 +77,7 @@ class MAPSReduction(ReductionWrapper):
       prop = {}
       prop['map_file'] = "4to1_102.map"  # "parker_rings.map"
       prop['monovan_mapfile'] = "parker_rings.map"
-      prop['hardmaskOnly']="4to1_102.msk" #maskfile # disable diag, use only hard mask
+      prop['hardmaskPlus']="4to1_102_add_msk.xml " #maskfile # disable diag, use only hard mask
       #prop['hard_mask_file'] = ""
       prop['bkgd_range'] = [15000,19000]
       prop['fix_ei'] = True

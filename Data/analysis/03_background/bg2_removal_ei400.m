@@ -14,41 +14,41 @@ end
 bg_file = 'w4Bz_400_meV_bg.mat';
 if ~isfile(bg_file)
     alatt= src400.data.alatt;
-    r_cut2 = (3*alatt(1))^2;
+    rlu = 2*pi./alatt;
+    r_cut2 = (3*rlu(1))^2;
     cutter = PageOp_sqw_binning();
     old_range = src400.data.img_range;
     cutter.new_binning = [40,40,40,100];
-    cutter.new_range = [0,0,0,old_range(1,4);2*alatt(1),2*alatt(2),2*alatt(3),old_range(2,4)];
+    cutter.new_range = [0,0,0,old_range(1,4);2*rlu(1),2*rlu(2),2*rlu(3),old_range(2,4)];
     sqw400meV_Bz_bg = sqw_op(src400, @build_bz_background, r_cut2,cutter,'-nopix');
+    sqw400meV_Bz_bg.filename = 'sqw400meV_Bz_bg';
     save(bg_file,'sqw400meV_Bz_bg');   
 else
     load(bg_file);
 end
-w2bz400_100bg = cut(sqw400meV_Bz_bg,[],[],2.209*[-0.1,0.1],[100-5,100+5]);
 
-%%{
-plot(w2bz400_100bg );
-lz 0 4
+w1bz400_dEbg = cut(sqw400meV_Bz_bg,2.209*[0,2],2.209*[0,2],2.209*[0,2],[]);
+%{
+w2bz400_100fg = cut(sqw400meV_Bz_bg,[],[],2.209*[-0.1,0.1],[100-5,100+5]);
+plot(w2bz400_100fg);
+lz 0 1
 keep_figure;
 
-ds(w2_4)
-lz 0 4
-keep_figure;
 
-plot(w1_4);
+plot(w1bz400_dEbg);
 keep_figure;
 %}
 
 if isfile(target)
     sqw400_no_bg = sqw(target);
 else
-    x1 = w2_4.p{1};
-    x2 = w2_4.p{2};
-    x1 = 0.5*(x1(1:end-1)+x1(2:end));
-    x2 = 0.5*(x2(1:end-1)+x2(2:end));
+    %x2 = w2_4.p{2};
+    x1 = axis_centerpoints(w1bz400_dEbg ,1);
+    %x2 = axis_centerpoints(w1bz400_dEbg ,2);
 
-    F = griddedInterpolant({x1,x2},w2_4.s);
-    sqw400_no_bg = sqw_op(src400,@remove_background,{w2_4,F},'outfile',target);
+
+    F = griddedInterpolant(x1,w1bz400_dEbg.s);
+    sqw400_no_bg = sqw_op(src400,@remove_background,{sqw400meV_Bz_bg,F},'outfile',target);
 end
 
 %x1=w1_8.p{1};
@@ -92,3 +92,7 @@ plot(w2qEnoBg150)
 lz 0 0.5
 keep_figure
 
+function cpa = axis_centerpoints(ds,n_axis)
+xi = ds.p{n_axis};
+cpa = 0.5*(xi(1:end-1)+xi(2:end));
+end

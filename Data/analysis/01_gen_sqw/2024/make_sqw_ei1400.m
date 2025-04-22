@@ -6,7 +6,7 @@ spe_dir=fullfile(root_dir,'sources','reduction','Mantid_nxspe_2024','cycle10_02'
 sqw_dir=fullfile(root_dir,'sqw','sqw2024'); 
 
 spename='MAP*_ei1372meV.nxspe';    % template for spe file names
-sqwname='Fe_ei1400.sqw';
+sqwname='Fe_ei1400_align.sqw';
 %parname='4to1_065.par';
 
 % Create the spe file names and psi array
