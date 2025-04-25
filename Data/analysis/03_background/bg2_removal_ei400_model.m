@@ -21,7 +21,7 @@ if ~isfile(bg_file)
     cutter.new_binning = [40,40,40,100];
     cutter.new_range = [0,0,0,old_range(1,4);2*rlu(1),2*rlu(2),2*rlu(3),old_range(2,4)];
     sqw400meV_Bz_bg = sqw_op(src400, @build_bz_background, r_cut2,cutter,'-nopix');
-    sqw400meV_Bz_bg.filename = 'sqw400meV_Bz_bg';
+    sqw400meV_Bz_bg.filename = 'sqw400meV_BzModel_bg';
     save(bg_file,'sqw400meV_Bz_bg');   
 else
     load(bg_file);

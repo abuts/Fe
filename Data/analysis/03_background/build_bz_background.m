@@ -1,4 +1,4 @@
-function data = build_bz_background(pageop_obj,r2_ignore)
+function data = build_bz_background(pageop_obj,r2_ignore,rlu)
 %build_bz_background used to build background out of q-values beyond of the
 % 
 %
@@ -10,7 +10,6 @@ data = data(:,keep);
 if isempty(data)
     return;
 end
-rlu = 4*pi./pageop_obj.img.alatt(:);
 
 q = data(1,:);
 invert    = q<0;
