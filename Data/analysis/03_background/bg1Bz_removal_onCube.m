@@ -10,11 +10,13 @@ if isfile(source)
         sqw_4d_mobj = sqw(source);
     end
     alatt = sqw_4d_mobj.data.alatt;
+    rlu = 2*pi./alatt;
     angdeg = sqw_4d_mobj.data.angdeg;
 else
     alatt = [2.84,2.84,2.84];
+    rlu = 2*pi./alatt;
     angdeg = [90,90,90];
-    ab = line_axes('nbins_all_dims',[120,120,40,62],'img_range',[-4,-4,-2,-10;8,8,2,300]);
+    ab = line_axes('nbins_all_dims',[120,120,120,62],'img_range',[-2,-2,-1,-10;4,4,1,300]);
     lp = line_proj([1,0,0],[0,1,0],'type','aaa','alatt',alatt,'angdeg',angdeg);
 
     sqw_4d_mobj = sqw.generate_cube_sqw(ab,lp, ...
@@ -30,7 +32,7 @@ end
 
 bg_file = 'w4_WSBz_Cube_bg.mat';
 if ~isfile(bg_file)
-    rlu = 2*pi./alatt;
+
     r_cut2 = -1;%(2*rlu(1))^2;
     orng = sqw_4d_mobj.data.img_range;
     old_bins = sqw_4d_mobj.data.axes.get_cut_range();
@@ -46,22 +48,11 @@ if ~isfile(bg_file)
     norm_vec = diag(norm_vec);
 
     wcN = [norm_vec(1),norm_vec(2),norm_vec(3)];
-    wct = rotz(-45)*(wc./repmat(wcN,3,1));
-    %tcm = mtimesx_horace(wct,test_vec);
-    tcm = wct*test_vec;
-    % projection which provides the same transformation:
-    uu= ubmat_proj('u_to_rlu',inv(wct*BM),'img_scales',ones(3,1),'alatt',alatt,'angdeg',angdeg);
-    tcm0 = uu.transform_pix_to_img(test_vec);
-    %
-    %WS_ranges = proj.transform_hkl_to_img(WS_cell);
-    WS_ranges = uu.transform_hkl_to_img(WS_cell);    
-    %max_range = [norm(WS_ranges(:,1)) ,norm(WS_ranges(:,2)),norm(WS_ranges(:,3))];
-    max_range = wcN;    
-    tc = proj.transform_pix_to_img(test_vec);
+    max_range = wcN;
     edg = -0.05;
-    bin_range = {[edg,0.04,max_range(1)-edg],[edg,0.1,max_range(2)-edg ],[edg,0.04,max_range(3)-edg],old_bins{4}};
+    bin_range = {[-max_range(1)+edg,0.1,max_range(1)-edg],[-max_range(2)+edg,0.1,max_range(2)-edg ],[-max_range(3)+edg,0.1,max_range(3)-edg],old_bins{4}};
 
-    msqw400meV_Bz_bg = sqw_op_bin_pixels(sqw_4d_mobj, @build_WigSeitz_background, {r_cut2,max_range},proj,bin_range{:},'-nopix');
+    msqw400meV_Bz_bg = sqw_op_bin_pixels(sqw_4d_mobj, @build_WigSeitz_background, {r_cut2,norm_vec},proj,bin_range{:},'-nopix');
     msqw400meV_Bz_bg.filename = 'modelCubeWSBZ_sqw400meV_bg';
     %save(bg_file,'msqw400meV_Bz_bg','max_range');
 else
@@ -70,13 +61,12 @@ end
 
 
 %%{
-w2bz400_0fg = cut(msqw400meV_Bz_bg,[],[],[-0.05,0.05],[-5,+5]);
+w2bz400_0fg = cut(msqw400meV_Bz_bg,[],[],[-0.1,0.1],[-5,+5]);
 plot(w2bz400_0fg);
 keep_figure;
 
 w2bz400_100fg = cut(msqw400meV_Bz_bg,[],[],[-0.05,0.05],[100-5,100+5]);
 plot(w2bz400_100fg);
-lz 1 3.2
 keep_figure;
 
 mw1bz400_dEbg = cut(msqw400meV_Bz_bg,2.209*[0,2],2.209*[0,2],2.209*[0,2],[]);
@@ -97,7 +87,7 @@ else
     x4 = axis_centerpoints(avBg ,4);
     F = griddedInterpolant({x1,x2,x3,x4},avBg.s,'linear','none');
 
-    msqw400_no_bg = sqw_op(sqw_4d_mobj,@remove_background,{msqw400meV_Bz_bg,F,max_range},'outfile',target);
+    msqw400_no_bg = sqw_op(sqw_4d_mobj,@remove_WS_background,{msqw400meV_Bz_bg,F,norm_vec},'outfile',target);
 end
 
 %x1=w1_8.p{1};

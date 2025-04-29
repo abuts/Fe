@@ -11,25 +11,26 @@ if ~isa('src1400','var') || ~isa(src1400,'sqw')
     src1400 = sqw(data_src1400);
 end
 
-bg_file = 'Bz4D_1400meV_bg.mat';
+bg_file = 'Bz4D_1400meV_fg.mat';
 if ~isfile(bg_file)
     alatt= src1400.data.alatt;
     rlu = 2*pi./alatt;
     r_cut2 = (3*rlu(1))^2;
-    cutter = PageOp_sqw_binning();
-    old_range = src1400.data.img_range;
-    cutter.new_binning = [60,60,60,100];
-    cutter.new_range = [0,0,0,old_range(1,4);2*rlu(1),2*rlu(2),2*rlu(3),old_range(2,4)];
-    sqw1400meV_Bz_bg = sqw_op(src1400, @build_bz_background, r_cut2,cutter,'-nopix');
-    sqw800meV_Bz_bg.filename = 'sqw1400meV_BzAndCyl_bg';
-    save(bg_file,'sqw1400meV_Bz_bg');
 
+    old_range = src1400.data.axes.get_cut_range();
+    del = 0.05;
+    zoneBins = [-1-del,0.05,1+del];
+    e_bins = old_range{4};
+    cut_range = {zoneBins *rlu(1),zoneBins*rlu(2),zoneBins*rlu(3),[-75,10,1355]};
+    sqw1400meV_Bz_fg = sqw_op_bin_pixels(src1400, @build_bz_background, {r_cut2,rlu},cut_range{:},'-nopix');
+    sqw1400meV_Bz_fg.filename = 'sqw1400meV_BzAndCyl_fg';
+    save(bg_file,'sqw1400meV_Bz_fg','alatt','rlu');
 else
     load(bg_file);
 end
-w1bz1400_dEbg = cut(sqw1400meV_Bz_bg,2.209*[0,2],2.209*[0,2],2.209*[0,2],[]);
-%{
-w2bz1400_100bg = cut(sqw1400meV_Bz_bg,[],[],2.209*[-0.1,0.1],[100-5,100+5]);
+w1bz1400_dEbg = cut(sqw1400meV_Bz_fg,rlu(1)*[0,2],rlu(1)*[0,2],rlu(1)*[0,2],[]);
+%%{
+w2bz1400_100bg = cut(sqw1400meV_Bz_fg,[],[],2.209*[-0.1,0.1],[100-5,100+5]);
 plot(w2bz1400_100bg);
 grid on
 keep_figure;
@@ -58,13 +59,13 @@ else
     %F = griddedInterpolant(x1,w1bz1400_dEbg.s);
     %sqw1400_no_bg = sqw_op(src1400,@remove_background,{w1bz1400_dEbg,F},'outfile',target);
     %avBg = smooth(sqw1400meV_Bz_bg,4,'hat');
-    avBg = sqw1400meV_Bz_bg;    
+    avBg = sqw1400meV_Bz_fg;    
     x1 = axis_centerpoints(avBg ,1);
     x2 = axis_centerpoints(avBg ,2);
     x3 = axis_centerpoints(avBg ,3);
     x4 = axis_centerpoints(avBg ,4);    
-    F = griddedInterpolant({x1,x2,x3,x4},sqw1400meV_Bz_bg.s);
-    sqw1400_no_bg = sqw_op(src1400,@remove_background,{sqw1400meV_Bz_bg,F},'outfile',target);
+    F = griddedInterpolant({x1,x2,x3,x4},sqw1400meV_Bz_fg.s);
+    sqw1400_no_bg = sqw_op(src1400,@remove_background,{sqw1400meV_Bz_fg,F},'outfile',target);
 end
 
 %x1=w1_8.p{1};

@@ -10,19 +10,12 @@ data = data(:,keep);
 if isempty(data)
     return;
 end
+scale = 2*rlu;
+q_coord = data(1:3,:);
+img_shift   = round(q_coord./scale(:)).*scale(:); % BRAGG positions in the new lattice
+q_coord  = q_coord - img_shift;
+invert = q_coord<0;
+q_coord(invert) = -q_coord(invert);
+data(1:3,:) = q_coord;
 
-q = data(1,:);
-invert    = q<0;
-q(invert) = -q(invert);
-data(1,:) = rem(q,rlu(1));
-
-q = data(2,:);
-invert    = q<0;
-q(invert) = -q(invert);
-data(2,:) = rem(q,rlu(2));
-
-q = data(3,:);
-invert    = q<0;
-q(invert) = -q(invert);
-data(3,:) = rem(q,rlu(3));
 end

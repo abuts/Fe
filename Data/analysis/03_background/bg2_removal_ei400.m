@@ -6,35 +6,36 @@ root_dir = fileparts(fileparts(fileparts(mfilename("fullpath"))));
 sqw_dir=fullfile(root_dir,'sqw','sqw2024');
 
 data_src400 =fullfile(sqw_dir,'Fe_ei401_align.sqw');
-target = fullfile(sqw_dir,'Fe_ei401_no_bg_4D.sqw');
+target = fullfile(sqw_dir,'Fe_ei401_no_bg_4D_reduced.sqw');
 if ~isa('src400','var') || ~isa(src400,'sqw')
     src400 = sqw(data_src400);
 end
+alatt= src400.data.alatt;
+rlu = 2*pi./alatt;
+r_cut2 = (3.5*rlu(1))^2;
 
-bg_file = 'w4Bz_400_meV_bg.mat';
+bg_file = 'w4Bz_400meV_bg.mat';
 if ~isfile(bg_file)
-    alatt= src400.data.alatt;
-    rlu = 2*pi./alatt;
-    r_cut2 = (3*rlu(1))^2;
-    cutter = PageOp_sqw_binning();
-    old_range = src400.data.img_range;
-    cutter.new_binning = [40,40,40,100];
-    cutter.new_range = [0,0,0,old_range(1,4);2*rlu(1),2*rlu(2),2*rlu(3),old_range(2,4)];
-    sqw400meV_Bz_bg = sqw_op(src400, @build_bz_background, r_cut2,cutter,'-nopix');
+
+    old_range = src400.data.axes.get_cut_range();
+    del = 0.05;
+    zoneBins = [-del,0.05,1+del];
+    e_bins = old_range{4};
+    cut_range = {zoneBins *rlu(1),zoneBins*rlu(2),zoneBins*rlu(3),[-15,2,340]};
+    sqw400meV_Bz_bg = sqw_op_bin_pixels(src400, @build_bz_background, {r_cut2,rlu},cut_range{:},'-nopix');
     sqw400meV_Bz_bg.filename = 'sqw400meV_Bz_bg';
     save(bg_file,'sqw400meV_Bz_bg');   
 else
     load(bg_file);
 end
 
-w1bz400_dEbg = cut(sqw400meV_Bz_bg,2.209*[0,2],2.209*[0,2],2.209*[0,2],[]);
-%{
-w2bz400_100fg = cut(sqw400meV_Bz_bg,[],[],2.209*[-0.1,0.1],[100-5,100+5]);
-plot(w2bz400_100fg);
+%%{
+w2bz400_100bg = cut(sqw400meV_Bz_bg,[],[],2.209*[-0.1,0.1],[100-5,100+5]);
+plot(w2bz400_100bg);
 lz 0 1
 keep_figure;
 
-
+w1bz400_dEbg = cut(sqw400meV_Bz_bg,2.209*[0,2],2.209*[0,2],2.209*[0,2],[]);
 plot(w1bz400_dEbg);
 keep_figure;
 %}
@@ -43,12 +44,17 @@ if isfile(target)
     sqw400_no_bg = sqw(target);
 else
     %x2 = w2_4.p{2};
-    x1 = axis_centerpoints(w1bz400_dEbg ,1);
+    %x1 = axis_centerpoints(w1bz400_dEbg ,1);
     %x2 = axis_centerpoints(w1bz400_dEbg ,2);
-
-
-    F = griddedInterpolant(x1,w1bz400_dEbg.s);
-    sqw400_no_bg = sqw_op(src400,@remove_background,{sqw400meV_Bz_bg,F},'outfile',target);
+    avBg = msqw400meV_Bz_bg;
+    x1 = axis_centerpoints(avBg ,1);
+    x2 = axis_centerpoints(avBg ,2);
+    x3 = axis_centerpoints(avBg ,3);
+    x4 = axis_centerpoints(avBg ,4);
+    F = griddedInterpolant({x1,x2,x3,x4},avBg.s,'linear','none');
+    mi = MagneticIons('Fe0');
+    fJi = mi.fJi;
+    sqw400_no_bg = sqw_op_bin_pixels(src400,@remove_background_bz0,{sqw400meV_Bz_bg,F,rlu,r_cut2,fJi},'outfile',target);
 end
 
 %x1=w1_8.p{1};
