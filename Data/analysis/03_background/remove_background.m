@@ -7,11 +7,11 @@ if numel(bg_model.GridVectors)==2
     bg_signal = bg_model(pix(2,:),data(4,:));
 elseif numel(bg_model.GridVectors)==4
 
-    
+
     q1 = data(1,:);
     invert    = q1<0;
     q1(invert) = -q1(invert);
-    q1 = rem(q1,rlu(1));    
+    q1 = rem(q1,rlu(1));
 
     q2 = data(2,:);
     invert    = q2<0;

@@ -20,6 +20,8 @@ targ_proj = pageop_obj.proj;
 q_coord = data(1:3,:);
 result = cell(1,numel(proj_array));
 for i=1:numel(proj_array)
+    proj_array(i).alatt = targ_proj.alatt;
+    proj_array(i).angdeg = targ_proj.angdeg;    
     coord_tr = proj_array(i).transform_pix_to_img(q_coord);
     include = coord_tr(2,:)>=range(1)&coord_tr(2,:)<=range(2)&coord_tr(3,:)>=range(1)&coord_tr(3,:)<=range(2);
     coord_tr  = coord_tr(:,include);
