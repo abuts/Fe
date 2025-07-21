@@ -6,7 +6,7 @@ root_dir = fileparts(fileparts(fileparts(mfilename("fullpath"))));
 sqw_dir=fullfile(root_dir,'sqw','sqw2024');
 
 data_src400 =fullfile(sqw_dir,'Fe_ei401_align.sqw');
-target = fullfile(sqw_dir,'Fe_ei401_noBg_4D_reducedBZ_FF_ignored.sqw');
+target = fullfile(sqw_dir,'Fe_ei401_noBg_4D_reducedBZ_FF_corr_filt_remove.sqw');
 if ~isa('src400','var') || ~isa(src400,'sqw')
     src400 = sqw(data_src400);
 end

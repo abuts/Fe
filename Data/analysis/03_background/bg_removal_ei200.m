@@ -12,6 +12,11 @@ src200 = sqw(data_src200);
 
 bg_file = 'w2_200_meV_bg.mat';
 if ~isfile(bg_file)
+    % proj200 = kf_sphere_proj();
+    % proj200.disable_pix_preselection = true;
+    % w3_4 = cut_sqw(src200,proj200,[0,11],[0,0.2,70],[-180,4,180],[-20,2,170],'-nopix');
+    % save(bg_file,'w3_4');
+    
     w2_200meV  = instrument_view_cut(src200,[0,0.2,65],[-20,2,170]);
     save(bg_file,"w2_200meV");
 else

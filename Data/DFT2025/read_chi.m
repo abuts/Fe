@@ -31,9 +31,7 @@ scaler = (72.65/(dW*RyTomEv*4*pi)/pi)./(1-exp(-1.451*e_scale)); %72.65 mb  -- sc
 scaler(1)=0;
 
 n_w = numel(w);
-dw=w(2:end)-w(1:end-1);
-dw = min(dw);
-ab = line_axes('nbins_all_dims',[25,25,25,n_w],'img_range',[-0.02,-0.02,-0.02,-0.5*dw;0.96+0.02,0.96+0.02,0.96+0.02,max(w)*13605.693]);
+ab = line_axes('nbins_all_dims',[25,25,25,n_w],'img_range',[-0.02,-0.02,-0.02,-0.5*dw;0.96+0.02,0.96+0.02,0.96+0.02,max(w)*Ry2meV]);
 proj = line_proj('alatt',2.867,'angdeg',90);
 img11 = d4d(ab,proj);
 

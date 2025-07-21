@@ -4,7 +4,7 @@ data  = pageop_obj.page_data;
 if numel(bg_model.GridVectors)==2
     % 2D background
     pix   = bg_data.proj.transform_pix_to_img(data(1:5,:));
-    bg_signal = bg_model(pix(2,:),data(4,:));
+    bg_signal = bg_model(pix(2,:),pix(4,:));
 elseif numel(bg_model.GridVectors)==4
 
 
