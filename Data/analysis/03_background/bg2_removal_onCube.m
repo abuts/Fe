@@ -3,7 +3,7 @@
 % =============================================================================
 root_dir = fileparts(mfilename("fullpath"));
 source = fullfile(root_dir,'sqw_cubeTestObj.sqw');
-target = fullfile(root_dir,'sqw_cubeTestObj_no_bg.sqw');
+target = fullfile(root_dir,'sqw_cubeTestObj_bin_no_bg.sqw');
 
 if isfile(source)
     if ~exist('sqw_4d_mobj','var')
@@ -34,19 +34,24 @@ if ~isfile(bg_file)
     orng = sqw_4d_mobj.data.img_range;
     old_bins = sqw_4d_mobj.data.axes.get_cut_range();
     max_range = 2*rlu;
-    edg = -0.05;
+    edg = 0.05;
     bin_range = {[edg,0.1,max_range(1)-edg],[edg,0.1,max_range(2)-edg ],[edg,0.1,max_range(3)-edg],old_bins{4}};
+    nbins = cellfun(@(bm)(floor((bm(3)-bm(1))/bm(2))),bin_range,'UniformOutput',false);
+    steps = cellfun(@(bm,nb)((bm(3)-bm(1))/nb),bin_range,nbins,'UniformOutput',false);
+    bin_range = cellfun(@(bm,st)([0.5*st,st,max_range(1)-0.5*st]),bin_range,steps,'UniformOutput',false);
+    bin_range{4}= old_bins{4};
 
+    %msqw400meV_Bz_bg = sqw_op_bin_pixels(sqw_4d_mobj, @build_bz_background, {r_cut2,max_range},bin_range{:});
     msqw400meV_Bz_bg = sqw_op_bin_pixels(sqw_4d_mobj, @build_bz_background, {r_cut2,max_range},bin_range{:},'-nopix');
     msqw400meV_Bz_bg.filename = 'model_sqw400meV_BzCube_bg';
     save(bg_file,'msqw400meV_Bz_bg','max_range');
 else
     load(bg_file);
-    msqw400meV_Bz_bg.filename = 'model_sqw400meV_BzCube_bg';    
+    msqw400meV_Bz_bg.filename = 'model_sqw400meV_BzCube_bg';
 end
 
 
-%%{
+%{
 w2bz400_100fg = cut(msqw400meV_Bz_bg,[],[],2.209*[-0.1,0.1],[100-5,100+5]);
 plot(w2bz400_100fg);
 lz 1 3.2
