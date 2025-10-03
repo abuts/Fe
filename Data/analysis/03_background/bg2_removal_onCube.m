@@ -122,4 +122,5 @@ keep_figure
 function cpa = axis_centerpoints(ds,n_axis)
 xi = ds.p{n_axis};
 cpa = 0.5*(xi(1:end-1)+xi(2:end));
+%cpa = xi(1:end-1);
 end
