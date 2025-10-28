@@ -1,18 +1,11 @@
-plist = 'H5P_DEFAULT';
-fileName = 'e:/SHARE/Fe/Data/DFT2025/01_10_2025/dataset2-nk50-conventional-29sep25/chipm_qsgw_conv_nk50.h5 ';
-fid = H5F.open(fileName);
-if ~isa('chi_gsgw_data','var')
-    dset_id = H5D.open(fid,'/chi_rsa_im');
-    % dims = [15625,10001,2,2];
-    % dtype = H5T.create('H5T_COMPOUND', 16);
-    % H5T.insert(dtype,'r',0,'H5T_NATIVE_DOUBLE');
-    % H5T.insert(dtype,'i',8,'H5T_NATIVE_DOUBLE');
 
-    %mem_space_id = H5S.create_simple(4,dims,[]);
+fileName = 'e:/SHARE/Fe/Data/DFT2025/01_10_2025/dataset2-nk50-conventional-29sep25/chipm_qsgw_conv_nk50.h5 ';
+if ~isa('chi_gsgw_data','var')
+    plist = 'H5P_DEFAULT';
+    fid = H5F.open(fileName);
+    dset_id = H5D.open(fid,'/chi_rsa_im');
+
     file_space_id = H5D.get_space(dset_id);
-    %offset = fliplr([0,0, 0, 0]);
-    %block = fliplr([10,10,2,2]);
-    %H5S.select_hyperslab(file_space_id,'H5S_SELECT_SET',offset,[],[],[]);
 
     chi_gsgw_data = H5D.read(dset_id,'H5ML_DEFAULT','H5S_ALL',file_space_id,plist);
     H5D.close(dset_id);
