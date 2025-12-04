@@ -1,6 +1,6 @@
 function wdisp = disp_dft_kun4D_lint(qh,qk,ql,en,varargin)
 % interpolate and expand numerical DFT data over whole q-dE space using
-% Matlab's 3D-scattered interpolant.
+% Matlab's 3D-scattered interpolator.
 %
 % Use this function as model for Tobyfit or sqw_eval or func_eval
 % algorithms.

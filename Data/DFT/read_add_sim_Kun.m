@@ -20,7 +20,7 @@ function [ses,qx_pts,en_pts,pxs,pys,pzs,ens]=read_add_sim_Kun(combine_with_1D,..
 % en  -- energy axis of the simulated array.
 %
 % Visualize intermediate results
-visualize = false;
+visualize = true;
 if nargin>2
     expand_over_energy_range = varargin{1};
 else
@@ -30,7 +30,7 @@ end
 [qx,qy,qz,En,Sig] = read_add_sim();
 % convert volume data into the form, suitable for applying symmetry
 % operations in Q-space, i.e convert energy points int cellarray, of size(qx)
-% with cells containing {[energy trafer,signal]} blocks.
+% with cells containing {[energy transfer,signal]} blocks.
 [qx,qy,qz,es] = compact3D(En,qx,qy,qz,Sig);
 if ~exist('combine_with_1D','var')
     combine_with_1D = false;

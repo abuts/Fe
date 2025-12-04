@@ -1,0 +1,11 @@
+### DATA ###
+01_10_2025/*
+*.zip
+
+### MATLAB ###
+# Windows default autosave extension
+*.asv
+
+# OSX / *nix default autosave extension
+*.m~
+

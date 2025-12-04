@@ -15,12 +15,13 @@ q = h5read(fileName,'/q');
 w = h5read(fileName,'/realw');
 dW = min(w(2:end)-w(1:end-1));
 
-Ry2meV = 13605.693;
+Ry2meV = 13605.693;  % meV
 
 e_scale = w*Ry2meV;
+s_scale = 1.6997e-3; % mBarn/meV convert Chi" units to mBarn/meV
 dw = dW*Ry2meV;
 % beta*h*w = E(meV)/k_b*T = E*1.451 T=8K
-%scaler = (72.65/(dW*RyTomEv*4*pi)/pi)./(1-exp(-1.451*e_scale)); %72.65 mb  -- scaling constant;
+%scaler = (s_scale./(1-exp(-1.451*e_scale));
 scaler(1)=0;
 
 n_w = numel(w);
@@ -30,7 +31,7 @@ img11 = d4d(ab,proj);
 
 ds = -reshape(chi_gsgw_data',50,50,50,1000);
 img11.npix = 1;
-img11.s = ds;
+img11.s = ds*s_scale;
 
 % data comparison
 proj11 = line_proj([1,1,0],[-1,1,0]);
