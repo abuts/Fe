@@ -59,8 +59,8 @@ $$
 
 Where $$R_{L}(r_i)$$ are the partial waves at site $$i$$, normalised to unity.
 
-This downfolds the large $G,G'$ (or $r,r'$) dependent susceptibility matrix onto one indexed by 
-site $i,j$ alone.  For a single site in the unit cell, this is a scalar (for each wave vector and 
+This downfolds the large $$G,G'$$ (or $$r,r'$$) dependent susceptibility matrix onto one indexed by 
+site $$i,j$$ alone.  For a single site in the unit cell, this is a scalar (for each wave vector and 
 frequency).
 
 The summation over $L$,$L'$ can optionally be stopped at $L=L-L'=0$ (spherical approximation).
