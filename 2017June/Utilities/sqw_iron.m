@@ -38,7 +38,7 @@ function weight = sqw_iron (qh,qk,ql,en,par)
 %                   Qz          Component of unit momentum transfer along
 %                              the moment direction. For cubic symmetry,
 %                              we have the domain averaged value <1+Qz^2> = 4/3
-%                   g           Electron gyronagnetic ratio
+%                   g           Electron gyromagnetic ratio
 %                   F(Q)        Magnetic form factor
 %
 %              and the delta functions are broadened by the response for

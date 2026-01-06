@@ -12,24 +12,25 @@ if isempty(data)
     return;
 end
 %
-% filter strange secondary reflections
-filt_scale = 0.5*rlu;
-q_filt = round(q_coord(1:2,:)./filt_scale(1)).*filt_scale(1);
-r_filt2 = (0.07*filt_scale(1))^2;
-%filter = (q_coord(1,:)-q_filt(1,:)).^2+(q_coord(2,:)-q_filt(2,:)).^2 < r_filt2;
-%data(1:2,filter) = 0 ;
-keep2 = (q_coord(1,:)-q_filt(1,:)).^2+(q_coord(2,:)-q_filt(2,:)).^2 >= r_filt2;
-data = data(:,keep2);
-if isempty(data)
-    return;
-end
-q_coord = q_coord(:,keep2);
-% Calculate magnetic form factor
-q2 = Q2(keep2)/(16*pi*pi);
-clear Q2;
-MFF = fJi{1}(q2).^2+fJi{2}(q2).^2+fJi{3}(q2).^2+fJi{4}(q2).^2;
+% % filter strange secondary reflections
+% filt_scale = 0.5*rlu;
+% q_filt = round(q_coord(1:2,:)./filt_scale(1)).*filt_scale(1);
+% r_filt2 = (0.07*filt_scale(1))^2;
+% %filter = (q_coord(1,:)-q_filt(1,:)).^2+(q_coord(2,:)-q_filt(2,:)).^2 < r_filt2;
+% %data(1:2,filter) = 0 ;
+% keep2 = (q_coord(1,:)-q_filt(1,:)).^2+(q_coord(2,:)-q_filt(2,:)).^2 >= r_filt2;
+% data = data(:,keep2);
+% if isempty(data)
+%     return;
+% end
+%q_coord = q_coord(:,keep2);
+%Calculate magnetic form factor
+%q2 = Q2(keep2)/(16*pi*pi);
+%q2 = Q2/(16*pi*pi);
+%clear Q2;
+%MFF = fJi{1}(q2).^2+fJi{2}(q2).^2+fJi{3}(q2).^2+fJi{4}(q2).^2;
 
-sig_var = data([8,9],:);
+%sig_var = data([8,9],:);
 
 % move everything into 1/4 of first square zone with basis
 scale = 2*rlu;
@@ -39,21 +40,40 @@ invert = q_coord<0;
 q_coord(invert) = -q_coord(invert);
 
 % calculate  background.
-q4 = data(4,:);
-bg_signal = bg_model(q_coord(1,:),q_coord(2,:),q_coord(3,:),q4);
-out_of_range = isnan(bg_signal);
-bg_signal(out_of_range) = 0;
+%q4 = data(4,:);
+%bg_signal = bg_model(q_coord(1,:),q_coord(2,:),q_coord(3,:),q4);
+%out_of_range = isnan(bg_signal);
+%bg_signal(out_of_range) = 0;
 % remove background
 %sig_var(1,:) = (data(8,:)-bg_signal);
+data(1:3,:) = q_coord;
+%data(8:9,:) = sig_var;
+% img_size = size(bg_obj.npix);
+% npix = zeros(img_size);
+% s    = zeros(img_size);
+% e    = zeros(img_size);
+% pix = PixelDataMemory();
+% pix = pix.set_raw_data(data);
+% [npix,s,~,~,~,cell_idx] = bg_obj.axes.bin_pixels(data(1:4,:),npix,s,e,pix);
+% 
+% idx = 1:numel(npix);
+% compencate = s<0;
+% idx = idx(compencate);
+% for i=1:numel(idx)
+%     s_cell = s(idx(i))/npix(idx(i));
+%     cell_pixels = cell_idx == idx(i);
+%     sig_var(1,cell_pixels)= sig_var(1,cell_pixels)-s_cell;
+% end
+
+
 % Correct for Magnetic form factor after background has
 % been removed
-sig_var(1,:) = (data(8,:)-bg_signal)./MFF;
-over_compensated = sig_var(1,:)<0;
-sig_var(1,over_compensated) = 0;
-sig_var(2,over_compensated) = 0;
+%data(8,:) = sig_var(1,:)./MFF;
+
+% over_compensated = sig_var(1,:)<0;
+%sig_var(1,over_compensated) = 0;
+%sig_var(2,over_compensated) = 0;
 
 
-data(1:3,:) = q_coord;
-data(8:9,:) = sig_var;
 
 end

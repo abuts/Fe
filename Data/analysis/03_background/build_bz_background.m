@@ -3,13 +3,13 @@ function data = build_bz_background(pageop_obj,r2_ignore,rlu)
 % 
 %
 data = pageop_obj.page_data;
-% Q2 = data(1,:).*data(1,:)+data(2,:).*data(2,:)+data(3,:).*data(3,:);
-% keep = Q2>=r2_ignore; % background
-% %keep = Q2<r2_ignore;   % foreground
-% data = data(:,keep);
-% if isempty(data)
-%     return;
-% end
+Q2 = data(1,:).*data(1,:)+data(2,:).*data(2,:)+data(3,:).*data(3,:);
+keep = Q2>=r2_ignore; % background
+%keep = Q2<r2_ignore;   % foreground
+data = data(:,keep);
+if isempty(data)
+    return;
+end
 scale = 2*rlu;
 q_coord = data(1:3,:);
 img_shift   = round(q_coord./scale(:)).*scale(:); % BRAGG positions in the new lattice

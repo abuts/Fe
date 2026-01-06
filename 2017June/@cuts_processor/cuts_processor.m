@@ -28,11 +28,11 @@ classdef cuts_processor
     end
     
     properties(Dependent)
-        J0 = 25.29;
-        J1 = 13.93;
-        J2 = -3.01 ;
-        J3 =0;
-        J4 =0;
+        J0 %= 25.29;
+        J1 %= 13.93;
+        J2 %= -3.01 ;
+        J3 %= 0;
+        J4 %= 0;
         % file used as source of cut data
         source_file
         % list of various cuts to fit;
