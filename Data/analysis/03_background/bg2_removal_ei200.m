@@ -18,7 +18,7 @@ old_range = src200.data.axes.get_cut_range();
 del = 0.05;
 zoneBins = [-del,0.05,1+del];
 e_bins = old_range{4};
-cut_range = {zoneBins *rlu(1),zoneBins*rlu(2),zoneBins*rlu(3),[-15,2,200]};
+cut_range = {zoneBins *rlu(1),zoneBins*rlu(2),zoneBins*rlu(3),[-15,2,170]};
 
 
 bg_file = 'w4Bz_200meV_bg.mat';

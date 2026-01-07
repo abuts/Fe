@@ -10,7 +10,8 @@ for i=1:numel(keys)
     all_cuts(keys{i}) = all_cuts(keys{i}).set_instrument(mi);
     all_cuts(keys{i}) = all_cuts(keys{i}).set_sample(sample);    
 end
-w1 = cut(all_cuts('GN'),[],[100-2,100+2]);
+en = 150;
+w1 = cut(all_cuts('GN'),[],[en-2,en+2]);
 
 correct_ff = 1;
 T   = 8;
@@ -26,7 +27,7 @@ J3 = -0.7469;       %-0.7448;
 J4 = 0.6056;        %0.6047;
 
 %init_fg_params = [coffect_ff,T,gamma,Seff, gap, J0, J1, J2, J3, J4];
-init_fg_params = [correct_ff,T,gamma,Seff, gap, J0, 0,   0, 0,   0];
+init_fg_params = [correct_ff,T,gamma,Seff, gap, J0, 0,   0,  0,  0];
 free_sw_param  = [0          0, 1   ,1   , 0,    1, 0,   0,  0,  0];
 
 kk = tobyfit(w1);
