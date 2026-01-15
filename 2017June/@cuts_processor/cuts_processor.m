@@ -79,7 +79,7 @@ classdef cuts_processor
         end
         % build list of initial cut files for multifitting and check if the files with these names are present
         % The initial
-        [obj,filenames,file_directions,missing_files] = obj.find_initial_cuts(bragg_list,file_list)
+        [obj,filenames,file_directions,missing_files] = find_initial_cuts(obj,bragg_list,file_list)
         %
         % load initial cut files and extract initial parameters for multifit
         [obj,init_fg_params,init_bg_params,param_binds,emin_real,emax_real] = ...

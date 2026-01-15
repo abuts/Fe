@@ -51,8 +51,8 @@ disp('*** Fitting loop started ')
 disp('*************************************************************')
 
 %
-%for i=1:n_en
-parfor i=1:n_en
+for i=1:n_en
+%parfor i=1:n_en
     equal_cuts = {};
     for ii = 1:numel(file_directions)
         direction = file_directions{ii};
@@ -130,7 +130,7 @@ parfor i=1:n_en
     
     kk = kk.set_mc_points(10);
     %profile on;
-    kk = kk.set_options('listing',0,'fit_control_parameters',[1.e-2;20;1.e-4]);
+    kk = kk.set_options('listing',2,'fit_control_parameters',[1.e-2;20;1.e-4]);
     %kk = kk.set_options('listing',1,'fit_control_parameters',[1.e-4;20;1.e-4]);
     %profile on;
     [w1D_arr1_tf,fp_arr1]=kk.fit;

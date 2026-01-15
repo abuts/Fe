@@ -1,5 +1,5 @@
-function [all_cuts,all_proj,fc_final] = gen_spagetty_fcc(in_sqw,q1_range,q2_range,q3_range,dE_range,name_base,sqw_dir,plot_intermediate,plot_final)
-% build spaghetty cuts for fcc lattice and given sqw object
+function [all_cuts,all_proj,fc_final] = gen_spagetti_bcc(in_sqw,q1_range,q2_range,q3_range,dE_range,name_base,sqw_dir,plot_intermediate,plot_final)
+% build spaghetti cuts for fcc lattice and given sqw object
 %
 if nargin<8
     plot_intermediate = false;
