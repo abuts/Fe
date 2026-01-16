@@ -1,5 +1,5 @@
 function fit_res = fit_cuts_along_direction(...
-the_2Dcut,cut_en,dE_step,half_dE,use_mask,mask_par,cut_range_curvature)
+the_2Dcut,direction_name,cut_en,dE_step,half_dE,use_mask,mask_par,cut_range_curvature)
 %FIT_CUTS_ALONG_DIRECTION fits high symmetry 2D cut privided as input 
 % by dividing it into multiple smaller cuts and fitting each of them
 % with single J Heisenbergh model broadened by DHSO function.
@@ -12,7 +12,7 @@ if use_mask
 else
     pref = 'range';    
 end
-res_name = sprintf("En_cut_2D%s_dir%s_dE%d.mat",pref,dir_name,2*half_dE);
+res_name = sprintf("En_cut_2D%s_dir%s_dE%d.mat",pref,direction_name,2*half_dE);
 if isfile(res_name)
     ld = load(res_name);
     fit_res = plot_result(ld.fit_res);

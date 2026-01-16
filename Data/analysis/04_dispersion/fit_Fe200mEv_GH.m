@@ -15,17 +15,17 @@ dir_name  = "GH";
 dE_step = 2; %original energy transfer step data were binned to. No point in going finer
 half_dE = 4; % half width of data binning
 cut_en = 30:2:158;
-use_mask = false;
+use_mask = true;
 % Mask algorithm masks appropriate part of sqw cut to allow binning within
 % whole cut range and avoid phonons
 % mask parameters:
 % masking done with sinus:
-mask_par = {40, ... Amplitde,
-    pi,...  %phase range in selected direction
+mask_par = {41, ... Amplitde,
+    pi/2,...  %phase range in selected direction
     10};    % baseline calculate sinus from
 % if cut is performed using cut ranges, this is parabolic approximation of
 % the range
 cut_range_curvature = 2600; % GP = 9000
 the_2Dcut = all_cuts(dir_name);
 fit_res = fit_cuts_along_direction(...
-    the_2Dcut,cut_en,dE_step,half_dE,use_mask,mask_par,cut_range_curvature);
+    the_2Dcut,dir_name,cut_en,dE_step,half_dE,use_mask,mask_par,cut_range_curvature);

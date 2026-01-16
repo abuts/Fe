@@ -28,4 +28,4 @@ mask_par = {40, ... Amplitde,
 cut_range_curvature = 9000 ; %GH= 2600 GP = 9000
 the_2Dcut = all_cuts(dir_name);
 fit_res = fit_cuts_along_direction(...
-    the_2Dcut,cut_en,dE_step,half_dE,use_mask,mask_par,cut_range_curvature);
+    the_2Dcut,dir_name,cut_en,dE_step,half_dE,use_mask,mask_par,cut_range_curvature);
