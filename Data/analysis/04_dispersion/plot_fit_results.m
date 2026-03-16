@@ -1,9 +1,9 @@
 
 if ~exist('fit_res_map_S','var')
     files = containers.Map('KeyType','char','ValueType','any');
-    files('GH') = {'En_cut_2Dmask_dirGH_dE8.mat','En_cut_1Drange_dirGH_dE8.mat','\n'};
-    files('GN') = {'En_cut_2Dmask_dirGN_dE8.mat','\n'};
-    files('GP') = {'En_cut_2Drange_dirGP_dE8.mat'};
+    files('GH') = {'En_cut200_2Drange_dirGH_dE8.mat','En_cut400_2Drange_dirGH_dE8.mat','En_cut200_2Dmask_dirGH_dE8.mat','\n'};
+    files('GN') = {'En_cut200_2Dmask_dirGN_dE8.mat','En_cut400_2Dmask_dirGN_dE8.mat ','\n'};
+    files('GP') = {'En_cut200_2Drange_dirGP_dE8.mat','En_cut400_2Drange_dirGP_dE8.mat'};
 
     fit_res_map_S = containers.Map('KeyType','char','ValueType','any');
     fit_res_map_gamma = containers.Map('KeyType','char','ValueType','any');
@@ -34,12 +34,12 @@ inp_files = [inp_files{:}];
 title = {''}; n_cell = 1;
 for i=1:numel(inp_files)
     file = inp_files{i};
-    if strcmp(file,'\n')        
+    if strcmp(file,'\n')
         n_cell = n_cell+1;
         title{n_cell} = '';
     else
         file = strrep(file,'.mat',';');
-        file = strrep(file,'_','\_');        
+        file = strrep(file,'_','\_');
         title{n_cell} = [title{n_cell},file];
     end
 end
@@ -53,12 +53,26 @@ colors = containers.Map({'GH','GN','GP'},{'r','g','b'});
 keys = res_map.keys;
 nk = numel(keys);
 plot_h = cell(1,nk);
+gp = genieplot.instance();
 for i = 1:nk
     dir = keys{i};
     acolor(colors(dir));
     res= res_map(dir);
+    %ic = 0;
+    gp.line_widths = 2;
+    %for j = 1:numel(res)
     [~,axh,plots] = pd([res{:}]);
     plot_h{i} = plots(1);
+    % if isempty(res{j}); continue; end
+    % [~,axh,plots] = pd([res{j}]);
+    %
+    % if ic == 0
+    %     plot_h{i} = plots(1);
+    %     ic = ic+1;
+    %     gp.line_widths = 0.5;
+    % end
+
+    %end
 end
 legend([plot_h{:}],keys)
 tit = axh.Title;

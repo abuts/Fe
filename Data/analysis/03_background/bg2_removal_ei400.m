@@ -6,7 +6,7 @@ root_dir = fileparts(fileparts(fileparts(mfilename("fullpath"))));
 sqw_dir=fullfile(root_dir,'sqw','sqw2024');
 
 data_src400 =fullfile(sqw_dir,'Fe_ei401_align.sqw');
-target = fullfile(sqw_dir,'Fe_ei401_noBg_4D_reducedBZ_FF_corr_filt_remove.sqw');
+target = fullfile(sqw_dir,'Fe_ei400_all_bg_4D_reducedBZ_no_ff_filt_remove.sqw');
 if ~exist("src400","var") || ~isa(src400,'sqw')
     src400 = sqw(data_src400);
 end
@@ -70,10 +70,29 @@ plot(w2noBg);lz 0 100; keep_figure
 q1_range = [0,0.005,1];
 q2_range = [-0.1,0.1];
 q3_range = [-0.1,0.1];
-dE_range = [-10,2,350];
+dE_range = [-10,4,390];
 
-[all_cuts,all_proj] = gen_spagetty_fcc(sqw400_no_bg,q1_range,q2_range,q3_range,dE_range, ...
-    'ei400_noBg_FF_ignored',sqw_dir,false,true);
+[~,name_base] = fileparts(target);
+cuts_file_name = ['all_cuts',name_base];
+cuts_file = [cuts_file_name,'.mat'];
+if isfile(cuts_file)
+    fprintf("*** loading resulting cuts from file: %s\n",cuts_file_name);    
+    load(cuts_file);
+    intensity= [0,1];
+    direction = all_cuts.keys;
+    fc_final=fig_spread();
+    for i=1:numel(direction)
+        out_obj = all_cuts(direction{i});
+        fh = plot(out_obj);  lz(intensity(1),intensity(2)); keep_figure; 
+        fc_final= fc_final.place_fig(fh);
+    end    
+else
+    [all_cuts,all_proj] = gen_spagetty_fcc(sqw400_no_bg,q1_range,q2_range,q3_range,dE_range, ...
+        name_base,sqw_dir,false,true);
+    fprintf("*** saving resulting cuts to file: %s\n",cuts_file_name);
+    save(cuts_file_name,"all_cuts","-v7.3");
+end
+
 %--------------------------------------------------------------------------
 %plot_unchanged_fcc(src400,all_proj,[-2,0.04,6],q2_range,q3_range,dE_range);
 %--------------------------------------------------------------------------

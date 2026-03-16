@@ -4,10 +4,15 @@ if ~exist("childa_sqw","var")
 end
 
 if ~exist("all_cuts_LDA","var")
-    all_cuts_LDA = spaghetty_cuts4DFT(childa_sqw,true);
+    if isfile('all_spaghetti_cuts_LDA.mat')
+        load('all_spaghetti_cuts_LDA.mat')
+    else
+        all_cuts_LDA = spaghetti_cuts4DFT(childa_sqw,true);
+        save('all_spaghetti_cuts_LDA.mat','all_cuts_LDA')
+    end
 end
 
-[calc_arr,labels] = gen_spaghetty_ds(all_cuts_LDA);
+[calc_arr,labels] = gen_spaghetti_ds(all_cuts_LDA);
 
 spaghetti_plot(calc_arr,'labels',labels);
 

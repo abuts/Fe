@@ -1,4 +1,4 @@
-if ~exist('all_cuts200mEv','var')
+if ~exist('all_cuts400mEv','var')
     ld = load('all_cutsFe_ei200_all_bg_4D_reducedBZ_no_ff.mat');
     all_cuts200mEv = ld.all_cuts;
 end
@@ -15,7 +15,7 @@ dir_name  = "GH";
 dE_step = 2; %original energy transfer step data were binned to. No point in going finer
 half_dE = 4; % half width of data binning
 cut_en = 30:2:158;
-use_mask = true;
+use_mask = false;
 % Mask algorithm masks appropriate part of sqw cut to allow binning within
 % whole cut range and avoid phonons
 % mask parameters:

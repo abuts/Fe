@@ -2,23 +2,18 @@ fileName = 'e:/SHARE/Fe/Data/DFT2025/01_10_2025/dataset2-nk50-conventional-29sep
 if ~exist("chigsgw_sqw","var")
     chigsgw_sqw = read_jerome_cube(fileName);
 end
-labels   = {' \Gamma','H','N',' \Gamma','P','N'};
+
 directions = {'GH','HN','NG','GP','PN'};
-
 if ~exist("all_cuts_GSGW","var")
-    all_cuts_GSGW = spaghetty_cuts4DFT(chigsgw_sqw,false);
+    if isfile('all_spaghetti_cuts_GSW.mat')
+        load('all_spaghetti_cuts_GSW.mat')
+    else 
+        all_cuts_GSGW = spaghetti_cuts4DFT(chigsgw_sqw,false);
+        save('all_spaghetti_cuts_GSW.mat','all_cuts_GSGW')        
+    end
 end
 
-calc_arr = repmat(IX_dataset_2d(),numel(directions),1);
-q_bg = zeros(3,numel(directions));
-for i=1:numel(calc_arr)
-    the_cut = all_cuts_GSGW(directions{i});
-    x = 0.5*(the_cut.p{1}(1:end-1)+the_cut.p{1}(2:end));
-    y = 0.5*(the_cut.p{2}(1:end-1)+the_cut.p{2}(2:end));    
-    ds =IX_dataset_2d(x-min(x),y,the_cut.s);
-    ds.title = [labels{i},labels{i+1}];
-    calc_arr(i) = ds;
-end
+[calc_arr,labels] = gen_spaghetti_ds(all_cuts_GSGW);
 
 spaghetti_plot(calc_arr,'labels',labels);
 

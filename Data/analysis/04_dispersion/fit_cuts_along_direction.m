@@ -1,18 +1,18 @@
 function fit_res = fit_cuts_along_direction(...
-the_2Dcut,direction_name,cut_en,dE_step,half_dE,use_mask,mask_par,cut_range_curvature)
-%FIT_CUTS_ALONG_DIRECTION fits high symmetry 2D cut privided as input 
+    the_2Dcut,direction_name,cut_en,dE_step,half_dE,use_mask,mask_par,cut_range_curvature)
+%FIT_CUTS_ALONG_DIRECTION fits high symmetry 2D cut privided as input
 % by dividing it into multiple smaller cuts and fitting each of them
 % with single J Heisenbergh model broadened by DHSO function.
-% 
-% Saves fitting results into mat file with special name. 
+%
+% Saves fitting results into mat file with special name.
 % if such file is present, loads and plots such file, does not do fitting
-% 
+%
 if use_mask
     pref = 'mask';
 else
-    pref = 'range';    
+    pref = 'range';
 end
-res_name = sprintf("En_cut_2D%s_dir%s_dE%d.mat",pref,direction_name,2*half_dE);
+res_name = sprintf("En_cut400_2D%s_dir%s_dE%d.mat",pref,direction_name,2*half_dE);
 if isfile(res_name)
     ld = load(res_name);
     fit_res = plot_result(ld.fit_res);
@@ -48,6 +48,7 @@ else
     Seff_err= zeros(1,N_points);
     J0arr   = zeros(1,N_points);
     J0_err   = zeros(1,N_points);
+    all_fit_par = cell(1,N_points);
     for i = 1:N_points
         en = cut_en(i);
         if use_mask
@@ -56,7 +57,7 @@ else
         else
             max_q = interp1(e_lim,q_par,en);
             w2 = cut(the_2Dcut,[0,0.02,max_q],[en-half_dE,dE_step,en+half_dE]);
-            w1 = cut(w2,[],[en-half_dE ,en+half_dE]);            
+            w1 = cut(w2,[],[en-half_dE ,en+half_dE]);
         end
         acolor k;
         plot(w1);
@@ -83,10 +84,11 @@ else
         J0_err(i) = abs(fit_par.sig(6));
 
         init_fg_params  = abs(fit_par.p);
+        all_fit_par{i} = fit_par;
     end
     en_bins = [cut_en-half_dE,cut_en(end)+half_dE];
     ax_x = IX_axis('Energy Transfer (meV)');
-    ax_s = IX_axis('Scattering amplitude','mbarn/(Sr*fmu)');
+    ax_s = IX_axis('Scattering amplitude','mbarn/(Sr*fmu*meV)');
     S_eff = IX_dataset_1d(en_bins,Seff,Seff_err);
     S_eff.x_axis = ax_x;
     S_eff.s_axis = ax_s;
@@ -102,8 +104,10 @@ else
     ax_s = IX_axis('J0','meV');
     J0_eff.s_axis = ax_s;
 
-    fit_res = struct("cut_range_curvature",cut_range_curvature, ...
-        "S",S_eff,"gamma",G_eff,"J0",J0_eff);
+    all_fit_par = [all_fit_par{:}];
+    fit_res = struct(...
+        "S",S_eff,"gamma",G_eff,"J0",J0_eff,...
+        'all_fit_par',all_fit_par);
     fit_res = plot_result(fit_res,res_name);
     save(res_name,'fit_res');
 end

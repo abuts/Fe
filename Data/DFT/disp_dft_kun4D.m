@@ -1,6 +1,6 @@
 function wdisp = disp_dft_kun4D(qh,qk,ql,en,varargin)
 % interpolate and expand numerical DFT data over whole q-dE space
-% using Chebyshev polinomial approximation
+% using Chebyshev polynomial approximation
 %
 % Use this function as model for Tobyfit or sqw_eval or func_eval
 % algorithms.
@@ -54,7 +54,7 @@ end
 
 qr = [qh,qk,ql];
 %
-% move all vectors into 0-1 quadrant where the interpolant is defined.
+% move all vectors into 0-1 quadrant where the interplant is defined.
 brav = fix(qr);
 brav = brav+sign(brav);
 brav = (brav-rem(brav,2));

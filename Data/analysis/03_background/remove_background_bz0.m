@@ -7,23 +7,26 @@ Q2 = q_coord(1,:).*q_coord(1,:)+q_coord(2,:).*q_coord(2,:)+q_coord(3,:).*q_coord
 keep = Q2<r2_ignore;   % foreground
 data = data(:,keep);
 q_coord = q_coord(:,keep);
-Q2      = Q2(keep);
+%Q2      = Q2(keep);
 if isempty(data)
     return;
 end
 %
-% % filter strange secondary reflections
-% filt_scale = 0.5*rlu;
-% q_filt = round(q_coord(1:2,:)./filt_scale(1)).*filt_scale(1);
-% r_filt2 = (0.07*filt_scale(1))^2;
-% %filter = (q_coord(1,:)-q_filt(1,:)).^2+(q_coord(2,:)-q_filt(2,:)).^2 < r_filt2;
-% %data(1:2,filter) = 0 ;
-% keep2 = (q_coord(1,:)-q_filt(1,:)).^2+(q_coord(2,:)-q_filt(2,:)).^2 >= r_filt2;
-% data = data(:,keep2);
-% if isempty(data)
-%     return;
-% end
-%q_coord = q_coord(:,keep2);
+% filter strange secondary reflections
+filt_scale = 0.5*rlu;
+q_filt = round(q_coord(1:2,:)./filt_scale(1)).*filt_scale(1);
+r_filt2 = (0.07*filt_scale(1))^2;
+%filter = (q_coord(1,:)-q_filt(1,:)).^2+(q_coord(2,:)-q_filt(2,:)).^2 < r_filt2;
+%data(1:2,filter) = 0 ;
+keep2 = (q_coord(1,:)-q_filt(1,:)).^2+(q_coord(2,:)-q_filt(2,:)).^2 >= r_filt2;
+
+q_coord = q_coord(:,keep2);
+if isempty(q_coord)
+    return;
+else
+    data = data(:,keep2);
+end
+
 %Calculate magnetic form factor
 %q2 = Q2(keep2)/(16*pi*pi);
 %q2 = Q2/(16*pi*pi);
@@ -55,7 +58,7 @@ data(1:3,:) = q_coord;
 % pix = PixelDataMemory();
 % pix = pix.set_raw_data(data);
 % [npix,s,~,~,~,cell_idx] = bg_obj.axes.bin_pixels(data(1:4,:),npix,s,e,pix);
-% 
+%
 % idx = 1:numel(npix);
 % compencate = s<0;
 % idx = idx(compencate);
@@ -73,7 +76,4 @@ data(1:3,:) = q_coord;
 % over_compensated = sig_var(1,:)<0;
 %sig_var(1,over_compensated) = 0;
 %sig_var(2,over_compensated) = 0;
-
-
-
 end
