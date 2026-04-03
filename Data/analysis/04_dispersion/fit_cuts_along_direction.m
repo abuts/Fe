@@ -1,5 +1,5 @@
 function fit_res = fit_cuts_along_direction(...
-    the_2Dcut,direction_name,cut_en,dE_step,half_dE,use_mask,mask_par,cut_range_curvature)
+    the_2Dcut,cut_name_base,direction_name,cut_en,dE_step,half_dE,use_mask,mask_par,cut_range_curvature)
 %FIT_CUTS_ALONG_DIRECTION fits high symmetry 2D cut privided as input
 % by dividing it into multiple smaller cuts and fitting each of them
 % with single J Heisenbergh model broadened by DHSO function.
@@ -12,7 +12,7 @@ if use_mask
 else
     pref = 'range';
 end
-res_name = sprintf("En_cut400_2D%s_dir%s_dE%d.mat",pref,direction_name,2*half_dE);
+res_name = sprintf("%s_2D%s_dir%s_dE%d.mat",cut_name_base,pref,direction_name,2*half_dE);
 if isfile(res_name)
     ld = load(res_name);
     fit_res = plot_result(ld.fit_res);
@@ -106,8 +106,10 @@ else
 
     all_fit_par = [all_fit_par{:}];
     fit_res = struct(...
+        "direction",direction_name,...
+        "cut_base",cut_name_base,...
         "S",S_eff,"gamma",G_eff,"J0",J0_eff,...
-        'all_fit_par',all_fit_par);
+        "all_fit_par",all_fit_par);
     fit_res = plot_result(fit_res,res_name);
     save(res_name,'fit_res');
 end
@@ -129,11 +131,17 @@ end
 function [q_par,e_lim] = qmax_cut(cut,ampl)
 % calculates parabola which runs lower then magnon dispersion but higher
 % then phonon dispersion signal
-q_par  = 0.5*(cut.data.p{1}(1:end-1)+cut.data.p{1}(2:end));
-qv_img = cut.data.proj.u'*q_par;
-qv_cc  = cut.data.proj.transform_pix_to_img(qv_img);
-q2_cc = sum(qv_cc.^2,1);
-e_lim = ampl*q2_cc;
+q_par  = 0.5*(cut.data.p{1}(1:end-1)+cut.data.p{1}(2:end));    
+if isinf(ampl)
+    e_lim = 0.5*(cut.data.p{2}(1:end-1)+cut.data.p{2}(2:end));    
+    q_par = repmat(max(q_par),size(e_lim));
+else
+
+    qv_img = cut.data.proj.u'*q_par;
+    qv_cc  = cut.data.proj.transform_pix_to_img(qv_img);    
+    q2_cc = sum(qv_cc.^2,1);
+    e_lim = ampl*q2_cc;
+end
 end
 function keep = gen_mask(cut,A,phase,shift)
 
