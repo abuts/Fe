@@ -1,5 +1,7 @@
+root_fld = fileparts(mfilename('fullpath'));
+data_fld = fullfile(root_fld,'sym4D_cutsAndFits');
 if ~exist('all_cuts400mEv','var')
-    ld = load('all_cutsFe_ei400_all_bg_4D_reducedBZ_no_ff_filt_remove.mat');
+    ld = load(fullfile(data_fld,'all_cutsFe_ei400_all_bg_4D_reducedBZ_no_ff_filt_remove.mat'));
     all_cuts400mEv = ld.all_cuts;
 end
 all_cuts = all_cuts400mEv;

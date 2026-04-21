@@ -1,5 +1,6 @@
-if ~exist('all_cuts400mEv','var')
-    ld = load('all_cutsFe_ei200_all_bg_4D_reducedBZ_no_ff.mat');
+if ~exist('all_cuts200mEv','var')
+    data_path = pwd;
+    ld = load(fullfile(data_path,'sym4D_cutsAndFits','all_cutsFe_ei200_all_bg_4D_reducedBZ_no_ff.mat'));
     all_cuts200mEv = ld.all_cuts;
 end
 all_cuts = all_cuts200mEv;
@@ -10,6 +11,7 @@ for key = string(all_cuts.keys)
     all_cuts(key) = all_cuts(key).set_instrument(mi);
     all_cuts(key) = all_cuts(key).set_sample(sample);
 end
+cut_name_base = 'En_cut200';
 dir_name  = "GH";
 
 dE_step = 2; %original energy transfer step data were binned to. No point in going finer
@@ -28,4 +30,4 @@ mask_par = {41, ... Amplitde,
 cut_range_curvature = 2600; % GP = 9000
 the_2Dcut = all_cuts(dir_name);
 fit_res = fit_cuts_along_direction(...
-    the_2Dcut,dir_name,cut_en,dE_step,half_dE,use_mask,mask_par,cut_range_curvature);
+    the_2Dcut,cut_name_base,dir_name,cut_en,dE_step,half_dE,use_mask,mask_par,cut_range_curvature);
