@@ -1,4 +1,4 @@
-function weight = sqw_iron (qh,qk,ql,en,par,hkl_proj)
+function weight = sqw_iron_with_phonons (qh,qk,ql,en,par,hkl_proj)
 % Spectral weight for domain averaged body centred cubic Heisenberg ferromagnet
 %
 %   >> weight = sqw_iron (qh,qk,ql,en,par,ion)
@@ -72,14 +72,29 @@ weight = (((4/3)*290.6)*idisp{1}) .* (dsho_over_eps (en, wdisp{1}, gamma) .* bos
 
 % Correct for magnetic form factor if requested
 if ff_correct
+    qm = max(qk);
+    if qm > 1.5
+        isel = 1;
+    else
+        isel = 2;        
+    end
     if isempty(ff_calc)
         mag_ff = MagneticIons('Fe0');
         ff_calc = mag_ff.get_fomFactor_fh();
     end
-    q_coord = hkl_proj(1).transform_hkl_to_pix([qh,qk,ql]');
+    q_coord = hkl_proj(isel).transform_hkl_to_pix([qh,qk,ql]');
     Q2 = (q_coord(1,:).^2+q_coord(2,:).^2+q_coord(3,:).^2)/(16*pi*pi);
     mff = ff_calc{1}(Q2).^2+ff_calc{2}(Q2).^2+ff_calc{3}(Q2).^2; % ff_calc{4} == 0
     weight = weight .* mff(:);
 
+    gammaP = abs(par(7));
+    A = abs(par(8));
+    H = abs(par(9));
+
+    wdispS = H*abs(sin(0.5*pi*(qk-hkl_proj(isel).offset(2))));
+    z = A.* (dsho_over_eps (en, wdispS(:), gammaP) .* bose_times_eps(en,T));
+    zer = wdispS(:) < 1.e-3 & abs(en) < 0.1;
+    z(zer) = 0;
+    weight =  weight + z;
 end
 

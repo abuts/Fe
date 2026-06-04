@@ -5,7 +5,7 @@ if ~exist('cuts2fit800','var')
     ld = load(fullfile(data_path,'multicuts_fit_dataGH_ei800meV.mat'));
     cuts2fit800 = ld.cuts2fit800;
 end
-cuts_list = cuts2fit800.cuts_list;
+cuts_list = cuts2fit800.cutsS_list;
 
 
 mi = maps_instrument(787,600,'S');
@@ -22,12 +22,12 @@ dir_name  = "GH";
 
 dE_step = 4; %original energy transfer step data were binned to. No point in going finer
 half_dE = 10; % half width of data binning
-cut_en = 60:10:400;
+cut_en = 80:10:390;
 %cut_en = 145;
 
 %cl= {cuts_list{3}};
 %cl = {w2_test_cut};
 fit_res_800 = fit_multicuts_along_direction(...
-    cuts_list,'En_cut800',dir_name,cut_en,dE_step,half_dE);
+    cuts_list,'FitEn_cut800_1DfSym',dir_name,cut_en,dE_step,half_dE);
     %cl,'En_cuts800',dir_name,cut_en,dE_step,half_dE);
 
