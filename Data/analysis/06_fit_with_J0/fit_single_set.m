@@ -13,6 +13,7 @@ sub_cuts = cell(1,n_samples);
 valid = true(1,n_samples);
 nplots = 0;
 bg_const = 0;
+use_fitted_bg_function =  iscell(init_bg_param);
 
 
 for j=1:n_samples
@@ -23,9 +24,11 @@ for j=1:n_samples
         nplots = nplots+1;
         cut_range = sub_cuts{j}.data.axes.get_cut_range;
         cut_range = cut_range{1};
-        %w0 = cut(sub_cuts{j},[cut_range(1),cut_range(3)],[en-half_dE ,en+half_dE],'-nopix');
-        w0 = cut(sub_cuts{j},[cut_range(1),cut_range(3)],'-nopix');
-        bg_const = bg_const+w0.s;
+        if ~use_fitted_bg_function
+            %w0 = cut(sub_cuts{j},[cut_range(1),cut_range(3)],[en-half_dE ,en+half_dE],'-nopix');
+            w0 = cut(sub_cuts{j},[cut_range(1),cut_range(3)],'-nopix');
+            bg_const = bg_const+w0.s;
+        end
     end
 end
 sub_cuts = sub_cuts(valid);
@@ -57,10 +60,16 @@ kk = tobyfit(sub_cuts{:});
 kk = kk.set_fun(@sqw_iron);
 kk = kk.set_pin({init_fg_params,hkl_proj});
 kk = kk.set_free(free_sw_param);
-kk = kk.set_bfun (@linear_bg1D); % set_bfun sets the background functions
+if use_fitted_bg_function 
+    kk = kk.set_bfun (@double_exp1D); % set_bfun sets the background functions    
+    kk = kk.set_bpin (bg_param);  % initial background constant and gradient    
+    kk = kk.set_bfree ([0,0,0,0]);    
+else    
+    kk = kk.set_bfun (@linear_bg1D); % set_bfun sets the background functions
 %kk = kk.set_bfun (@linear_bg2D); % set_bfun sets the background functions
-kk = kk.set_bpin (bg_param);  % initial background constant and gradient
-kk = kk.set_bfree ([1, 1]);
+    kk = kk.set_bpin (bg_param);  % initial background constant and gradient
+    kk = kk.set_bfree ([1, 0]);
+end
 %kk = kk.set_bfree ([1, 0, 1]);
 kk = kk.set_options('list',2);
 

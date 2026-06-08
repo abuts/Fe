@@ -24,6 +24,12 @@ else
 
     %init_fg_params = [coffect_ff,T,gamma,Seff, gap, J0, I, gm, H, J4];
     %init_fg_params0 = [correct_ff,T,gamma,Seff0, gap, J0, 5.5,24, 40.,0]; % ei=200; iron with phonons
+    if iscell(the_2Dcuts{end})
+        init_bg_par = the_2Dcuts{end};
+        the_2Dcuts  = the_2Dcuts(1:end-1);
+    else
+        init_bg_par = [];
+    end
     init_fg_params0 = [correct_ff,T,gamma,Seff0, gap, J0, 0,  0,  0,  0];
     init_fg_params = init_fg_params0;
 
@@ -38,7 +44,7 @@ else
     % for Ei=200
     %init_bg_par = [0,0];
     % for all other Ei
-    init_bg_par = [];
+
     for i = 1:N_points
         en = cut_en(i);
         fprintf('******************************\n')
