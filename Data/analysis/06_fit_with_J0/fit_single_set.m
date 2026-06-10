@@ -15,7 +15,7 @@ nplots = 0;
 bg_const = 0;
 use_fitted_bg_function =  iscell(init_bg_param);
 
-
+clObj = set_temporary_config_options('hor_config','log_level',-1);
 for j=1:n_samples
     %sub_cuts{j} = cut(the_2Dcuts{j},0.02,[en-half_dE ,dE_step,en+half_dE]);
     sub_cuts{j} = cut(the_2Dcuts{j},0.02,[en-half_dE ,en+half_dE]);
@@ -31,6 +31,7 @@ for j=1:n_samples
         end
     end
 end
+clear clObj;
 sub_cuts = sub_cuts(valid);
 if (numel(sub_cuts) == 0)
     fit_obj = [];
@@ -38,6 +39,7 @@ if (numel(sub_cuts) == 0)
     figa = [];
     return
 end
+n_samples = numel(sub_cuts);
 hkl_proj =cellfun(@(sobj)sobj.data.proj,sub_cuts);
 %hkl_proj = sub_cuts{2}.data.proj; %get the projection, used for converting from hkl to Crystal Cartesian
 %hkl_proj.offset = [0,0,0];
@@ -60,10 +62,16 @@ kk = tobyfit(sub_cuts{:});
 kk = kk.set_fun(@sqw_iron);
 kk = kk.set_pin({init_fg_params,hkl_proj});
 kk = kk.set_free(free_sw_param);
-if use_fitted_bg_function 
+if use_fitted_bg_function
+    for ii=1:n_samples 
+        bg_par  = bg_param{ii};
+        bg_par(end+1) = en;
+        bg_param{ii} = bg_par;
+    end
+    
     kk = kk.set_bfun (@double_exp1D); % set_bfun sets the background functions    
     kk = kk.set_bpin (bg_param);  % initial background constant and gradient    
-    kk = kk.set_bfree ([0,0,0,0]);    
+    kk = kk.set_bfree ([0,0,0,0,0]);    
 else    
     kk = kk.set_bfun (@linear_bg1D); % set_bfun sets the background functions
 %kk = kk.set_bfun (@linear_bg2D); % set_bfun sets the background functions

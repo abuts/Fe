@@ -12,6 +12,15 @@ w2_000b = cut(src200,line_proj('offset',[0,0,1]),[-0.1,0.1],0.04,0.04,[45,55]);
 plot(w2_000b);lz 0 4; keep_figure;
 
 hc.log_level = ll;
+% despite it is the result, its nince to have it from the start to
+% have existing masks ready
+data_path = 'e:\SHARE\Fe\Data\analysis\06_fit_with_J0\sym4D_cutsAndFits';
+fit_cuts_file = 'multicuts_fit_dataGH_ei200meV.mat';
+fit_cuts_file  = fullfile(data_path,fit_cuts_file);
+if ~exist('cuts2fit200','var')
+    ld = load(fit_cuts_file);
+    cuts2fit200 = ld.cuts2fit200;
+end
 %%
 hc.log_level = -2;
 
@@ -207,10 +216,6 @@ tf = func_eval(w1t,@double_exp1D,fp.p);
 acolor r
 pd(tf); keep_figure %[output:2e2b7786] %[output:7419e9af]
 %%
-data_path = 'e:\SHARE\Fe\Data\analysis\06_fit_with_J0\sym4D_cutsAndFits';
-
-fit_cuts_file = 'multicuts_fit_dataGH_ei200meV.mat';
-fit_cuts_file  = fullfile(data_path,fit_cuts_file);
 cuts2fit200.cuts_list = {w2_200m,w2_200a,w2_200b};
 cuts2fit200.cutsS_list =  {w2_200mfit,w2_200afit,w2_200bfit};
 

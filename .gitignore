@@ -6,6 +6,7 @@
 *.mat
 *.sqw
 *.tmp
+*.mlx
 ~*
 
 /Data/DFT/*.gz
