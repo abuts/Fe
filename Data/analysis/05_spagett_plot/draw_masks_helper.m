@@ -1,4 +1,4 @@
-function [ws,all_cuts]= draw_masks_helper(fh,all_cuts,mask_field_name)
+function [ws,all_cuts]= draw_masks_helper(fh,all_cuts,mask_field_name,varargin)
 % Helper function to draw number of masks on an image used by a
 % directional cut script (mlx)
 % Inputs:
@@ -17,7 +17,16 @@ function [ws,all_cuts]= draw_masks_helper(fh,all_cuts,mask_field_name)
 %              control to user to draw appropriate masks.
 %              Existing masks are still applied to workspace
 ws= src(fh);
-n_msks = numel(all_cuts.(mask_field_name));
+if isfield(all_cuts,all_cuts)
+    n_msks = numel(all_cuts.(mask_field_name));
+else
+    if nargin>3
+        n_msks = varargin{1};
+    else
+        n_msks = 1;
+    end
+    all_cuts.(mask_field_name) = cell(1,n_msks);
+end
 
 mask_vert = cell(1,n_msks);
 empty_mask = false(1,n_msks);

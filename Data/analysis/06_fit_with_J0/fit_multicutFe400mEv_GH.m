@@ -25,13 +25,13 @@ cut_en = 50:10:260;
 
 %cl= {cuts_list{3}};
 %cl = {w2_test_cut};
-% if isfield(cuts2fit400,'bg_par_010off000')
-%     bg_par = {cuts2fit400.bg_par_010off000.p,cuts2fit400.bg_par_010off100.p,cuts2fit400.bg_par_010off200.p};
-%     cuts_list{end+1} = bg_par;
-% end
+if isfield(cuts2fit400,'bg_par_010off000')
+    bg_par = {cuts2fit400.bg_par_010off000.p,cuts2fit400.bg_par_010off100.p,cuts2fit400.bg_par_010off200.p};
+    cuts_list{end+1} = bg_par;
+end
 
 fit_res_400fix_bg = fit_multicuts_along_direction(...
-    cuts_list,'FitEn_cut400_1D_fit_bg',dir_name,cut_en,dE_step,half_dE);
+    cuts_list,'FitEn_cut400_2D_fit_bg',dir_name,cut_en,dE_step,half_dE);
     %cl,'En_cuts800',dir_name,cut_en,dE_step,half_dE);
 beep
 beep

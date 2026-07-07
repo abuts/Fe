@@ -83,17 +83,19 @@ else
     S_eff = IX_dataset_1d(en_bins,Seff,Seff_err);
     S_eff.x_axis = ax_x;
     S_eff.s_axis = ax_s;
-    plot(S_eff)
+    plot(S_eff); keep_figure;
 
     G_eff = IX_dataset_1d(en_bins,gam,gam_err);
-    ax_s = IX_axis('DSHO broadening','meV{^-1}');
+    ax_s = IX_axis('DSHO broadening','meV');
     G_eff.x_axis = ax_x;
     G_eff.s_axis = ax_s;
+    plot(G_eff); keep_figure;
 
     J0_eff = IX_dataset_1d(en_bins,J0arr,J0_err);
     J0_eff.x_axis = ax_x;
     ax_s = IX_axis('J0','meV');
     J0_eff.s_axis = ax_s;
+    plot(J0_eff);keep_figure
 
     all_fit_par = [all_fit_par{:}];
     fit_res = struct(...
