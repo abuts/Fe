@@ -3,7 +3,7 @@ if ~exist('all_cuts800mEv','var')
     all_cuts800mEv = ld.all_cuts;
 end
 all_cuts = all_cuts800mEv;
-mi = maps_instrument(200,600,'S');
+mi = maps_instrument(787,600,'S');
 sample=IX_sample(true,[1,0,0],[0,1,0],'cuboid',[0.04,0.03,0.02]);
 
 for key = string(all_cuts.keys)

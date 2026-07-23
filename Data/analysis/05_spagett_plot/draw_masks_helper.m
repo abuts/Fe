@@ -6,6 +6,9 @@ function [ws,all_cuts]= draw_masks_helper(fh,all_cuts,mask_field_name,varargin)
 % all_cuts  -- structure, containing mask information
 % mask_field_name
 %           -- the name of the field, which contains mask information
+% Optional: 
+% n_masks   -- number of masks to draw if mask_field_name is absent in
+%              all_cuts structure
 % Returns:
 % ws        -- masked workspace
 % all_cuts  -- the structure with fireld containing (modified) mask
