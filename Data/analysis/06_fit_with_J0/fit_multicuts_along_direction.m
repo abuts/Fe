@@ -17,9 +17,9 @@ else
     correct_ff = 1;
     T   = 8;
     gap = 0;    %
-    gamma = 10;
+    gamma = 200;
     Seff0 =1;      %1.4489;
-    J0 = 20;
+    J0 = 40;
 
 
     %init_fg_params = [coffect_ff,T,gamma,Seff, gap, J0, I, gm, H, J4];
@@ -44,6 +44,7 @@ else
     % for Ei=200
     %init_bg_par = [0,0];
     % for all other Ei
+    valid_fits = true(1,N_points);
 
     for i = 1:N_points
         en = cut_en(i);
@@ -53,14 +54,8 @@ else
 
         [fit_obj,fit_par]=fit_single_set(the_2Dcuts,en,half_dE,dE_step,init_fg_params,init_bg_par,true);
         if isempty(fit_obj)
-            gam = gam(1:i-1);
-            gam_err = gam_err(1:i-1);
-            Seff = Seff(1:i-1);
-            Seff_err = Seff_err(1:i-1);
-            J0arr  = J0arr(1:i-1);
-            J0_err = J0_err(1:i-1);
-            all_fit_par = all_fit_par(1:i-1);
-            break
+            valid_fits(i) = false;
+            continue;
         end
         if fit_par.p(3)<0 || fit_par.p(6) < 0
             init_fg_params  = init_fg_params0;
@@ -77,7 +72,24 @@ else
         %init_fg_params  = abs(fit_par.p);
         all_fit_par{i} = fit_par;
     end
-    en_bins = cut_en;
+    gam = gam(valid_fits);
+    gam_err = gam_err(valid_fits);
+    Seff = Seff(valid_fits);
+    Seff_err = Seff_err(valid_fits);
+    J0arr  = J0arr(valid_fits);
+    J0_err = J0_err(valid_fits);
+    all_fit_par = all_fit_par(valid_fits);
+    
+
+    [en_bins,idx] = sort(cut_en);
+    gam = gam(idx);
+    gam_err =  gam_err(idx);
+    Seff    = Seff(idx);
+    Seff_err = Seff_err(idx);
+    J0arr  = J0arr(idx);
+    J0_err = J0_err(idx);
+    all_fit_par = all_fit_par(idx);    
+
     ax_x = IX_axis('Energy Transfer (meV)');
     ax_s = IX_axis('Scattering amplitude','mbarn/(Sr*fmu*meV)');
     S_eff = IX_dataset_1d(en_bins,Seff,Seff_err);

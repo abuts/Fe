@@ -1,4 +1,4 @@
-function [fit_obj,fit_par,figa,figb]=fit_single_set(the_2Dcuts,en,half_dE,dE_step,init_fg_params,init_bg_param,do_fit)
+function [fit_obj,fit_par,figa,figb]=fit_single_set(the_2Dcuts,en,half_dE,dE_step,init_fg_param,init_bg_param,do_fit)
 
 %with phonons here:
 %init_fg_params = [coffect_ff,T,gamma,Seff, gap, J0, gf, af, J3, J4];
@@ -72,7 +72,7 @@ kk = tobyfit(sub_cuts{:});
 
 %kk = kk.set_fun(@sqw_iron_with_phonons);
 kk = kk.set_fun(@sqw_iron);
-kk = kk.set_pin({init_fg_params,hkl_proj});
+kk = kk.set_pin({init_fg_param,hkl_proj});
 kk = kk.set_free(free_sw_param);
 if use_fitted_bg_function
     if use_2D_cuts

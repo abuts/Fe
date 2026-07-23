@@ -17,7 +17,7 @@ function [ws,all_cuts]= draw_masks_helper(fh,all_cuts,mask_field_name,varargin)
 %              control to user to draw appropriate masks.
 %              Existing masks are still applied to workspace
 ws= src(fh);
-if isfield(all_cuts,all_cuts)
+if isfield(all_cuts,mask_field_name)
     n_msks = numel(all_cuts.(mask_field_name));
 else
     if nargin>3
