@@ -1,9 +1,12 @@
-function [fit_obj,fit_par,figa,figb]=refit_singleset_picks(the_2Dcuts,en,half_dE,dE_step,fit_par_in,do_fit)
+function [fit_obj,fit_par,figa,figb]=refit_singleset_picks(the_2Dcuts,en,half_dE,dE_step,fit_par_in,peak_scale,do_fit,batch)
 
 init_fg_param = fit_par_in.p;
 init_bg_param = fit_par_in.bp;
 if ~iscell(init_bg_param)
     init_bg_param  = {init_bg_param};
+end
+if ~exist('batch','var')
+    batch = false;
 end
 %with phonons here:
 %init_fg_params = [coffect_ff,T,gamma,Seff, gap, J0, gf, af, J3, J4];
@@ -33,7 +36,9 @@ for j=1:n_samples
         nplots = nplots+1;
     end
 end
-clear clObj;
+if ~batch
+    clear clObj;
+end
 sub_cuts = sub_cuts(valid);
 if (numel(sub_cuts) == 0)
     fit_obj = [];
@@ -74,7 +79,6 @@ end
 n_chunks_tot = sum(chunks_nums);
 chunks = cell(1,n_chunks_tot);
 
-peak_scale = 0.02;
 n_ch = 1;
 ignored_chunks_provided = isfield(fit_par_in,'valid_chunks');
 if ignored_chunks_provided
@@ -82,6 +86,7 @@ if ignored_chunks_provided
 else
     ch_valid = true(1,n_chunks_tot);
 end
+fit_chunks = cell(1,sum(chunks_nums));
 for i=1:n_samples
     obj_i = fit_obj{i};
     x_min = obj_i.data.p{1}(1);
@@ -104,20 +109,24 @@ for i=1:n_samples
         end
         one_peak_ch = IX_dataset_1d(dnd_obj);
         x_ax = 0.5*(one_peak_ch.x(1:end-1)+one_peak_ch.x(2:end));
-        [M,I] = max(one_peak_ch.signal);
-        peak_lim = M*peak_scale;
-        keep = one_peak_ch.signal>=peak_lim;
+        [~,I] = max(one_peak_ch.signal);
+        MIM = min_max(one_peak_ch.signal');
+        peak_lim = (MIM(2)-MIM(1))*peak_scale;
+        keep = one_peak_ch.signal>=(peak_lim+MIM(1));
         pii = find(keep);
         mii = min_max(pii');
         if mii(1)==I || mii(2) == I % max out of range
-                ch_valid(n_ch) = false;
-                n_ch = n_ch + 1;
-                x_min = x_max; %
-                continue;            
+            ch_valid(n_ch) = false;
+            n_ch = n_ch + 1;
+            x_min = x_max; %
+            continue;
         end
         x_contr = x_ax(keep);
         cut_range = min_max(x_contr);
         chunks{n_ch} = cut(sub_cuts{i},[cut_range(1),0.02,cut_range(2)],[]);
+        if ~do_fit
+            fit_chunks{n_ch} = cut(obj_i,[cut_range(1),0.02,cut_range(2)],[en-half_dE,en+half_dE],'-nopix');
+        end
 
         n_ch = n_ch + 1; % Increment the chunk index
         x_min = x_max; % Update x_min for the next chunk
@@ -130,9 +139,18 @@ if ~any(ch_valid)
     fit_obj = [];
     fit_par = [];
     figa = [];
-    return    
+    return
 end
+
 chunks = chunks(ch_valid);
+if ~do_fit
+    fit_obj = fit_chunks;
+    fit_par = [];
+    [figa,figb]=plot_result(sub_cuts,fit_obj,chunks_nums,[],false,[en-half_dE ,en+half_dE]);
+    return
+end
+
+
 bg_param  = cell(1,n_chunks_tot);
 init_bg_param = init_bg_param(valid);
 n_ch = 1;
@@ -159,7 +177,11 @@ bfree = zeros(1,numel(bg_param{1}));
 %bfree(1:2)=1;
 kk = kk.set_bfree (bfree);
 
-kk = kk.set_options('list',2);
+if batch
+    kk = kk.set_options('list',0);
+else
+    kk = kk.set_options('list',2);
+end
 
 if do_fit
     [fit_obj,fit_par] = kk.fit();
@@ -177,18 +199,37 @@ if nargout<3
     return;
 end
 
+[figa,figb]=plot_result(sub_cuts,fit_obj,chunks_nums,fit_par,eval_sw,[en-half_dE ,en+half_dE]);
+
+end
+
+function [figa,figb] =plot_result(sub_cuts,fit_obj,chunks_nums,fit_par,eval_sw,en_range)
+if isempty(fit_par)
+    eval_sw = false;
+end
+sel = logical([0,0, 1,1,0,1,0,0, 0,0]);
 colour={'k','k','r','r','g','g'};
 gp = genieplot.instance();
 n_ch = 1;
+nplots = numel(sub_cuts);
 for j=1:nplots
     gp.line_widths = 0.5;
     if sub_cuts{j}.dimensions() == 2
-        w1 = cut(sub_cuts{j},[],[en-half_dE ,en+half_dE],'-nopix');
+        w1 = cut(sub_cuts{j},[],en_range,'-nopix');
     else
         w1  = sub_cuts{j};
     end
     acolor(colour{2*j-1});
     if j == 1
+        if ~isempty(fit_par)
+            cont = fit_par.p(sel);
+            sig =  fit_par.sig(sel);
+            title = sprintf("S=%4.2g±%4.2g; J0=%4.2g±%4.2g; gamma=%g±%g", ...
+                cont(2),sig(2),cont(3),sig(3),cont(1),sig(1));
+        else
+            title = '';
+        end
+        w1.axes.title = title;
         plot(w1);liny;
     else
         pd(w1);
@@ -196,8 +237,8 @@ for j=1:nplots
     acolor(colour{2*j});
     gp.line_widths = 2;
     for ii=1:chunks_nums(j)
-        if sub_cuts{j}.dimensions() == 2
-            w1fit = cut(fit_obj{n_ch},[],[en-half_dE ,en+half_dE],'-nopix');
+        if fit_obj{n_ch}.dimensions() == 2
+            w1fit = cut(fit_obj{n_ch},[],en_range,'-nopix');
         else
             w1fit = fit_obj{n_ch};
         end
@@ -207,12 +248,13 @@ for j=1:nplots
     end
 end
 figa = gcf;
+
 if eval_sw
     keep_figure;
     for j=1:nplots
         gp.line_widths = 0.5;
         if sub_cuts{j}.dimensions() == 2
-            w1 = cut(sub_cuts{j},[],[en-half_dE ,en+half_dE]);
+            w1 = cut(sub_cuts{j},[],en_range);
         else
             w1  = sub_cuts{j};
         end
@@ -225,6 +267,7 @@ if eval_sw
         acolor(colour{2*j});
         gp.line_widths = 2;
         w1fit = sqw_eval(w1,@sqw_iron,{fit_par.p,w1.data.proj});
+        w1fit.data.axes.title = '2D fit evaluated on 1D dataset';
         pl(w1fit);
         drawnow;
     end
@@ -232,5 +275,6 @@ if eval_sw
 else
     figb = [];
 end
+
 
 end
