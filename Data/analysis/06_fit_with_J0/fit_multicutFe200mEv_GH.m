@@ -7,7 +7,8 @@ if ~exist('cuts2fit200','var')
     cuts2fit200 = ld.cuts2fit200;
 end
 %cuts_list = cuts2fit200.cutsS_list();
-cuts_list = {cuts2fit200.cut200_200sel};
+%cuts_list = {cuts2fit200.cut200_200sel};
+cuts_list = {cuts2fit200.cut110_sel};
 
 mi = maps_instrument(200,600,'S');
 sample=IX_sample(true,[1,0,0],[0,1,0],'cuboid',[0.04,0.03,0.02]);
@@ -21,7 +22,8 @@ dir_name  = "GH";
 
 dE_step = 2; %original energy transfer step data were binned to. No point in going finer
 half_dE = 10; % half width of data binning
-cut_en = 30:10:150;
+%cut_en = 30:10:150;
+cut_en = 30:10:120;
 %cut_en = 145;
 
 %cl= {cuts_list{3}};
@@ -30,13 +32,13 @@ if isfield(cuts2fit200,'bg_par_010off000')
     if numel(cuts_list) == 3
         bg_par = {cuts2fit200.bg_par_010off000.p,cuts2fit200.bg_par_010off100.p,cuts2fit200.bg_par_010off200.p};
     else
-        bg_par = {cuts2fit200.bg_par_010off200.p};
+        bg_par = {cuts2fit200.bg_par_010off100.p};
     end
     cuts_list{end+1} = bg_par;
 
 end
 fit_res_200fix_bg = fit_multicuts_along_direction(...
-    cuts_list,'FitEn_cut200ref200_2D_fit_bgSer',dir_name,cut_en,dE_step,half_dE);
+    cuts_list,'FitEn_cut200ref110_2D_fit_bgSer',dir_name,cut_en,dE_step,half_dE);
     %cl,'En_cuts800',dir_name,cut_en,dE_step,half_dE);
 beep
 beep

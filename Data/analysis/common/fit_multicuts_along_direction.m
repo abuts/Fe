@@ -19,7 +19,7 @@ else
     gap = 0;    %
     gamma = 20;
     Seff0 =1;      %1.4489;
-    J0 = 20;
+    J0 = 30;
 
 
     %init_fg_params = [coffect_ff,T,gamma,Seff, gap, J0, I, gm, H, J4];

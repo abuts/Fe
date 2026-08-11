@@ -31,7 +31,8 @@ end
 ds1 = log(ds1);ds1.signal = real(ds1.signal);
 ds2 = log(ds2);ds2.signal = real(ds2.signal);
 acolor k
-plot(ds1);liny; pd(ds2);
+plot(ds1);liny;
+pd(ds2);
 fc = multifit(ds1,ds2);
 fc = fc.set_fun(@double_exp1Dlog);
 fc = fc.set_pin([ds1.signal(1),init_bg_par(:)']);
