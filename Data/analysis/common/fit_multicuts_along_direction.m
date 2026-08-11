@@ -34,12 +34,6 @@ else
     init_fg_params = init_fg_params0;
 
     N_points = numel(cut_en);
-    gam = zeros(1,N_points);
-    gam_err = zeros(1,N_points);
-    Seff    = zeros(1,N_points);
-    Seff_err= zeros(1,N_points);
-    J0arr   = zeros(1,N_points);
-    J0_err   = zeros(1,N_points);
     all_fit_par = cell(1,N_points);
     % for Ei=200
     %init_bg_par = [0,0];
@@ -62,52 +56,17 @@ else
         else
             init_fg_params = fit_par.p;
         end
-        gam(i) = abs(fit_par.p(3));
-        gam_err(i) = abs(fit_par.sig(3));
-        Seff(i) = fit_par.p(4);
-        Seff_err(i) = abs(fit_par.sig(4));
-        J0arr(i) = fit_par.p(6);
-        J0_err(i) = abs(fit_par.sig(6));
 
         %init_fg_params  = abs(fit_par.p);
         all_fit_par{i} = fit_par;
     end
-    gam = gam(valid_fits);
-    gam_err = gam_err(valid_fits);
-    Seff = Seff(valid_fits);
-    Seff_err = Seff_err(valid_fits);
-    J0arr  = J0arr(valid_fits);
-    J0_err = J0_err(valid_fits);
     all_fit_par = all_fit_par(valid_fits);
     
 
-    [en_bins,idx] = sort(cut_en);
-    gam = gam(idx);
-    gam_err =  gam_err(idx);
-    Seff    = Seff(idx);
-    Seff_err = Seff_err(idx);
-    J0arr  = J0arr(idx);
-    J0_err = J0_err(idx);
-    all_fit_par = all_fit_par(idx);    
-
-    ax_x = IX_axis('Energy Transfer (meV)');
-    ax_s = IX_axis('Scattering amplitude','mbarn/(Sr*fmu*meV)');
-    S_eff = IX_dataset_1d(en_bins,Seff,Seff_err);
-    S_eff.x_axis = ax_x;
-    S_eff.s_axis = ax_s;
-    plot(S_eff); keep_figure;
-
-    G_eff = IX_dataset_1d(en_bins,gam,gam_err);
-    ax_s = IX_axis('DSHO broadening','meV');
-    G_eff.x_axis = ax_x;
-    G_eff.s_axis = ax_s;
+    [S_eff,J0_eff,G_eff] = extract_fit_par(all_fit_par );
+    plot(S_eff); keep_figure;    
+    plot(J0_eff);keep_figure 
     plot(G_eff); keep_figure;
-
-    J0_eff = IX_dataset_1d(en_bins,J0arr,J0_err);
-    J0_eff.x_axis = ax_x;
-    ax_s = IX_axis('J0','meV');
-    J0_eff.s_axis = ax_s;
-    plot(J0_eff);keep_figure
 
     all_fit_par = [all_fit_par{:}];
     fit_res = struct(...

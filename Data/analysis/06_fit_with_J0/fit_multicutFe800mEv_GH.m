@@ -37,6 +37,6 @@ end
 %cl= {cuts_list{3}};
 %cl = {w2_test_cut};
 fit_res_800fix_bg = fit_multicuts_along_direction(...
-    cuts_list,'FitEn_cut800br100_2D_fit_bgS',dir_name,cut_en,dE_step,half_dE);
+    cuts_list,'FitEn_cut800ref110_2D_dirGH_fix_bg_slope',dir_name,cut_en,dE_step,half_dE);
     %cl,'En_cuts800',dir_name,cut_en,dE_step,half_dE);
 

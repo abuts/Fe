@@ -1,0 +1,15 @@
+acolor b; plot(fit_resEi800.S)
+acolor b; pd(fit_resEi800.Speak)
+acolor r; pd(fit_resEi200.S)
+acolor r; pd(fit_resEi200.Speak)
+ly 0 2
+acolor b; plot(fit_resEi800.J0)
+acolor b; pd(fit_resEi800.J0peak)
+acolor r; pd(fit_resEi200.J0)
+acolor r; pd(fit_resEi200.J0peak)
+ly 10 50
+acolor b; plot(fit_resEi800.gamma)
+acolor b; pd(fit_resEi800.gamma_peak)
+acolor r; pd(fit_resEi200.gamma)
+acolor r; pd(fit_resEi200.gamma_peak)
+ly 0 200
