@@ -1,4 +1,4 @@
-function [fit_obj,fit_par,figa,figb]=refit_singleset_picks(the_2Dcuts,en,half_dE,dE_step,fit_par_in,peak_scale,do_fit,batch)
+function [fit_obj,fit_par,figa,figb]=refit_singleset_picks(the_2Dcuts,en_range,fit_par_in,peak_scale,do_fit,batch)
 
 init_fg_param = fit_par_in.p;
 init_bg_param = fit_par_in.bp;
@@ -14,7 +14,7 @@ free_sw_param  =  [0          0, 1   ,1   , 0,    1, 0,   0, 0,  0];
 
 %init_fg_params = [coffect_ff,T,gamma,Seff, gap, J0, J1, J2, J3, J4];
 %free_sw_param  =  [0          0, 1   ,1   , 0,    1, 0,   0,  0,  0];
-if nargout == 4
+if nargout >= 4
     eval_sw = true;
 else
     eval_sw = false;
@@ -29,7 +29,7 @@ nplots = 0;
 clObj = set_temporary_config_options('hor_config','log_level',-1);
 init_fg_param(1)=0;
 for j=1:n_samples
-    sub_cuts{j} = cut(the_2Dcuts{j},0.02,[en-half_dE ,dE_step,en+half_dE]);
+    sub_cuts{j} = cut(the_2Dcuts{j},0.02,en_range);
 
     valid(j) = sub_cuts{j}.num_pixels>0;
     if valid(j)
@@ -93,7 +93,7 @@ for i=1:n_samples
     n_valid_ch = 0;
     for j=1:chunks_nums(i)
         x_max = x_min+1;
-        dnd_obj = cut(obj_i,[x_min,0.02,x_max],[en-half_dE,en+half_dE],'-nopix');
+        dnd_obj = cut(obj_i,[x_min,0.02,x_max],[en_range(1),en_range(3)],'-nopix');
 
         if ignored_chunks_provided && ~ch_valid(n_ch)
             n_ch = n_ch + 1;
@@ -125,7 +125,7 @@ for i=1:n_samples
         cut_range = min_max(x_contr);
         chunks{n_ch} = cut(sub_cuts{i},[cut_range(1),0.02,cut_range(2)],[]);
         if ~do_fit
-            fit_chunks{n_ch} = cut(obj_i,[cut_range(1),0.02,cut_range(2)],[en-half_dE,en+half_dE],'-nopix');
+            fit_chunks{n_ch} = cut(obj_i,[cut_range(1),0.02,cut_range(2)],[en_range(1),en_range(3)],'-nopix');
         end
 
         n_ch = n_ch + 1; % Increment the chunk index
@@ -146,7 +146,7 @@ chunks = chunks(ch_valid);
 if ~do_fit
     fit_obj = fit_chunks;
     fit_par = [];
-    [figa,figb]=plot_result(sub_cuts,fit_obj,chunks_nums,[],false,[en-half_dE ,en+half_dE]);
+    [figa,figb]=plot_result(sub_cuts,fit_obj,chunks_nums,[],false,[en_range(1),en_range(3)]);
     return
 end
 
@@ -174,7 +174,7 @@ kk = kk.set_bfun (@double_exp2D); % set_bfun sets the background functions
 
 kk = kk.set_bpin (bg_param);  % initial background constant and gradient
 bfree = zeros(1,numel(bg_param{1}));
-%bfree(1:2)=1;
+bfree(1)=1; % allow modifying bg intensity
 kk = kk.set_bfree (bfree);
 
 if batch
@@ -189,8 +189,8 @@ else
     [fit_obj,fit_par] = kk.simulate();
 end
 fit_par.valid_chunks = ch_valid;
-fit_par.en = en;
-fit_par.en_range = [en-half_dE ,dE_step,en+half_dE];
+fit_par.en = 0.5*(en_range(1)+en_range(3));
+fit_par.en_range = en_range;
 if ~iscell(fit_obj)
     fit_obj = {fit_obj};
 end
@@ -199,7 +199,7 @@ if nargout<3
     return;
 end
 
-[figa,figb]=plot_result(sub_cuts,fit_obj,chunks_nums,fit_par,eval_sw,[en-half_dE ,en+half_dE]);
+[figa,figb]=plot_result(sub_cuts,fit_obj,chunks_nums,fit_par,eval_sw,[en_range(1),en_range(3)]);
 
 end
 
