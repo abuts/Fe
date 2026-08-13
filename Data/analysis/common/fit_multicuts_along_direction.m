@@ -1,4 +1,4 @@
-function fit_res = fit_multicuts_along_direction(...
+function [fit_res,res_name] = fit_multicuts_along_direction(...
     the_2Dcuts,cut_name_base,direction_name,cut_en,dE_step,half_dE)
 %FIT_CUTS_ALONG_DIRECTION fits high symmetry 2D cut privided as input
 % by dividing it into multiple smaller cuts and fitting each of them
@@ -62,8 +62,7 @@ else
     end
     all_fit_par = all_fit_par(valid_fits);
     
-
-    [S_eff,J0_eff,G_eff] = extract_fit_par(all_fit_par );
+    [S_eff,G_eff,J0_eff] = extract_fit_par(all_fit_par );
     plot(S_eff); keep_figure;    
     plot(J0_eff);keep_figure 
     plot(G_eff); keep_figure;
@@ -75,6 +74,6 @@ else
         "S",S_eff,"gamma",G_eff,"J0",J0_eff,...
         "all_fit_par",all_fit_par);
     fit_res = plot_j0_fit_result(fit_res,res_name);
-    save(res_name,'fit_res');
+
 end
 end

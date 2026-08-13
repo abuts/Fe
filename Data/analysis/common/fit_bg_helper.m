@@ -1,4 +1,4 @@
-function cuts2fit = fit_bg_helper(cuts2fit,source_ds,cut1_proj,cut2_proj,bg_Qrange,bg_en_range,init_bg_par,field_name,other_range)
+function cuts2fit = fit_bg_helper(cuts2fit,source_ds,cut1_proj,cut2_proj,bg_Qrange,bg_en_range,init_bg_par,field_name,other_range,plot_fit)
 % helper in fitting background parameters in specific Q-range for specific
 % Q-dE direction if background is defined by two 1D exponential funtions
 % in energy transfer direction
@@ -21,6 +21,9 @@ function cuts2fit = fit_bg_helper(cuts2fit,source_ds,cut1_proj,cut2_proj,bg_Qran
 %              dataset. other_range defines ranges used to take 2-D Q-dE
 %              cut from whole 4-D dataset.
 %
+if ~exist('plot_fit','var')
+    plot_fit = true;
+end
 if iscell(bg_Qrange)
     ds1 = IX_dataset_1d(cut(source_ds,cut1_proj,bg_Qrange{1},other_range{1:2},bg_en_range,'-nopix'));
     ds2 = IX_dataset_1d(cut(source_ds,cut2_proj,bg_Qrange{2},other_range{1:2},bg_en_range,'-nopix'));
@@ -30,20 +33,28 @@ else
 end
 ds1 = log(ds1);ds1.signal = real(ds1.signal);
 ds2 = log(ds2);ds2.signal = real(ds2.signal);
-acolor k
-plot(ds1);liny;
-pd(ds2);
+if plot_fit
+    acolor k
+    plot(ds1);liny;
+    pd(ds2);
+end
 fc = multifit(ds1,ds2);
 fc = fc.set_fun(@double_exp1Dlog);
 fc = fc.set_pin([ds1.signal(1),init_bg_par(:)']);
 fc = fc.set_free([1,1,1,1]);
 [fd,fp] = fc.fit();
-acolor g
-pl(fd{1});
-acolor b
-pl(fd{2});keep_figure;
+
 %fp.p(3) = abs(fp.p(3));
 cuts2fit.(field_name) = fp;
+
+if plot_fit
+    acolor g
+    pl(fd{1});
+    acolor b
+    pl(fd{2});keep_figure;
+else
+    return;
+end
 
 if iscell(bg_Qrange)
     w1t= cut(source_ds,cut1_proj,bg_Qrange{1},other_range{:},'-nopix');

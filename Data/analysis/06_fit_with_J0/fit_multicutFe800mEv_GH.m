@@ -36,7 +36,9 @@ if isfield(cuts2fit800,'bg_par_010off100')
 end
 %cl= {cuts_list{3}};
 %cl = {w2_test_cut};
-fit_res_800fix_bg = fit_multicuts_along_direction(...
-    cuts_list,'FitEn_cut800ref110_2D_dirGH_fix_bg_slope',dir_name,cut_en,dE_step,half_dE);
+[fit_res_800fix_bg,res_name] = fit_multicuts_along_direction(...
+    cuts_list,'FitEn_cut800ref110_2D',dir_name,cut_en,dE_step,half_dE);
     %cl,'En_cuts800',dir_name,cut_en,dE_step,half_dE);
+
+save(res_name,'fit_resEi800');
 

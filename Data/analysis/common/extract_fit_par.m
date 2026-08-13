@@ -1,14 +1,33 @@
-function [S_eff,J0_eff,G_eff] = extract_fit_par(all_fit_par)
+function [varargout] = extract_fit_par(all_fit_par,idx)
+%[S_eff,J0_eff,G_eff] = extract_fit_par(all_fit_par,idx)
 %Extract global fit parameters from fit data to plot
-%   Detailed explanation goes here
+%
+if ~exist('idx','var')
+    idx = [4,3,6]; % gamma,S and J0;
+    captions = {...
+        'Scattering amplitude';...
+        'DSHO broadening';...
+        'J0'...
+        };
+    units = {...
+        'mbarn/(Sr*fmu*meV)';...
+        'meV';...
+        'meV'...
+        };
+else
+    ii = 1:numel(idx);
+    captions = arrayfun(@(x)(''),ii,UniformOutput=false);
+    units = arrayfun(@(x)(''),ii,UniformOutput=false);
+end
 n_elem  = numel(all_fit_par);
 cut_en  = zeros(1,n_elem);
-gam     = zeros(1,n_elem);
-gam_err = zeros(1,n_elem);
-Seff    = zeros(1,n_elem);
-Seff_err= zeros(1,n_elem);
-J0arr   = zeros(1,n_elem);
-J0_err  = zeros(1,n_elem);
+
+sig = cell(1,numel(idx));
+err = cell(1,numel(idx));
+for j=1:numel(idx)
+    sig{j} = zeros(1,n_elem);
+    err{j} = zeros(1,n_elem);
+end
 
 
 for i=1:n_elem
@@ -19,41 +38,26 @@ for i=1:n_elem
         fit_par = all_fit_par(i);
     end
     cut_en(i) = fit_par.en;
-    gam(i) = abs(fit_par.p(3));
-    gam_err(i) = abs(fit_par.sig(3));
-    Seff(i) = fit_par.p(4);
-    Seff_err(i) = abs(fit_par.sig(4));
-    J0arr(i) = fit_par.p(6);
-    J0_err(i) = abs(fit_par.sig(6));
+    for j=1:numel(idx)
+        sig{j}(i) = abs(fit_par.p(idx(j)));
+        err{j}(i) = abs(fit_par.sig(idx(j)));
+    end
 end
 
 
-[en_bins,idx] = sort(cut_en);
-gam = gam(idx);
-gam_err =  gam_err(idx);
-Seff    = Seff(idx);
-Seff_err = Seff_err(idx);
-J0arr  = J0arr(idx);
-J0_err = J0_err(idx);
+[en_bins,ord_idx] = sort(cut_en);
+for j=1:numel(idx)
+    sig{j} = sig{j}(ord_idx);
+    err{j} = err{j}(ord_idx);
+end
 
 
 ax_x = IX_axis('Energy Transfer (meV)');
-ax_s = IX_axis('Scattering amplitude','mbarn/(Sr*fmu*meV)');
-S_eff = IX_dataset_1d(en_bins,Seff,Seff_err);
-S_eff.x_axis = ax_x;
-S_eff.s_axis = ax_s;
-
-
-G_eff = IX_dataset_1d(en_bins,gam,gam_err);
-ax_s = IX_axis('DSHO broadening','meV');
-G_eff.x_axis = ax_x;
-G_eff.s_axis = ax_s;
-
-
-J0_eff = IX_dataset_1d(en_bins,J0arr,J0_err);
-J0_eff.x_axis = ax_x;
-ax_s = IX_axis('J0','meV');
-J0_eff.s_axis = ax_s;
-
-
+for i=1:nargout
+    ax_s = IX_axis(captions{i},units{i});
+    res = IX_dataset_1d(en_bins,sig{i},err{i});
+    res.x_axis = ax_x;
+    res.s_axis = ax_s;
+    varargout{i} = res;
+end
 end

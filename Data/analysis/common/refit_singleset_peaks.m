@@ -1,4 +1,4 @@
-function [fit_obj,fit_par,figa,figb]=refit_singleset_picks(the_2Dcuts,en_range,fit_par_in,peak_scale,do_fit,batch)
+function [fit_obj,fit_par,figa,figb]=refit_singleset_peaks(the_2Dcuts,en_range,fit_par_in,peak_scale,do_fit,batch)
 
 init_fg_param = fit_par_in.p;
 init_bg_param = fit_par_in.bp;
@@ -139,6 +139,7 @@ if ~any(ch_valid)
     fit_obj = [];
     fit_par = [];
     figa = [];
+    figb = [];
     return
 end
 
@@ -174,7 +175,7 @@ kk = kk.set_bfun (@double_exp2D); % set_bfun sets the background functions
 
 kk = kk.set_bpin (bg_param);  % initial background constant and gradient
 bfree = zeros(1,numel(bg_param{1}));
-bfree(1)=1; % allow modifying bg intensity
+bfree(1:2)=1; % allow modifying bg intensity and slope?
 kk = kk.set_bfree (bfree);
 
 if batch
@@ -272,6 +273,7 @@ if eval_sw
         drawnow;
     end
     figb = gcf;
+    keep_figure;
 else
     figb = [];
 end
