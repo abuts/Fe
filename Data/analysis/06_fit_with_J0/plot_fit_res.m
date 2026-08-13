@@ -1,7 +1,7 @@
-%bs_fld = {'S','J0','gamma'};
-%plot_field_name = {'Speak','J0peak','gamma_peak'};
-bs_fld = {'Speak','J0peak','gamma_peak'};
-plot_field_name = {'Speak_varsl','J0peak_varsl','gamma_peak_varsl'};
+bs_fld = {'S','J0','gamma'};
+plot_field_name = {'Speak','J0peak','gamma_peak'};
+%bs_fld = {'Speak','J0peak','gamma_peak'};
+%plot_field_name = {'Speak_varsl','J0peak_varsl','gamma_peak_varsl'};
 
 
 
