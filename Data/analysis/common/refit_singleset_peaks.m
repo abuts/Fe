@@ -27,7 +27,7 @@ valid = true(1,n_samples);
 nplots = 0;
 
 clObj = set_temporary_config_options('hor_config','log_level',-1);
-init_fg_param(1)=0;
+%init_fg_param(1)=0;
 for j=1:n_samples
     sub_cuts{j} = cut(the_2Dcuts{j},0.02,en_range);
 
@@ -145,9 +145,8 @@ end
 
 chunks = chunks(ch_valid);
 if ~do_fit
-    fit_obj = fit_chunks;
-    fit_par = [];
-    [figa,figb]=plot_result(sub_cuts,fit_obj,chunks_nums,[],false,[en_range(1),en_range(3)]);
+    fit_obj = fit_chunks(ch_valid);
+    [figa,figb]=plot_result(sub_cuts,fit_obj,chunks_nums,fit_par,false,[en_range(1),en_range(3)]);
     return
 end
 
@@ -175,7 +174,7 @@ kk = kk.set_bfun (@double_exp2D); % set_bfun sets the background functions
 
 kk = kk.set_bpin (bg_param);  % initial background constant and gradient
 bfree = zeros(1,numel(bg_param{1}));
-bfree(1:2)=1; % allow modifying bg intensity and slope?
+bfree(1)=1; % allow modifying bg intensity and slope?
 kk = kk.set_bfree (bfree);
 
 if batch

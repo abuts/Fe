@@ -1,5 +1,5 @@
 function [fit_res,res_name] = fit_multicuts_along_direction(...
-    the_2Dcuts,cut_name_base,direction_name,cut_en,dE_step,half_dE)
+    the_2Dcuts,cut_name_base,direction_name,cut_en,dE_step,half_dE,do_fit)
 %FIT_CUTS_ALONG_DIRECTION fits high symmetry 2D cut privided as input
 % by dividing it into multiple smaller cuts and fitting each of them
 % with single J Heisenbergh model broadened by DHSO function.
@@ -7,6 +7,7 @@ function [fit_res,res_name] = fit_multicuts_along_direction(...
 % Saves fitting results into mat file with special name.
 % if such file is present, loads and plots such file, does not do fitting
 %
+if ~e
 
 res_name = sprintf("%s_dir%s_dE%d_fix_bg_slope.mat",cut_name_base,direction_name,2*half_dE);
 if isfile(res_name)
