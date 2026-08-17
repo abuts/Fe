@@ -27,7 +27,9 @@ valid = true(1,n_samples);
 nplots = 0;
 
 clObj = set_temporary_config_options('hor_config','log_level',-1);
-%init_fg_param(1)=0;
+if do_fit
+    init_fg_param(1)=0;
+end
 for j=1:n_samples
     sub_cuts{j} = cut(the_2Dcuts{j},0.02,en_range);
 
@@ -169,11 +171,13 @@ kk = kk.set_fun(@sqw_iron);
 kk = kk.set_pin({init_fg_param,hkl_proj});
 kk = kk.set_free(free_sw_param);
 
-
+%kk = kk.set_global_background();
 kk = kk.set_bfun (@double_exp2D); % set_bfun sets the background functions
-
 kk = kk.set_bpin (bg_param);  % initial background constant and gradient
 bfree = zeros(1,numel(bg_param{1}));
+kk = kk.set_bbind({[1,2],[1,1],1},{[1,4],[1,3],1},{[1,5],[1,4],1});
+
+
 bfree(1)=1; % allow modifying bg intensity and slope?
 kk = kk.set_bfree (bfree);
 
