@@ -17,7 +17,8 @@ if ~exist('cuts2fit800','var')
     cuts2fit800 = ld.cuts2fit800;
 end
 cuts2fit = cuts2fit800;
-fit_res = fit_resEi800;
+%fit_res = fit_resEi800;
+fit_res  = ld.fit_res;
 mi = maps_instrument(787,600,'S');
 sample=IX_sample(true,[1,0,0],[0,1,0],'cuboid',[0.04,0.03,0.02]);
 cl = {cuts2fit800.cut2fit010_dir100} %[output:15e6db94]
@@ -31,16 +32,8 @@ end
 cuts2fit800.cut2fit010_dir100 = cl{1};
 the2Dcuts =cl;
 %%
-acolor b
-Sgnl = fit_res.S;
-pd(Sgnl);ly 0.5 2;liny;keep_figure %[output:5b5d0ff1]
-J0 = fit_res.J0;
-pd(J0);ly 20 50;keep_figure %[output:0cc9d144]
-% incorrect units fixture
-G = fit_res.gamma;
-G.s_axis.units = 'meV';
-fit_res.gamma = G;
-pd(G);ly 0 200;keep_figure %[output:25e0da0a]
+[Sgnl,J0,G] = plot_SJG_results(fit_res,'b',{'S','J0','gamma'},{[0.5,2],[20,60],[0,200]});
+%[output:5b5d0ff1] %[output:0cc9d144] %[output:25e0da0a]
 
 dE = min(Sgnl.x(2:end)-Sgnl.x(1:end-1));
 e_min = Sgnl.x(1);

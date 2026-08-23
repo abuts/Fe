@@ -7,7 +7,7 @@ if nargin > 1
     fit_res.J0.title =['J0, ',file_name];
 end
 
-% plot(fit_res.S); keep_figure;
-% plot(fit_res.gamma); keep_figure;
-% plot(fit_res.J0); keep_figure;
+plot(fit_res.S); ly 0 2;keep_figure;
+plot(fit_res.J0); ly 0 60; keep_figure;
+plot(fit_res.gamma);ly 0 200; keep_figure;
 end

@@ -11,6 +11,7 @@ end
 %with phonons here:
 %init_fg_params = [coffect_ff,T,gamma,Seff, gap, J0, gf, af, J3, J4];
 free_sw_param  =  [0          0, 1   ,1   , 0,    1, 0,   0, 0,  0];
+%free_sw_param  =  [0          0, 1   ,1   , 0,    0, 0,   0, 0,  0];
 
 %init_fg_params = [coffect_ff,T,gamma,Seff, gap, J0, J1, J2, J3, J4];
 %free_sw_param  =  [0          0, 1   ,1   , 0,    1, 0,   0,  0,  0];
@@ -81,7 +82,6 @@ end
 n_chunks_tot = sum(chunks_nums);
 chunks = cell(1,n_chunks_tot);
 
-n_ch = 1;
 ignored_chunks_provided = isfield(fit_par_in,'valid_chunks');
 if ignored_chunks_provided
     ch_valid  = fit_par_in.valid_chunks;
@@ -89,6 +89,9 @@ else
     ch_valid = true(1,n_chunks_tot);
 end
 fit_chunks = cell(1,sum(chunks_nums));
+
+n_ch = 1;
+ch4bg = cell(1,n_chunks_tot);
 for i=1:n_samples
     obj_i = fit_obj{i};
     x_min = obj_i.data.p{1}(1);
@@ -96,6 +99,7 @@ for i=1:n_samples
     for j=1:chunks_nums(i)
         x_max = x_min+1;
         dnd_obj = cut(obj_i,[x_min,0.02,x_max],[en_range(1),en_range(3)],'-nopix');
+        ch4bg{n_ch}= cut(sub_cuts{i},[x_min,x_max],[],'-nopix');
 
         if ignored_chunks_provided && ~ch_valid(n_ch)
             n_ch = n_ch + 1;
@@ -146,19 +150,48 @@ if ~any(ch_valid)
 end
 
 chunks = chunks(ch_valid);
-if ~do_fit
-    fit_obj = fit_chunks(ch_valid);
-    [figa,figb]=plot_result(sub_cuts,fit_obj,chunks_nums,fit_par,false,[en_range(1),en_range(3)]);
-    return
-end
+ch4bg  = ch4bg(ch_valid);
+%if ~do_fit
+%    fit_obj = fit_chunks(ch_valid);
+%    [figa,figb]=plot_result(sub_cuts,fit_obj,chunks_nums,fit_par,false,[en_range(1),en_range(3)]);
+%    return
+%end
 
 
 bg_param  = cell(1,n_chunks_tot);
-init_bg_param = init_bg_param(valid);
+% init_bg_param = init_bg_param(valid);
+% n_ch = 1;
+% for i=1:n_samples
+%     for j=1:chunks_nums(i)
+%         ibg = init_bg_param{i};
+%         if numel(ibg)==4
+%             ibg(end+1) = 0;
+%         end
+%         bg_param{n_ch} = ibg;
+%         n_ch = n_ch+1;
+%     end
+% end
+debug_bg = true;
 n_ch = 1;
 for i=1:n_samples
     for j=1:chunks_nums(i)
-        bg_param{n_ch} = init_bg_param{i};
+        %theCh = chunks{n_ch};
+        %range = min_max(theCh.p{1});
+
+        ds1 = IX_dataset_1d(ch4bg{n_ch});
+        ds1 = log(ds1);ds1.signal = real(ds1.signal);
+        fc = multifit(ds1);
+        fc = fc.set_fun(@linear_bg1D);
+        fc = fc.set_pin([ds1.signal(1),0]);
+        fc = fc.set_free([1,1]);
+        [fd,fp] = fc.fit();
+        if debug_bg
+            plot(ds1);
+            acolor r;
+            pl(fd);
+        end
+        bg_param{n_ch} = [exp(fp.p(1)),fp.p(2),0];
+
         n_ch = n_ch+1;
     end
 end
@@ -172,10 +205,10 @@ kk = kk.set_pin({init_fg_param,hkl_proj});
 kk = kk.set_free(free_sw_param);
 
 %kk = kk.set_global_background();
-kk = kk.set_bfun (@double_exp2D); % set_bfun sets the background functions
+kk = kk.set_bfun (@single_exp2D); % set_bfun sets the background functions
 kk = kk.set_bpin (bg_param);  % initial background constant and gradient
 bfree = zeros(1,numel(bg_param{1}));
-kk = kk.set_bbind({[1,2],[1,1],1},{[1,4],[1,3],1},{[1,5],[1,4],1});
+%kk = kk.set_bbind({[1,2],[1,1],1},{[1,4],[1,3],1},{[1,5],[1,4],1});
 
 
 bfree(1)=1; % allow modifying bg intensity and slope?

@@ -37,7 +37,7 @@ if refit_data
 else
     peak_fit_par = fit_par0;
 end
-[Sg,Gamma,J0] = extract_fit_par(peak_fit_par);
+[Sg,J0,Gamma] = extract_fit_par(peak_fit_par);
 
 if input_is_struct
     fit_res.peak_fit_par = [peak_fit_par{:}];
