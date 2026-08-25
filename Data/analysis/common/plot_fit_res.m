@@ -10,7 +10,7 @@ for j=1:nplots
     if sub_cuts{j}.dimensions() == 2
         w1 = cut(sub_cuts{j},[],[en_range(1),en_range(3)],'-nopix');
     else
-        w1  = sub_cuts{j};
+        w1  = sub_cuts{j}.data;
     end
     if ~isempty(fit_par)
         cont = fit_par.p(sel);

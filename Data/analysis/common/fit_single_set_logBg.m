@@ -1,4 +1,4 @@
-function [fit_obj,fit_par,figa,figb]=fit_single_set_logBg(the_2Dcuts,en_range,init_fg_param,do_fit)
+function [fit_obj,fit_par,figa,figb]=fit_single_set_logBg(the_2Dcuts,n_dim2fit,en_range,init_fg_param,do_fit)
 
 %with phonons here:
 %init_fg_params = [coffect_ff,T,gamma,Seff, gap, J0, gf, af, J3, J4];
@@ -12,6 +12,7 @@ else
     eval_sw = false;
 end
 batch = true;
+fit_bg = false;
 
 n_samples = numel(the_2Dcuts);
 sub_cuts = cell(1,n_samples);
@@ -25,26 +26,41 @@ clObj = set_temporary_config_options('hor_config','log_level',-1);
 init_bg_param = cell(1,n_samples);
 debug_bg = true;
 for j=1:n_samples
-    sub_cuts{j} = cut(the_2Dcuts{j},0.02,en_range);
+    if n_dim2fit == 2
+        range2 = en_range;
+    else
+        range2  = [en_range(1),en_range(3)];
+    end
+    sub_cuts{j} = cut(the_2Dcuts{j},0.02,range2 );
     valid(j) = sub_cuts{j}.num_pixels>0;
     if valid(j)
         nplots = nplots+1;
         cut_range = sub_cuts{j}.data.axes.get_cut_range;
         cut_range = cut_range{1};
-        w1 = cut(sub_cuts{j},[cut_range(1),cut_range(3)],[],'-nopix');
-        ds1 = IX_dataset_1d(w1);
-        ds1 = log(ds1);ds1.signal = real(ds1.signal);
-        fc = multifit(ds1);
-        fc = fc.set_fun(@linear_bg1D);
-        fc = fc.set_pin([ds1.signal(1),0]);
-        fc = fc.set_free([1,1]);
-        [fd,fp] = fc.fit();
-        if debug_bg
-            plot(ds1);
-            acolor r;
-            pl(fd);
+        if fit_bg
+            w1 = cut(sub_cuts{j},[cut_range(1),cut_range(3)],[],'-nopix');
+            ds1 = IX_dataset_1d(w1);
+            ds1 = log(ds1);ds1.signal = real(ds1.signal);
+            fc = multifit(ds1);
+            fc = fc.set_fun(@linear_bg1D);
+            fc = fc.set_pin([ds1.signal(1),0]);
+            fc = fc.set_free([1,1]);
+            [fd,fp] = fc.fit();
+            if debug_bg
+                plot(ds1);
+                acolor r;
+                pl(fd);
+            end
+            init_bg_param{j} = [exp(fp.p(1)),fp.p(2),0];
+        else
+            if n_dim2fit == 2
+                w0 = cut(sub_cuts{j},[cut_range(1),cut_range(3)],[en_range(1),en_range(3)],'-nopix');
+            else
+                w0 = cut(sub_cuts{j},[cut_range(1),cut_range(3)],'-nopix');
+            end
+            init_bg_param{j} = [w0.s,0,0];
         end
-        init_bg_param{j} = [exp(fp.p(1)),fp.p(2),0];
+
     end
 end
 clear clObj;
@@ -68,8 +84,11 @@ kk = kk.set_fun(@sqw_iron);
 kk = kk.set_pin({init_fg_param,hkl_proj});
 kk = kk.set_free(free_sw_param);
 
-
-kk = kk.set_bfun (@single_exp2D); % set_bfun sets the background functions
+if n_dim2fit == 2
+    kk = kk.set_bfun (@single_exp2D); % set_bfun sets the background functions
+else
+    kk = kk.set_bfun (@linear_bg1D); % set_bfun sets the background functions    
+end
 bg_param = init_bg_param(valid);
 kk = kk.set_bpin (bg_param);  % initial background constant and gradient
 bfree = zeros(1,numel(bg_param{1}));

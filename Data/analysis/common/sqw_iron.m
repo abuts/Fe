@@ -78,7 +78,8 @@ if ff_correct
     end
     q_coord = hkl_proj(1).transform_hkl_to_pix([qh,qk,ql]');
     Q2 = (q_coord(1,:).^2+q_coord(2,:).^2+q_coord(3,:).^2)/(16*pi*pi);
-    mff = ff_calc{1}(Q2).^2+ff_calc{2}(Q2).^2+ff_calc{3}(Q2).^2; % ff_calc{4} == 0
+    %mff = ff_calc{1}(Q2).^2+ff_calc{2}(Q2).^2+ff_calc{3}(Q2).^2; % ff_calc{4} == 0
+    mff = ff_calc{1}(Q2).^2; % ff_calc{4} == 0
     weight = weight .* mff(:);
 
 end

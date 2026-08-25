@@ -1,5 +1,5 @@
 function [fit_res,res_name] = fit_multicuts_along_direction(...
-    the_2Dcuts,cut_name_base,direction_name,cut_en,dE_step,half_dE,do_fit)
+    the_2Dcuts,cut_name_base,direction_name,n_dim2fit,cut_en,dE_step,half_dE,do_fit)
 %FIT_CUTS_ALONG_DIRECTION fits high symmetry 2D cut provided as input
 % by dividing it into multiple smaller cuts and fitting each of them
 % with single J Heisenberg model broadened by DHSO function.
@@ -64,7 +64,7 @@ for i = 1:N_points
         init_fg_params = fit_res.all_fit_par(i).p;
     end
     %[fit_obj,fit_par]=fit_single_set(the_2Dcuts,en,half_dE,dE_step,init_fg_params,init_bg_par,true);
-    [fit_obj,fit_par,figa,figb]=fit_single_set_logBg(the_2Dcuts,en_range,init_fg_params,do_fit);
+    [fit_obj,fit_par,figa,figb]=fit_single_set_logBg(the_2Dcuts,n_dim2fit,en_range,init_fg_params,do_fit);
     if isempty(fit_obj)
         valid_fits(i) = false;
         continue;
