@@ -12,7 +12,7 @@ else
     eval_sw = false;
 end
 batch = true;
-fit_bg = false;
+fit_bg = true;
 
 n_samples = numel(the_2Dcuts);
 sub_cuts = cell(1,n_samples);
@@ -69,6 +69,7 @@ if (numel(sub_cuts) == 0)
     fit_obj = [];
     fit_par = [];
     figa = [];
+    figb = [];    
     return
 end
 n_samples = numel(sub_cuts);

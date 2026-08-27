@@ -15,6 +15,7 @@ res_name = sprintf("%s_dir%s_dE%d_fitSlopeDE.mat",cut_name_base,direction_name,2
 ref_name = res_name;
 %wf =20;
 %ref_name = sprintf("%s_dir%s_dE%d_fitSlopeDE.mat",cut_name_base,direction_name,wf);
+%ref_name = 'e:\SHARE\Fe\Data\analysis\06_fit_with_J0\sym4D_cutsAndFits\EnFit_Ei400off200_2D_dirGP_dE20_fitSlopeDE.mat';
 replot_fit_res = false;
 if isfile(ref_name)
     ld = load(ref_name);
