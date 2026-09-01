@@ -1,0 +1,61 @@
+VALIDATION REPORT
+Profile: Processes
+Scheduler Type: Local Machine Processes
+
+Stage: Cluster connection test (parcluster)
+Status: Passed
+Start Time: July 9, 2026 at 7:11:16 PM British Summer Time
+Finish Time: July 9, 2026 at 7:11:20 PM British Summer Time
+Running Duration: 0 min 4 sec
+Description:
+Details:
+Error Report:
+Command Line Output:
+Debug Log:
+
+Stage: Job test (createJob)
+Status: Passed
+Start Time: July 9, 2026 at 7:11:20 PM British Summer Time
+Finish Time: July 9, 2026 at 7:11:53 PM British Summer Time
+Running Duration: 0 min 33 sec
+Description:
+Details:
+Error Report:
+Command Line Output:
+Debug Log:
+
+Stage: SPMD job test (createCommunicatingJob)
+Status: Passed
+Start Time: July 9, 2026 at 7:12:24 PM British Summer Time
+Finish Time: July 9, 2026 at 7:12:41 PM British Summer Time
+Running Duration: 0 min 17 sec
+Description: Job ran with 10 workers.
+Details:
+Error Report:
+Command Line Output:
+Debug Log:
+
+Stage: Pool job test (createCommunicatingJob)
+Status: Passed
+Start Time: July 9, 2026 at 7:12:47 PM British Summer Time
+Finish Time: July 9, 2026 at 7:13:06 PM British Summer Time
+Running Duration: 0 min 19 sec
+Description: Job ran with 10 workers.
+Details:
+Error Report:
+Command Line Output:
+Debug Log:
+
+Stage: Parallel pool test (parpool)
+Status: Passed
+Start Time: July 9, 2026 at 7:13:12 PM British Summer Time
+Finish Time: July 9, 2026 at 7:13:43 PM British Summer Time
+Running Duration: 0 min 31 sec
+Description: Parallel pool ran with 10 workers.
+Details:
+Error Report:
+Command Line Output: 
+Connected to parallel pool with 10 workers.
+Parallel pool using the 'Processes' profile is shutting down.
+
+Debug Log:
