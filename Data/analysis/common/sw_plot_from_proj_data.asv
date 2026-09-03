@@ -1,22 +1,18 @@
-function pl = sw_plot_from_proj_data(pl_pannels,par)
+function sw_plot_from_proj_data(pl_pannels)
 
 n_pannels = numel(pl_pannels);
 
 rlu = [0,0,0;1,0,0;1/2,1/2,0;0,0,0;1/2,1/2,1/2;1/2,1/2,0]';
 hp = cell(1,n_pannels);
 xp = cell(1,n_pannels);
-if ~exist('par','var')
-    gap = 0;    %
-    kB=8.6173324e-2;
-    gamma = 10;
-    T = 8;
-    Seff =1;      %1.4489;
-    J0 = 35;
-    par = [Seff, gap, J0, 5.5, 10, 10.0, 0, 0];
-else
-    gamma = par(1);
-    par = par(2:end);
-end
+gap = 0;    %
+kB=8.6173324e-2;
+gamma = 10;
+T = 8;
+Seff =1;      %1.4489;
+J0 = 25;  
+par = [Seff, gap, J0, 5.5, 10, 10.0, 0];
+
 %slinD = repmat(IX_dataset_1d,1,n_pannels);
 x_start = 0;
 for i=1:n_pannels
@@ -28,7 +24,7 @@ for i=1:n_pannels
     Np = numel(pl_pannels(i).x)-1;
     hkl = hkl_path_from_proj(Np,rlu,i+1);
     [wdisp,idisp] = disp_bcc_hfm(hkl(1,:),hkl(2,:),hkl(3,:),par);
-    hp{i} = idisp{1} .*wdisp{1};
+    hp{i} = (4/3)*290.6)*idisp{1}) .* (dsho_over_eps (en, wdisp{1}
     % en0 = wdisp{1};
     % en0sq =en0.^2;
     % g_sq = gamma*gamma;
@@ -43,20 +39,20 @@ end
 
 xxt=cat(2,xp{:});
 hpt = cat(2,hp{:});
-pl = plot(xxt,hpt);
+plot(xxt,hpt);
 end
 
 function hkl = hkl_path_from_proj(Np,rlu,np)
-%hkl_path_from_proj -- Generate hkl path along
+%hkl_path_from_proj -- Generate hkl path along 
 %
-%
+% 
 u0 = rlu(:,np-1);
 u1 = rlu(:,np);
 vec = u1-u0;
 vec = vec(:);
 dVec = vec/(Np-1);
 ii = 0:Np-1;
-hkl = u0(:) + dVec*ii;
+hkl = u0(:) + dVec*ii; 
 % hkl = zeros(3,Np);
 % for i=1:Np
 %     hkl(:,i) = u0+dVec*(i-1);

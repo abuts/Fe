@@ -7,20 +7,23 @@ end
 
 fn = fieldnames(cut_par);
 n_cuts = numel(fn);
-n_1Dcuts = 2*n_cuts;
 
-cuts_list = cell(1,2*n_cuts);
-is_400 = false(1,2*n_cuts);
+
+cuts_list = cell(1,n_cuts);
+is_400 = false(1,n_cuts);
 
 for i=1:n_cuts
     src_cut = multij_110.(fn{i});
-    nlkp = numel(lcut_par);
-    for j=1:nlkp
-        ij= nlkp*(i-1)+j;
-        is_400(ij)= contains(cut_names{i},'Ei400');
-        llpar = lcut_par{j};
-        cuts_list{ij} = cut(src_cut,llpar{:});
-    end
+    is_400(i)= contains(fn{i},'Ei400');    
+    bg_field_name = [fn{i},'_2exp_bg'];
+    bg_Qrange = min_max(src_cut.data.p{1});
+    bg_Erange = min_max(src_cut.data.p{2});
+    bg_Erange(1) = max(20,bg_Erange(1));
+    multij_110 = fit_1DsBg_helper(multij_110,src_cut,bg_Qrange, ...
+        [bg_Erange(1),2,bg_Erange(2)],[0,-3,0],bg_field_name,true);
+
+    cuts_list{i} = src_cut;
+    plot(cuts_list{i});liny;lz 0 1;
 end
 
 mi200 = maps_instrument(200,600,'S');
@@ -35,7 +38,6 @@ for i=1:n_1Dcuts
     end
     cuts_list{i} = cuts_list{i}.set_sample(sample);
     hkl_proj(i) = cuts_list{i}.data.proj;
-    plot(cuts_list{i});
 end
 
 res_file = 'fit3J_multicut1D3Gamma.mat';

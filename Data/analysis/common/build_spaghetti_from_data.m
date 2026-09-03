@@ -1,3 +1,4 @@
+function [pl_pannels,fg] = build_spaghetti_from_data()
 pannels_folder = 'e:\SHARE\Fe\Data\analysis\05_spagett_plot\spagh_pannels_data';
 
 % list of pannels to draw
@@ -24,7 +25,7 @@ if ~exist('all_data','var')
 
 end
 labels = {'G','H','N','G','P','N'};
-[pl_pannels,dnd_data,fg,ah,ph] = spaghetti_plot(dnd_data,'labels',labels);
+[pl_pannels,~,fg,ah] = spaghetti_plot(dnd_data,'labels',labels);
 lz 0 1;
 pan0 = zeros(1,n_pannels+1);
 all_x = cell(1,n_pannels);
