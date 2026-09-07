@@ -16,6 +16,8 @@ sliderX = 150;          % Slider horizontal position
 topAreaHeight = 100;    % Textbox + OK button area
 bottomMargin = 20;
 
+root_path = fileparts(mfilename('fullpath'));
+restart_fileName = fullfile(root_path,'show_disp_line_wit_sliders_settings.mat');
 %--------------------------------------------------------------
 % Main figure
 %--------------------------------------------------------------
@@ -27,8 +29,8 @@ uilabel(fig, ...
     'Position', [30 minFigHeight-50 540 22], ...
     'Text', 'Enter set of values in the form Name1:min1,max;Name2:min2,max2;... separated by semicolon');
 
-if isfile('show_disp_line_wit_sliders_settings.mat')
-    ld = load('show_disp_line_wit_sliders_settings.mat');
+if isfile(restart_fileName)
+    ld = load(restart_fileName);
     init_settings = ld.textValue;
 else
     init_settings   = ['gamma:10,20,100;' ...
@@ -77,7 +79,7 @@ GenerateSliders(editBox);
         for i=1:numel(sliders)
             if isa(sliders(i),'matlab.ui.control.Slider') && isstruct(sliders(i).UserData)
                 delete(sliders(i).UserData.nameLabel);
-                delete(sliders(i).UserData.valLabel);                
+                delete(sliders(i).UserData.valLabel);
             end
         end
         delete(sliders);
@@ -195,9 +197,10 @@ GenerateSliders(editBox);
         values = zeros(3,n_sliders);
         for i=1:numel(blocks)
             block_info = strsplit(blocks{i},':');
-            names{i} = block_info{1};
+            names{i} = regexprep(block_info{1}, '^\s+|\s+$','');
             val_s = strsplit(block_info{2},{',',' '});
-            val_d = str2double(val_s);
+            valid = cellfun(@(x)~isempty(x),val_s);
+            val_d = str2double(val_s(valid));
             min_val = val_d(1);
             max_val = val_d(end);
             if numel(val_d) == 2
@@ -206,7 +209,9 @@ GenerateSliders(editBox);
                 mid_val = val_d(2);
             else
                 uialert(fig, ...
-                    'Initial slider values must be two or three numbers separated by spaces or commas', ...
+                    sprintf('Problem with slider N%d, name %s\n%s',...
+                    i,names{i},...
+                    'Initial slider values must be two or three numbers separated by spaces or commas'), ...
                     'Invalid input');
                 return;
             end
@@ -224,6 +229,7 @@ GenerateSliders(editBox);
         end
         result.names = names;
         result.values = values;
+        result.restart_file = restart_fileName;
         editBox.UserData = result;
     end
 %--------------------------------------------------------------
@@ -261,7 +267,8 @@ GenerateSliders(editBox);
         for i=1:n_boxes
             sub_val{i} = sprintf('%s:%.3g,%.3g,%3g',names{i},values(:,i));
         end
-        text = strjoin(sub_val,'; ');
-        editBox.Value = text;
+        textValue = strjoin(sub_val,'; ');
+        editBox.Value = textValue;
+        save(res.restart_file,'textValue')
     end
 end
