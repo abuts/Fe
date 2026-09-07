@@ -73,8 +73,8 @@ wdisp = disp_bcc_hfmMS(qh,qk,ql,Jeff);
 F = zeros(size(wdisp));
 bose = bose_times_eps(en,T);
 F(:,1) = Seff(1)*dsho_over_eps (en, wdisp(:,1), gamma(1)).*bose;
-F(:,2) = Seff(2)*dsho_over_eps (en, wdisp(:,2), gamma(2)).*bose;
-F(:,3) = Seff(3)*dsho_over_eps (en, wdisp(:,3), gamma(3)).*bose;
+F(:,2) = Seff(1)*dsho_over_eps (en, wdisp(:,2), gamma(2)).*bose;
+F(:,3) = Seff(1)*dsho_over_eps (en, wdisp(:,3), gamma(3)).*bose;
 weight = sum(F,2)*((2/3)*290.6);
 
 

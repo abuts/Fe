@@ -71,7 +71,7 @@ else
 end
 
 %init_fg_params = [coffect_ff,T,gamma,     Seff,          J0, J1, J2];
-free_sw_param  =  [0          0, ones(1,3) ,ones(1,3)   , 1, 1,   1];
+free_sw_param  =  [0          0, ones(1,3) ,1,0,0,         1, 1,   1];
 
 
 kk = tobyfit(cuts_list{:});
