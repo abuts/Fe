@@ -1,4 +1,4 @@
-function variableSliderGUI()
+function show_disp_line_with_sliders()
 
     %--------------------------------------------------------------
     % Parameters

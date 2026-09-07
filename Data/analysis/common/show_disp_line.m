@@ -33,7 +33,7 @@ end
 
 function keyPressed(event, editBox)
 
-if strcmp(event.Key, 'return')   
+if strcmp(event.Key, 'return')
     okPressed(editBox);
 end
 
@@ -42,35 +42,14 @@ end
 function okPressed(editBox)
 % Callback executed when OK is pressed
 
-fg = findobj('Tag','Fe_Spaghetty_Plot');
-if ~isempty(fg) && isgraphics(fg)
-    pl_pannels = fg.UserData;
-else
-    [pl_pannels,fg] = build_spaghetti_from_data();
-    fg.Tag = 'Fe_Spaghetty_Plot';
-    fg.UserData = pl_pannels;
-    fg.Name = 'Fe Dispersion search area';
-end
-
-figure(fg);
-hold on;
+[fg,pl_pannels]  = build_or_show_spaghetty();
 % Read contents of textbox
 textValue = editBox.Value;
 param = str2double(strsplit(textValue, ','));
 ax = fg.CurrentAxes;
 ax.Title.String = textValue;
 save('show_disp_line_settings.mat',"textValue");
-pl = findobj(fg,'Tag','Fe_Dispersion_model');
-if ~isempty(pl)
-    if isgraphics(pl)
-        delete(pl);
-    end
-end
-
-pl = sw_plot_from_proj_data(pl_pannels,param);
-pl.LineWidth = 2;
-pl.Color = 'r';
-pl.Tag = 'Fe_Dispersion_model';
-
+%
+build_and_show_dispersion_model(fg,pl_pannels,param)
 
 end
