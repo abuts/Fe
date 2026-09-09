@@ -1,4 +1,3 @@
-
 function [figa,figb]= plot_fit_res(sub_cuts,fit_obj,fit_par,en_range,eval_sw,keep_plots)
 
 colour={'k','k','r','r','g','g'};

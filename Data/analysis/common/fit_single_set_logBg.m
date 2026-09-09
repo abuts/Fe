@@ -12,7 +12,7 @@ else
     eval_sw = false;
 end
 batch = true;
-fit_bg = true;
+fit_bg = n_dim2fit == 2;
 
 n_samples = numel(the_2Dcuts);
 sub_cuts = cell(1,n_samples);
@@ -49,7 +49,7 @@ for j=1:n_samples
             if debug_bg
                 plot(ds1);
                 acolor r;
-                pl(fd);
+                pl(fd);keep_figure;
             end
             init_bg_param{j} = [exp(fp.p(1)),fp.p(2),0];
         else
@@ -69,7 +69,7 @@ if (numel(sub_cuts) == 0)
     fit_obj = [];
     fit_par = [];
     figa = [];
-    figb = [];    
+    figb = [];
     return
 end
 n_samples = numel(sub_cuts);
@@ -88,12 +88,16 @@ kk = kk.set_free(free_sw_param);
 if n_dim2fit == 2
     kk = kk.set_bfun (@single_exp2D); % set_bfun sets the background functions
 else
-    kk = kk.set_bfun (@linear_bg1D); % set_bfun sets the background functions    
+    kk = kk.set_bfun (@linear_bg1D); % set_bfun sets the background functions
 end
 bg_param = init_bg_param(valid);
 kk = kk.set_bpin (bg_param);  % initial background constant and gradient
 bfree = zeros(1,numel(bg_param{1}));
-bfree(1)=1;
+if n_dim2fit == 2
+    bfree(3)=1;
+else
+    bfree(1)=1;
+end
 kk = kk.set_bfree (bfree);
 
 if batch

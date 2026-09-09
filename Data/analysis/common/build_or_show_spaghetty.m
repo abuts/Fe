@@ -1,9 +1,10 @@
 function [fg,pl_pannels]  = build_or_show_spaghetty()
 % Build spaghetti plot if it is not present and show it to the users
-% setting input information for this plot as user data
+% setting source information for this plot as the UserData field of the
+% plot.
 %
 % If spaghetty plot is already present, get access to it and 
-% return source information.
+% return source information from UserData field
 
 fg = findobj('Tag','Fe_Spaghetty_Plot');
 if ~isempty(fg) && isgraphics(fg)

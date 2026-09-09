@@ -11,20 +11,20 @@ if ~exist("do_fit","var")
     do_fit = true;
 end
 
-res_name = sprintf("%s_dir%s_dE%d_fitSlopeDE.mat",cut_name_base,direction_name,2*half_dE);
+res_name = sprintf("%s_dir%s_dE%d_constCutBg.mat",cut_name_base,direction_name,2*half_dE);
 ref_name = res_name;
 %wf =20;
 %ref_name = sprintf("%s_dir%s_dE%d_fitSlopeDE.mat",cut_name_base,direction_name,wf);
-ref_name = 'e:\SHARE\Fe\Data\analysis\06_fit_with_J0\sym4D_cutsAndFits\EnFit_Ei200Br110dir010_2D_dirGH_dE10_fitSlopeDE.mat';
+%ref_name = 'e:\SHARE\Fe\Data\analysis\06_fit_with_J0\sym4D_cutsAndFits\EnFit_Ei200Br110dir010_2D_dirGH_dE10_fitSlopeDE.mat';
 replot_fit_res = false;
-if isfile(ref_name)
-    ld = load(ref_name);
-    fnms = fieldnames(ld);
-    fit_res = plot_j0_fit_result(ld.(fnms{1}),ref_name);
-    replot_fit_res = true;
-    %do_fit = false;
-    cut_en = arrayfun(@(x)x.en,fit_res.all_fit_par);
-end
+% if isfile(ref_name)
+%     ld = load(ref_name);
+%     fnms = fieldnames(ld);
+%     fit_res = plot_j0_fit_result(ld.(fnms{1}),ref_name);
+%     replot_fit_res = true;
+%     %do_fit = false;
+%     cut_en = arrayfun(@(x)x.en,fit_res.all_fit_par);
+% end
 
 %gamma=49.51;Seff0=0.7917;J0=33.5;
 correct_ff = 1;
@@ -54,11 +54,11 @@ all_fit_par = cell(1,N_points);
 %init_bg_par = [0,0];
 % for all other Ei
 valid_fits = true(1,N_points);
-
+finE = max(cut_en);
 for i = 1:N_points
     en = cut_en(i);
     fprintf('******************************\n')
-    fprintf('**** En = %g±%g\n',en,half_dE)
+    fprintf('**** En = %g±%g going to %g\n',en,half_dE,finE);
     fprintf('******************************\n')
     en_range = [en-half_dE,dE_step,en+half_dE];
     if replot_fit_res
@@ -75,7 +75,10 @@ for i = 1:N_points
     else
         init_fg_params = fit_par.p;
     end
-
+    max_hldr = IX_dataset_1d(fit_obj{1});
+    xx = 0.5*(max_hldr.x(1:end-1)+max_hldr.x(2:end));
+    [~,imx] = max(max_hldr.signal);
+    fit_par.q_max = xx(imx);
     %init_fg_params  = abs(fit_par.p);
     all_fit_par{i} = fit_par;
 end
