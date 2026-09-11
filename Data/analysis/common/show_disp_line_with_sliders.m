@@ -195,7 +195,12 @@ GenerateSliders(editBox);
         end
         names = cell(1,n_sliders);
         values = zeros(3,n_sliders);
+        valid_blocks = true(1,n_sliders);
         for i=1:numel(blocks)
+            if isempty(blocks{i})
+                valid_blocks(i) = false;
+                continue;
+            end
             block_info = strsplit(blocks{i},':');
             names{i} = regexprep(block_info{1}, '^\s+|\s+$','');
             val_s = strsplit(block_info{2},{',',' '});
@@ -227,6 +232,8 @@ GenerateSliders(editBox);
             values(2,i) = mid_val;
             values(3,i) = max_val;
         end
+        names = names(valid_blocks);
+        values = values(:,valid_blocks);
         result.names = names;
         result.values = values;
         result.restart_file = restart_fileName;

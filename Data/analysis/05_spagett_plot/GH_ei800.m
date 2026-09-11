@@ -221,7 +221,7 @@ end
 instr_check.w2e800dir010off100 = w2_800o11y;
 instr_check.e800_bg_par = cuts2fit800.bg_par_010off100;
 %%
-% fitting bacground for cut in <1,0,0> direction, offset <1,0,0>
+% fitting background for cut in <1,0,0> direction, offset <1,0,0>
 
 hc.log_level = -2;
 proj100_y = line_proj([0,1,0],[-1,0,0],'offset',[1,0,0]);
