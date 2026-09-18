@@ -1,26 +1,23 @@
-function weight = test_dsho_fun(q,en,par,varargin)
+function weight = test_dsho_fun_q(q,en,par,varargin)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
+enAv  = par(2);
 gamma = par(3);
 A = par(4);
 peak_pos = par(6);
 
 % Dispersion and spectral weight(=Seff/2)
 %[wdisp,idisp] = disp_bcc_hfm(qh,qk,ql,par(4:end));
-enAv  = sum(en(:))/numel(en);
-en = en(:)/enAv;
-%
-gamSq = gamma*gamma;
-%
-Norm = 4*A*gamma*peak_pos./(pi/2+atan(0.5/gamma*en));
+
+eg = en(:)/(gamma);
+qe0g = enAv*peak_pos*q(:)/gamma;
+Norm = (4*A*enAv*peak_pos/gamma)./(pi/2+atan(0.5*eg));
 
 %q = hkl_proj(1).transform_hkl_to_img([qh,qk,ql]');
 %qq = omg0Sq*sqrt(q(1,:).^2+q(2,:).^2+q(3,:).^2)';
-qomg = peak_pos*q(:);
-qomgSq = qomg.^2;
-% sho shape
 
-weight = Norm.*qomg.*en./((en.^2-qomgSq).^2+(4*gamSq)*en.^2);
+
+weight = Norm.*qe0g.*eg./(((eg-qe0g).*(eg+qe0g)).^2+4*eg.^2);
 %y = ((4/pi)*abs(gam.*en0))./((en.^2-en0.^2).^2 + 4*(gam.*en).^2);
 
 end
