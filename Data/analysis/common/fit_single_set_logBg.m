@@ -31,7 +31,7 @@ for j=1:n_samples
     else
         range2  = [en_range(1),en_range(3)];
     end
-    sub_cuts{j} = cut(the_2Dcuts{j},0.02,range2 );
+    sub_cuts{j} = cut(the_2Dcuts{j},[],range2 );
     valid(j) = sub_cuts{j}.num_pixels>0;
     if valid(j)
         nplots = nplots+1;
@@ -81,7 +81,8 @@ hkl_proj =cellfun(@(sobj)sobj.data.proj,sub_cuts);
 kk = tobyfit(sub_cuts{:});
 
 %kk = kk.set_fun(@sqw_iron_with_phonons);
-kk = kk.set_fun(@sqw_iron);
+%kk = kk.set_fun(@sqw_iron);
+kk = kk.set_fun(@dsho_fun_q);
 kk = kk.set_pin({init_fg_param,hkl_proj});
 kk = kk.set_free(free_sw_param);
 
@@ -117,6 +118,6 @@ if ~iscell(fit_obj)
     fit_obj = {fit_obj};
 end
 
-[figa,figb]=plot_fit_res(sub_cuts,fit_obj,fit_par,en_range,eval_sw,true);
+[figa,figb]=plot_fit_res(sub_cuts,fit_obj,fit_par,en_range,eval_sw,false);
 
 end
