@@ -58,7 +58,7 @@ if eval_sw
         end
         acolor(colour{2*j});
         gp.line_widths = 2;
-        w1fit = sqw_eval(w1,@dsho_fun_q,{fit_par.p,w1.data.proj});
+        w1fit = sqw_eval(w1,@sqw_iron,{fit_par.p,w1.data.proj});
         pl(w1fit);
         drawnow;
     end

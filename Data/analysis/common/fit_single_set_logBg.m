@@ -79,10 +79,10 @@ hkl_proj =cellfun(@(sobj)sobj.data.proj,sub_cuts);
 
 
 kk = tobyfit(sub_cuts{:});
-
+%kk = kk.set_mc_points(50);
 %kk = kk.set_fun(@sqw_iron_with_phonons);
-%kk = kk.set_fun(@sqw_iron);
-kk = kk.set_fun(@dsho_fun_q);
+kk = kk.set_fun(@sqw_iron);
+%kk = kk.set_fun(@dsho_fun_q);
 kk = kk.set_pin({init_fg_param,hkl_proj});
 kk = kk.set_free(free_sw_param);
 
@@ -118,6 +118,6 @@ if ~iscell(fit_obj)
     fit_obj = {fit_obj};
 end
 
-[figa,figb]=plot_fit_res(sub_cuts,fit_obj,fit_par,en_range,eval_sw,false);
+[figa,figb]=plot_fit_res(sub_cuts,fit_obj,fit_par,en_range,eval_sw,true);
 
 end

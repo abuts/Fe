@@ -83,7 +83,7 @@ if ~exist('GP_FFCutsFits','var')
     GP_FFCutsFits = [];
 end
 GP_FFCutsFits = save_selected_cuts(GP_FFCutsFits,allJfitfile, ... %[output:group:75f9386d] %[output:0e07fc73]
-    'Ei200_off110GPmiff',cut(w2e200GPoff110f,[0,0.005,0.3],[6,2,115])); %[output:group:75f9386d] %[output:0e07fc73]
+    'Ei200_off110GPminFF',cut(w2e200GPoff110f,[0,0.005,0.3],[6,2,115])); %[output:group:75f9386d] %[output:0e07fc73]
 
 %%
 % GP offset 110; max FF variation
@@ -92,7 +92,7 @@ liny %[output:930d419c]
 
 lp111ma = line_proj([1,1,1],[1,-1,0],'offset',[1,1,0]);
 w2_200off110maf = cut(src200sym,lp111ma,[0,0.005,1],othrEi200cut111{:});
-w2_200off110maf.full_filename = [fname,', w2_200off110maff'];
+w2_200off110maf.full_filename = [fname,', w2_200off110maxFF'];
 fh= plot(w2_200off110maf); lz 0 4; %[output:930d419c]
 [w2_200off110maff,cuts2fit200GP] = draw_masks_helper(fh,cuts2fit200GP,'msk110_dir_111',1); %[output:930d419c]
 plot(w2_200off110maff); lz 0 1;keep_figure %[output:930d419c]
@@ -101,7 +101,7 @@ cuts2fit200GP.cuts_off110 = w2_200off110maf %[output:3c5839c2]
 hc.log_level = ll;
 %%
 GP_FFCutsFits = save_selected_cuts(GP_FFCutsFits,allJfitfile, ... %[output:76faa8ae]
-    'Ei200_off110GPmaff',cut(w2_200off110maff,[0,0.005,0.3],[6,2,125]));
+    'Ei200_off110GPmaxFF',cut(w2_200off110maff,[0,0.005,0.3],[6,2,125]));
 
 
 %%
@@ -141,7 +141,7 @@ cuts2fit200GP.cuts_off200f = w2e200GPoff200f;
 hc.log_level = ll;
 %%
 GP_FFCutsFits = save_selected_cuts(GP_FFCutsFits,allJfitfile, ... %[output:8a1b9c70]
-    'Ei200_off200GPmiff',cut(w2e200GPoff200f,[0,0.01,0.3],[6,2,130]));
+    'Ei200_off200GPminFF',cut(w2e200GPoff200f,[0,0.01,0.3],[6,2,130]));
 %%
 % GP offset 200; max FF direction
 hc.log_level = -2;
@@ -181,7 +181,7 @@ hc.log_level = ll;
 save(cuts_res_file,'cuts2fit200GP','-v7.3');
 %%
 GP_FFCutsFits = save_selected_cuts(GP_FFCutsFits,allJfitfile, ... %[output:536cbb11]
-    'Ei200_off200GPmaff',cut(w2e200GPoff200maff,[0,0.005,0.35],[6,2,150]));
+    'Ei200_off200GPmaxFF',cut(w2e200GPoff200maff,[0,0.005,0.35],[6,2,150]));
 %%
 hc.log_level = -2;
 

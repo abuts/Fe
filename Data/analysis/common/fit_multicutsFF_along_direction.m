@@ -34,15 +34,15 @@ else
     all_fit_par = cell(1,N_points);    
 end
 
-%gamma=49.51;Seff0=0.7917;J0=33.5;
+gamma=10;Seff0=0.7917;J0=33.5;
 correct_ff = 1;
 gap = 0;    %
-gamma = 2;
-A =0.1; 
-peak_pos = 8;
+%gamma = 10; A =1; stiff = 90;
 
 
-init_fg_params0 = [correct_ff,30,gamma,A, gap, peak_pos, 0,  0,  0,  0];
+%init_fg_params0 = [correct_ff,35,gamma,A, gap, stiff, 0,  0,  0,  0];
+%init_fg_params0 = [correct_ff,T,gamma,Seff0, gap, J0, 5.5,24, 40.,0]
+init_fg_params0 = [correct_ff,8,gamma,Seff0,  0,   J0, 0,  0,  0,  0];
 init_fg_params = init_fg_params0;
 
 
@@ -61,7 +61,7 @@ for i = 1:N_points
     if replot_fit_res
         init_fg_params = all_fit_par{i}.p;
     end
-    init_fg_params(2) = en;
+    %init_fg_params(2) = en; % for dsho_fun_q
     %[fit_obj,fit_par]=fit_single_set(the_2Dcuts,en,half_dE,dE_step,init_fg_params,init_bg_par,true);
     [fit_obj,fit_par,figa,figb]=fit_single_set_logBg(the_2Dcuts,n_dim2fit,en_range,init_fg_params,do_fit);
     if isempty(fit_obj)

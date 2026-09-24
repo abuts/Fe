@@ -73,9 +73,8 @@ if q_dep_defined
             if sum(eq_elements)>1
                 first_unique = find(eq_elements,1);
                 step= 0.0001*(qu(end)-qu(1))/numel(qu);
-                n_elem = numel(q)-first_unique+1;
-                add = step*(0:n_elem-1);
-                q(first_unique:n_elem) = q(first_unique:n_elem)+add;
+                n_elem = numel(q);
+                q(first_unique+1:n_elem) = q(first_unique+1:n_elem)+step;
                 [q,idx] = sort(q);
                 sig{4} = sig{4}(idx);
                 err{4} = err{4}(idx);                
@@ -90,7 +89,7 @@ end
 
 ax_x = IX_axis('Energy Transfer (meV)');
 if q_dep_defined
-    ax_q = IX_axis('q along dir');
+    ax_q = IX_axis('q/2.84A along dir');
 end
 for i=1:nargout
     ax_s = IX_axis(captions{i},units{i});
