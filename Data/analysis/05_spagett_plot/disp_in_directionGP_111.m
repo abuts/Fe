@@ -8,7 +8,7 @@ cuts_map('sGP_Ei800_maxFFC_bg_rem_ff_corr') = [100;450]; % Single cut in directi
 
 %[w2,fh] = build_disp_in_dir(cuts_map);
 n_existing_figures = 1;
-[w2,fh] = build_disp_in_dir(cuts_map,0.01,0.5,n_existing_figures,false);
+[w2,fh] = build_disp_in_dir_with_ds(GPcuts_map,0.01,0.5,false);
 data_ranges = cuts_map.values;
 data_ranges  = [data_ranges{:}];
 pan_data = struct('data_ranges',data_ranges,'combined_ds',w2);
