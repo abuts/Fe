@@ -2,10 +2,10 @@ function [fit_obj,fit_par,figa,figb]=fit_single_set_logBg(the_2Dcuts,n_dim2fit,e
 
 %with phonons here:
 %init_fg_params = [coffect_ff,T,gamma,Seff, gap, J0, gf, af, J3, J4];
-free_sw_param  =  [0          0, 1   ,1   , 0,    1, 0,   0, 0,  0];
+%free_sw_param  =  [0          0, 1   ,1   , 0,    1, 0,   0, 0,  0];
 
 %init_fg_params = [coffect_ff,T,gamma,Seff, gap, J0, J1, J2, J3, J4];
-%free_sw_param  =  [0          0, 1   ,1   , 0,    1, 0,   0,  0,  0];
+free_sw_param  =  [0          0, 1   ,1   , 0,    1, 0,   0,  0,  0];
 if nargout == 4
     eval_sw = true;
 else
@@ -32,7 +32,7 @@ for j=1:n_samples
         range2  = [en_range(1),en_range(3)];
     end
     sub_cuts{j} = cut(the_2Dcuts{j},[],range2 );
-    valid(j) = sub_cuts{j}.num_pixels>0;
+    valid(j) = sub_cuts{j}.num_pixels>sum(free_sw_param);
     if valid(j)
         nplots = nplots+1;
         cut_range = sub_cuts{j}.data.axes.get_cut_range;
@@ -119,5 +119,4 @@ if ~iscell(fit_obj)
 end
 
 [figa,figb]=plot_fit_res(sub_cuts,fit_obj,fit_par,en_range,eval_sw,true);
-
 end

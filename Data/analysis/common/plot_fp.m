@@ -1,4 +1,4 @@
-function plot_fp(title,rg,varargin)
+function plot_fp(separate_fig,title,rg,varargin)
 % Helper function to plot S,J,Gamma dataset arrays for different
 % incident energies
 colors = {'g','b','r','k'};
@@ -20,7 +20,12 @@ for j=1:numel(argi )
     ds(1).title = title;
     for i=1:numel(ds)
         acolor(colors{i});
-        pd(ds(i));
+        if separate_fig
+            fg = pd(ds(i));
+            set(fg,'Visible','on')
+        else
+            pd(ds(i));
+        end
         if ~isempty(range)
             ly(range(1),range(2));
         end

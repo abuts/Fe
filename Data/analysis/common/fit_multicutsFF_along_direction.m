@@ -34,7 +34,10 @@ else
     all_fit_par = cell(1,N_points);    
 end
 
-gamma=10;Seff0=0.7917;J0=33.5;
+gamma=10;Seff0=0.7917;
+J0=34; J1=0; % Fitting with 1J
+%J0=39;
+%J1=35;
 correct_ff = 1;
 gap = 0;    %
 %gamma = 10; A =1; stiff = 90;
@@ -42,7 +45,7 @@ gap = 0;    %
 
 %init_fg_params0 = [correct_ff,35,gamma,A, gap, stiff, 0,  0,  0,  0];
 %init_fg_params0 = [correct_ff,T,gamma,Seff0, gap, J0, 5.5,24, 40.,0]
-init_fg_params0 = [correct_ff,8,gamma,Seff0,  0,   J0, 0,  0,  0,  0];
+init_fg_params0 = [correct_ff,8,gamma,Seff0,  0,   J0, J1,  0,  0,  0];
 init_fg_params = init_fg_params0;
 
 

@@ -8,7 +8,10 @@ if ~exist('GP_FFCutsFits','var')
     GP_FFCutsFits = ld.fit_src_struc;
 end
 fit_res_field = 'all_fit_par';
+separate_fig  = false; % if true, detach figures from live script
 %%
+% Plot S,J0,gamma as function of direction and incident energy
+
 [S_op11Ei200,J_op11Ei200,Gam_op11Ei200,S_op11Ei200q] = extract_fit_par( ...
     GP_FFCutsFits.(['Ei200_off110GPmiff_',fit_res_field]));
 [S_op11Ei400,J_op11Ei400,Gam_op11Ei400,S_op11Ei400q] = extract_fit_par( ...
@@ -21,7 +24,7 @@ S_op11Ei200q = transform_img_path_to_pix_path(S_op11Ei200q,proj);
 S_op11Ei400q = transform_img_path_to_pix_path(S_op11Ei400q,proj);
 S_op11Ei800q = transform_img_path_to_pix_path(S_op11Ei800q,proj);
 
-plot_fp('offset <110> min FF change', ... %[output:group:989e0ead] %[output:13ccb300] %[output:11f35959] %[output:9754d904]
+plot_fp(separate_fig,'offset <110> min FF change', ... %[output:group:989e0ead] %[output:13ccb300] %[output:11f35959] %[output:9754d904]
     [S_op11Ei200,S_op11Ei400,S_op11Ei800], ... %[output:13ccb300] %[output:11f35959] %[output:9754d904]
     [J_op11Ei200,J_op11Ei400,J_op11Ei800], ... %[output:13ccb300] %[output:11f35959] %[output:9754d904]
     [Gam_op11Ei200,Gam_op11Ei400,Gam_op11Ei800]) %[output:group:989e0ead] %[output:13ccb300] %[output:11f35959] %[output:9754d904]
@@ -39,7 +42,7 @@ S_opEi400q = transform_img_path_to_pix_path(S_opEi400q,proj);
 S_opEi800q = transform_img_path_to_pix_path(S_opEi800q,proj);
 
 
-plot_fp('offset <200> min FF change', ... %[output:group:6095e585] %[output:60045d34] %[output:76191d5b] %[output:5f296261]
+plot_fp(separate_fig,'offset <200> min FF change', ... %[output:group:6095e585] %[output:60045d34] %[output:76191d5b] %[output:5f296261]
     [S_opEi200,S_opEi400,S_opEi800], ... %[output:60045d34] %[output:76191d5b] %[output:5f296261]
     [J_opEi200,J_opEi400,J_opEi800], ... %[output:60045d34] %[output:76191d5b] %[output:5f296261]
     [Gam_opEi200,Gam_opEi400,Gam_opEi800]) %[output:group:6095e585] %[output:60045d34] %[output:76191d5b] %[output:5f296261]
@@ -57,7 +60,7 @@ S_ma11Ei400q = transform_img_path_to_pix_path(S_ma11Ei400q,proj);
 S_ma11Ei800q = transform_img_path_to_pix_path(S_ma11Ei800q,proj);
 
 
-plot_fp('offset <110> max FF change', ... %[output:group:53c72443] %[output:90bda33a] %[output:1f3946d4] %[output:4928216d]
+plot_fp(separate_fig,'offset <110> max FF change', ... %[output:group:53c72443] %[output:90bda33a] %[output:1f3946d4] %[output:4928216d]
     [S_ma11Ei200,S_ma11Ei400,S_ma11Ei800], ... %[output:90bda33a] %[output:1f3946d4] %[output:4928216d]
     [J_ma11Ei200,J_ma11Ei400,J_ma11Ei800], ... %[output:90bda33a] %[output:1f3946d4] %[output:4928216d]
     [Gam_ma11Ei200,Gam_ma11Ei400,Gam_ma11Ei800]) %[output:group:53c72443] %[output:90bda33a] %[output:1f3946d4] %[output:4928216d]
@@ -75,71 +78,41 @@ S_maEi200q = transform_img_path_to_pix_path(S_maEi200q,proj);
 S_maEi400q = transform_img_path_to_pix_path(S_maEi400q,proj);
 S_maEi800q = transform_img_path_to_pix_path(S_maEi800q,proj);
 
-plot_fp('offset <200> max FF change', ... %[output:group:722e8efa] %[output:9d560298] %[output:3f6e56b1] %[output:8214eb3a]
+plot_fp(separate_fig,'offset <200> max FF change', ... %[output:group:722e8efa] %[output:9d560298] %[output:3f6e56b1] %[output:8214eb3a]
     [S_maEi200,S_maEi400,S_maEi800], ... %[output:9d560298] %[output:3f6e56b1] %[output:8214eb3a]
     [J_maEi200,J_maEi400,J_maEi800], ... %[output:9d560298] %[output:3f6e56b1] %[output:8214eb3a]
     [Gam_maEi200,Gam_maEi400,Gam_maEi800]) %[output:group:722e8efa] %[output:9d560298] %[output:3f6e56b1] %[output:8214eb3a]
 
 %%
-
-plot_fp_var('g', ... %[output:group:8aab8e40] %[output:430bba3a] %[output:4adcff98] %[output:86e91de1]
+% Plot S,J0,gamma as function of direction at given incident energy
+plot_fp_var(separate_fig,'g', ... %[output:group:8aab8e40] %[output:430bba3a] %[output:4adcff98] %[output:86e91de1]
     [S_op11Ei200,S_opEi200,S_ma11Ei200,S_maEi200], ... %[output:430bba3a] %[output:4adcff98] %[output:86e91de1]
     [J_op11Ei200,J_opEi200,J_ma11Ei200,J_maEi200], ... %[output:430bba3a] %[output:4adcff98] %[output:86e91de1]
     [Gam_op11Ei200,Gam_opEi200,Gam_ma11Ei200,Gam_maEi200]) %[output:group:8aab8e40] %[output:430bba3a] %[output:4adcff98] %[output:86e91de1]
 
-plot_fp_var('b', ... %[output:group:80caa7a8] %[output:5c4cad38] %[output:783cbb5d] %[output:86cbdd29]
+plot_fp_var(separate_fig,'b', ... %[output:group:80caa7a8] %[output:5c4cad38] %[output:783cbb5d] %[output:86cbdd29]
     [S_op11Ei400,S_opEi400,S_ma11Ei400,S_maEi400], ... %[output:5c4cad38] %[output:783cbb5d] %[output:86cbdd29]
     [J_op11Ei400,J_opEi400,J_ma11Ei400,J_maEi400], ... %[output:5c4cad38] %[output:783cbb5d] %[output:86cbdd29]
     [Gam_op11Ei400,Gam_opEi400,Gam_ma11Ei400,Gam_maEi400]) %[output:group:80caa7a8] %[output:5c4cad38] %[output:783cbb5d] %[output:86cbdd29]
 
-plot_fp_var('r', ... %[output:group:8291d97d] %[output:8c119c28] %[output:18e0e308] %[output:5669fc41]
+plot_fp_var(separate_fig,'r', ... %[output:group:8291d97d] %[output:8c119c28] %[output:18e0e308] %[output:5669fc41]
     [S_op11Ei800,S_opEi800,S_ma11Ei800,S_maEi800], ... %[output:8c119c28] %[output:18e0e308] %[output:5669fc41]
     [J_op11Ei800,J_opEi800,J_ma11Ei800,J_maEi800], ... %[output:8c119c28] %[output:18e0e308] %[output:5669fc41]
     [Gam_op11Ei800,Gam_opEi800,Gam_ma11Ei800,Gam_maEi800]) %[output:group:8291d97d] %[output:8c119c28] %[output:18e0e308] %[output:5669fc41]
 
 %%
-plot_fp_var('g', {S_op11Ei200q,'','',''}); %[output:65b2da51]
-plot_fp_var('g', {'',S_opEi200q,'',''}); %[output:768d6529]
-plot_fp_var('g', {'','',S_ma11Ei200q,S_maEi200q}); %[output:018a74e1]
+plot_fp_var(separate_fig,'g', {S_op11Ei200q,'','',''}); %[output:65b2da51]
+plot_fp_var(separate_fig,'g', {'',S_opEi200q,'',''}); %[output:768d6529]
+plot_fp_var(separate_fig,'g', {'','',S_ma11Ei200q,S_maEi200q}); %[output:018a74e1]
 
-plot_fp_var('b',{S_op11Ei400q,'','',''}); %[output:7a031eb6]
-plot_fp_var('b',{'',S_opEi400q,'',''}); %[output:88bbab2d]
-plot_fp_var('b',{'','',S_ma11Ei400q,S_maEi400q}); %[output:84f72962]
-
-
-plot_fp_var('r',{S_op11Ei800q,'','',''}); %[output:29ead943]
-plot_fp_var('r',{'',S_opEi800q,'',''}); %[output:2fdc3505]
-plot_fp_var('r',{'','',S_ma11Ei800q,S_maEi800q}); %[output:19a1df27]
-
-%%
+plot_fp_var(separate_fig,'b',{S_op11Ei400q,'','',''}); %[output:7a031eb6]
+plot_fp_var(separate_fig,'b',{'',S_opEi400q,'',''}); %[output:88bbab2d]
+plot_fp_var(separate_fig,'b',{'','',S_ma11Ei400q,S_maEi400q}); %[output:84f72962]
 
 
-function plot_fp_var(color,varargin)
-
-ranges = {[0.5,2],[10,70],[0,200]};
-types = {'o','x','+','d'};
-gp = genieplot.instance();
-gp.marker_types = types;
-acolor(color);
-for j=1:numel(varargin)
-    ds = varargin{j};
-    if iscell(ds)
-        valid = cellfun(@(x)(~isempty(x)),ds);
-        ds = [ds{valid}];
-
-    else
-        valid = true(1,numel(ds));
-    end
-            pd(ds);    
-    range = ranges{j};
-
-    ly(range(1),range(2))
-    keep_figure;
-    lg =  {'<110> minFF','<200> minFF','<110> max FF','<200> max FF'};
-    lg = lg(valid);
-    legend(lg);
-end
-end
+plot_fp_var(separate_fig,'r',{S_op11Ei800q,'','',''}); %[output:29ead943]
+plot_fp_var(separate_fig,'r',{'',S_opEi800q,'',''}); %[output:2fdc3505]
+plot_fp_var(separate_fig,'r',{'','',S_ma11Ei800q,S_maEi800q}); %[output:19a1df27]
 
 
 %[appendix]{"version":"1.0"}
