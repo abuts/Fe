@@ -1,4 +1,4 @@
-function [w2,fh] = build_disp_in_dir_with_ds(cutsInfo,cuts_map,hkl_step,max_hkl_range,varargin)
+function [w2,fh] = build_disp_in_dir_with_ds(cutsInfo,cuts_map,hkl_range,varargin)
 %
 
 keys  = cuts_map.keys();
@@ -31,7 +31,7 @@ targ_proj.type = 'aaa';
 targ_proj.offset = [0,0,0];
 lp.offset = [0,0,0];
 w2 = sqw_op_bin_pixels(sources,@combine_en_zones,{zones,lp,src_proj}, ...
-    targ_proj,[0,hkl_step,max_hkl_range]*scales(1),[-0.1,0.1]*scales(2),[-0.1,0.1]*scales(3),[0,4,450], ...
+    targ_proj,hkl_range*scales(1),[-0.1,0.1]*scales(2),[-0.1,0.1]*scales(3),[0,4,450], ...
     '-combine');
 %targ_proj,[0,0.005,0.5],[-0.1,0.1],[-0.1,0.1],[0,5,400], ...
 
