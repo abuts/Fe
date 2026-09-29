@@ -12,14 +12,10 @@ w2_000b = cut(src200sym,line_proj('offset',[0,0,1]),[-0.1,0.1],0.04,0.04,[45,55]
 plot(w2_000b);lz 0 1; keep_figure; %[output:3bb16a47]
 
 
-data_path = 'e:\SHARE\Fe\Data\analysis\06_fit_with_J0\sym4D_cutsAndFits\' %[output:0c3edc9f]
-fit_cuts_file = 'multicuts_fit_dataGP_ei200meV.mat' %[output:5c3cac6c]
-cuts_res_file = fullfile(data_path,fit_cuts_file);
-% retrieve selected cuts and masks used to improve the cuts
-if ~exist('cuts2fit200GP','var')
-    cuts2fit200GP = recover_cuts_2fit(cuts_res_file,'cuts2fit200GP');
-end
-
+% retrieve selected cuts and masks used to improve the cuts %[output:0c3edc9f] %[output:5c3cac6c]
+cuts2fit200GP  = recover_masks_file('cuts2fit200GP');
+% retrieve selected cuts used for further fitting
+[GP_FFCutsFits,allJfitfile] = recover_selected_cuts('GP_FFCutsFits');
 hc.log_level = ll;
 
 othrEi200cut111 = {[-0.1,0.1],[-0.1,0.1],[0,2,150]};
@@ -77,11 +73,7 @@ plot(w2e200GPoff110f);liny; lz 0 1;keep_figure; %[output:9f16a1da]
 %cuts2fit200GP.cuts_off110f = w2e200GPoff110f;
 hc.log_level = ll;
 %%
-scuts_path = 'e:\SHARE\Fe\Data\analysis\07_fit_with_multicut_allJ\sel_cuts';
-allJfitfile = fullfile(scuts_path,'GP_FFCutsFits.mat');
-if ~exist('GP_FFCutsFits','var')
-    GP_FFCutsFits = [];
-end
+
 GP_FFCutsFits = save_selected_cuts(GP_FFCutsFits,allJfitfile, ...
     'Ei200_off110GPminFF',cut(w2e200GPoff110f,[0,0.005,0.3],[6,2,115]));
 

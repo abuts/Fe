@@ -13,23 +13,16 @@ plot(w2_000b);lz 0 4; keep_figure; %[output:7ac626f5]
 
 hc.log_level = ll;
 
-data_path = 'e:\SHARE\Fe\Data\analysis\06_fit_with_J0\sym4D_cutsAndFits';
-fit_cuts_file = 'multicuts_fit_dataGH_ei200meV.mat';
-fit_cuts_file  = fullfile(data_path,fit_cuts_file);
-if ~exist('cuts2fit200GH','var')
-    cuts2fit200GH = recover_cuts_2fit(fit_cuts_file,'cuts2fit200GH');
-end
+
+% retrieve selected cuts and masks used to improve the cuts
+cuts2fit200GH  = recover_masks_file('cuts2fit200GH');
+
 other_ranges200 = {[-0.1,0.1],[-0.1,0.1],[0,2,180]} %[output:89e80b91]
 %
-scuts_path = 'e:\SHARE\Fe\Data\analysis\07_fit_with_multicut_allJ\sel_cuts';
-allJfitfile = fullfile(scuts_path,'GH_FFCutsFits.mat');
-if ~exist('GH_FFCutsFits','var') && isfile(allJfitfile)
-    ld = load(allJfitfile);
-    GH_FFCutsFits = ld.fit_src_struc;
-else
-    GH_FFCutsFits = [];
-end
+% retrieve selected cuts used for further fitting
+[GH_FFCutsFits,allJfitfile] = recover_selected_cuts('GH_FFCutsFits');
 %%
+
 hc.log_level = -2;
 e0=150;
 w2_001 = cut(src200sym,line_proj('offset',[0,0,0]),0.04,0.04,[-0.1,0.1],[e0-10,e0+10]);
@@ -113,11 +106,6 @@ hc.log_level = ll;
 %%
 cuts2fit200GH = fit_bg_helper(cuts2fit200GH,src200sym,lp010of100,lp010of100,{[0.2,0.5],[1.5,1.8]},[55,2,120],[0,-3,0],'bg_par_fc010off100',other_ranges200); %[output:39934d9b] %[output:7ad2a6eb] %[output:5aa4e692] %[output:50b7e453]
 %%
-scuts_path = 'e:\SHARE\Fe\Data\analysis\07_fit_with_multicut_allJ\sel_cuts';
-allJfitfile = fullfile(scuts_path,'GH_FFCutsFits.mat');
-if ~exist('GH_FFCutsFits','var')
-    GH_FFCutsFits = [];
-end
 % though it is not a min FF change path, there are no other available.
 GH_FFCutsFits = save_selected_cuts(GH_FFCutsFits,allJfitfile, ... %[output:group:4b2fce08] %[output:2f0db81c]
     'Ei200_off110GHminFF', ... %[output:2f0db81c]

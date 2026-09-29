@@ -27,22 +27,13 @@ keep_figure; %[output:0581f1d3]
 hc.log_level = ll;
 % despite it is the result, its nince to have it from the start to
 % have existing masks ready.
-data_path = 'e:\SHARE\Fe\Data\analysis\06_fit_with_J0\sym4D_cutsAndFits\' %[output:17072c6e]
-fit_cuts_file = 'multicuts_fit_dataGH_ei800meV.mat';
-fit_cuts_file = fullfile(data_path,fit_cuts_file);
-if ~exist('cuts2fit800GH','var')
-    cuts2fit800GH = recover_cuts_2fit(fit_cuts_file,'cuts2fit800GH');
-end
+cuts2fit800GH  = recover_masks_file('cuts2fit800GH'); %[output:17072c6e]
+
+
 other_ranges800 = {[-0.1,0.1],[-0.1,0.1],[0,4,600]};
 %
-scuts_path = 'e:\SHARE\Fe\Data\analysis\07_fit_with_multicut_allJ\sel_cuts';
-allJfitfile = fullfile(scuts_path,'GH_FFCutsFits.mat');
-if ~exist('GH_FFCutsFits','var') && isfile(allJfitfile)
-    ld = load(allJfitfile);
-    GH_FFCutsFits = ld.fit_src_struc;
-else
-    GH_FFCutsFits = [];
-end
+% retrieve selected cuts used for further fitting
+[GH_FFCutsFits,allJfitfile] = recover_selected_cuts('GH_FFCutsFits');
 %%
 
 hc.log_level = -2;

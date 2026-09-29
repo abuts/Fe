@@ -10,19 +10,18 @@ plot(w2_00);lz 0 1; keep_figure; %[output:8dec2da2]
 w2_00 = cut(src800sym,line_proj(),0.04,0.04,[-0.1,0.1],[95,105]);
 plot(w2_00);lz 0 1; keep_figure; %[output:7f772893]
 
+hc.log_level = ll; %[output:0fc91160] %[output:09e0fe06]
 
-data_path = 'e:\SHARE\Fe\Data\analysis\06_fit_with_J0\sym4D_cutsAndFits\' %[output:0fc91160]
-fit_cuts_file = 'multicuts_fit_dataNG_ei800meV.mat' %[output:09e0fe06]
-cuts_res_file = fullfile(data_path,fit_cuts_file);
-if ~exist('cuts2fit800NG','var')
-    cuts2fit800NG = recover_cuts_2fit(cuts_res_file,'cuts2fit800NG');
-end
-hc.log_level = ll;
 
 othrEi800cut110 = {[-0.1,0.1],[-0.1,0.1],[0,4,500]};
 file = src800sym.full_filename %[output:1989d97b]
 [~,fname] = fileparts(file);
+
+cuts2fit800NG  = recover_masks_file('cuts2fit800NG');
+% retrieve selected cuts used for further fitting
+[NG_FFCutsFits,allJfitfile] = recover_selected_cuts('NG_FFCutsFits');
 %%
+
 % make all cuts in <110> directions, around <110> symmetry-related Braggs
 % where magnetic form-factor changes minimally.
 %
@@ -60,11 +59,6 @@ w2ei800NGoff110minFF = sqw_op_bin_pixels({w2_800off110dirM110,w2_800offM110dir11
     lpM110off110,[-2,0.005,2],othrEi800cut110{:},'-combine');
 plot(w2ei800NGoff110minFF);liny; lz 0 1;keep_figure; %[output:18e59d8f]
 %%
-scuts_path = 'e:\SHARE\Fe\Data\analysis\07_fit_with_multicut_allJ\sel_cuts';
-allJfitfile = fullfile(scuts_path,'NG_FFCutsFits.mat');
-if ~exist('NG_FFCutsFits','var')
-    NG_FFCutsFits = [];
-end
 % <110> cut min FF change direction
 w2ei800NGoff110minFFfit = cut(w2ei800NGoff110minFF,[0,0.005,0.5],[50,4,250],SymopReflection('normvec',[-1,1,0],'offset',[1,1,0]));
 plot(w2ei800NGoff110minFFfit);lz 0 1; keep_figure; %[output:6af38a5a]

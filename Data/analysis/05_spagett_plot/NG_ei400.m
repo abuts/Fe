@@ -13,17 +13,18 @@ plot(w2_000a);liny; lz 0 2;keep_figure; %[output:0823464a]
 w2_000b = cut(src400sym,line_proj('offset',[0,0,1]),[-0.1,0.1],0.04,0.04,[45,55]);
 plot(w2_000b);lz 0 2; keep_figure; %[output:171c725a]
 
-data_path = 'e:\SHARE\Fe\Data\analysis\06_fit_with_J0\sym4D_cutsAndFits\' %[output:88164110]
-fit_cuts_file = 'multicuts_fit_dataNG_ei400meV.mat' %[output:7fe5f879]
-cuts_res_file = fullfile(data_path,fit_cuts_file);
-if ~exist('cuts2fit400NG','var')
-    cuts2fit400NG = recover_cuts_2fit(cuts_res_file,'cuts2fit400NG');
-end
+%[output:88164110] %[output:7fe5f879]
 hc.log_level = ll;
+
+cuts2fit400NG  = recover_masks_file('cuts2fit400NG');
 
 othrEi400cut110 = {[-0.1,0.1],[-0.1,0.1],[0,2,260]};
 file = src400sym.full_filename %[output:4c828ed2]
 [~,fname] = fileparts(file);
+
+% retrieve selected cuts used for further fitting
+[NG_FFCutsFits,allJfitfile] = recover_selected_cuts('NG_FFCutsFits');
+
 %%
 hc.log_level = -2;
 e0=150;
@@ -51,11 +52,7 @@ cuts2fit400NG.all_cff_cuts = {w2_400NGfit};
 save(cuts_res_file,'cuts2fit400NG','-v7.3');
 %%
 % <110> min FF change cut
-scuts_path = 'e:\SHARE\Fe\Data\analysis\07_fit_with_multicut_allJ\sel_cuts';
-allJfitfile = fullfile(scuts_path,'NG_FFCutsFits.mat');
-if ~exist('NG_FFCutsFits','var')
-    NG_FFCutsFits = [];
-end
+
 w2_400NGfits = cut(w2_400NGfit,[0,0.005,0.5],[10,2,175],SymopReflection('normvec',[-1,1,0],'offset',[1,1,0]));
 plot(w2_400NGfits);lz 0 1; keep_figure; %[output:778c9548]
 

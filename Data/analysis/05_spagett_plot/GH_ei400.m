@@ -14,16 +14,12 @@ w2_000b = cut(src400sym,line_proj('offset',[0,0,1]),[-0.1,0.1],0.04,0.04,[45,55]
 plot(w2_000b);lz 0 2; keep_figure; %[output:460a2484]
 %
 hc.log_level = ll;
-% despite it is the result, its nince to have it from the start to
-% have existing masks ready
-data_path = 'e:\SHARE\Fe\Data\analysis\06_fit_with_J0\sym4D_cutsAndFits\' %[output:2d63fdec]
-fit_cuts_file = 'multicuts_fit_dataGH_ei400meV.mat' %[output:6296c5cc]
-proc_cuts_file = fullfile(data_path,fit_cuts_file);
-if ~exist('cuts2fit400GH','var')
-    cuts2fit400GH = recover_cuts_2fit(proc_cuts_file,'cuts2fit400GH');
-end
-
+%[output:2d63fdec] %[output:6296c5cc]
 hc.log_level = -2;
+
+% retrieve selected cuts and masks used to improve the cuts
+cuts2fit400GH  = recover_masks_file('cuts2fit400GH');
+
 
 
 ei =190;
@@ -38,14 +34,9 @@ keep_figure; %[output:8a3853eb]
 hc.log_level = ll;
 other_ranges400 = {[-0.1,0.1],[-0.1,0.1],[0,4,360]};
 %
-scuts_path = 'e:\SHARE\Fe\Data\analysis\07_fit_with_multicut_allJ\sel_cuts';
-allJfitfile = fullfile(scuts_path,'GH_FFCutsFits.mat');
-if ~exist('GH_FFCutsFits','var') && isfile(allJfitfile)
-    ld = load(allJfitfile);
-    GH_FFCutsFits = ld.fit_src_struc;
-else
-    GH_FFCutsFits = [];
-end
+
+% retrieve selected cuts used for further fitting
+[GH_FFCutsFits,allJfitfile] = recover_selected_cuts('GH_FFCutsFits');
 %%
 hc.log_level = -2;
 
