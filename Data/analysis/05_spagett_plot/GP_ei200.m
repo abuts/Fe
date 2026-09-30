@@ -12,15 +12,16 @@ w2_000b = cut(src200sym,line_proj('offset',[0,0,1]),[-0.1,0.1],0.04,0.04,[45,55]
 plot(w2_000b);lz 0 1; keep_figure; %[output:3bb16a47]
 
 
-% retrieve selected cuts and masks used to improve the cuts %[output:0c3edc9f] %[output:5c3cac6c]
-cuts2fit200GP  = recover_masks_file('cuts2fit200GP');
-% retrieve selected cuts used for further fitting
-[GP_FFCutsFits,allJfitfile] = recover_selected_cuts('GP_FFCutsFits');
+%[output:0c3edc9f] %[output:5c3cac6c]
 hc.log_level = ll;
 
 othrEi200cut111 = {[-0.1,0.1],[-0.1,0.1],[0,2,150]};
 file = src200sym.full_filename %[output:537013d6]
-[~,fname] = fileparts(file);
+[~,fname200] = fileparts(file);
+% recover masks not to draw them again
+[cuts2fit200GP,cuts_res_file]  = recover_selected_cuts('cuts2fit200GP','e:\SHARE\Fe\Data\analysis\06_fit_with_J0\sym4D_cutsAndFits');
+% retrieve selected cuts used for further fitting
+[GP_FFCutsFits,allJfitfile] = recover_selected_cuts('GP_FFCutsFits','e:\SHARE\Fe\Data\analysis\07_fit_with_multicut_allJ\sel_cuts');
 
 %%
 % generic awarenes about the system. Rotation plane
@@ -42,14 +43,14 @@ liny %[output:0a1c6f4d]
 
 lp111m = line_proj([-1,1,1],[-1,-1,0],'offset',[1,1,0]);
 w2_200off110m = cut(src200sym,lp111m,[0,0.01,1],othrEi200cut111{:});
-w2_200off110m.full_filename = [fname,', w2_200off110m'];
+w2_200off110m.full_filename = [fname200,', w2_200off110m'];
 fh= plot(w2_200off110m); lz 0 4; %[output:435539d5]
 [w2_200off110mf,cuts2fit200GP] = draw_masks_helper(fh,cuts2fit200GP,'msk110_dir_m111',1);
 plot(w2_200off110mf); lz 0 1;keep_figure %[output:435539d5]
 %
 lp111p = line_proj([1,-1,1],[1,1,0],'offset',[1,1,0]);
 w2_200off110p = cut(src200sym,lp111p,[0,0.01,1],othrEi200cut111{:});
-w2_200off110p.full_filename = [fname,', w2_200off110p'];
+w2_200off110p.full_filename = [fname200,', w2_200off110p'];
 fh = plot(w2_200off110p); lz 0 4; %[output:2cb5e6ef]
 [w2_200off110pf,cuts2fit200GP] = draw_masks_helper(fh,cuts2fit200GP,'msk110_dir_p111',1);
 plot(w2_200off110mf); lz 0 1;keep_figure; %[output:2cb5e6ef]
@@ -84,7 +85,7 @@ liny %[output:930d419c]
 
 lp111ma = line_proj([1,1,1],[1,-1,0],'offset',[1,1,0]);
 w2_200off110maf = cut(src200sym,lp111ma,[0,0.005,1],othrEi200cut111{:});
-w2_200off110maf.full_filename = [fname,', w2_200off110maxFF'];
+w2_200off110maf.full_filename = [fname200,', w2_200off110maxFF'];
 fh= plot(w2_200off110maf); lz 0 4; %[output:02d7ed0c]
 [w2_200off110maff,cuts2fit200GP] = draw_masks_helper(fh,cuts2fit200GP,'msk110_dir_111',1);
 plot(w2_200off110maff); lz 0 1;keep_figure %[output:02d7ed0c]
@@ -103,14 +104,14 @@ liny %[output:1fff6b2f]
 
 lp111m2 = line_proj([-1,1,1],[-1,-1,0],'offset',[2,0,0]);
 w2_200off200m = cut(src200sym,lp111m2,[0,0.01,1],othrEi200cut111{:});
-w2_200off200m.full_filename = [fname,', w2_200off200m'];
+w2_200off200m.full_filename = [fname200,', w2_200off200m'];
 fh= plot(w2_200off200m); lz 0 4; %[output:9ef2dd5f]
 [w2_200off200mf,cuts2fit200GP] = draw_masks_helper(fh,cuts2fit200GP,'msk200_dir_m111',1);
 plot(w2_200off110mf); lz 0 1;keep_figure %[output:9ef2dd5f]
 %
 lp111p2 = line_proj([1,-1,1],[1,1,0],'offset',[0,2,0]);
 w2_200off200p = cut(src200sym,lp111p2,[0,0.01,1.5],othrEi200cut111{:});
-w2_200off200p.full_filename = [fname,', w2_200off200p'];
+w2_200off200p.full_filename = [fname200,', w2_200off200p'];
 fh = plot(w2_200off200p); lz 0 4; %[output:1453a145]
 [w2_200off200pf,cuts2fit200GP] = draw_masks_helper(fh,cuts2fit200GP,'msk200_dir_p111',1);
 plot(w2_200off200pf); lz 0 1;keep_figure; %[output:1453a145]
@@ -141,14 +142,14 @@ liny %[output:5b333e5c]
 
 lp111ma2 = line_proj([1,1,1],[1,-1,0],'offset',[2,0,0]);
 w2_200off200ma = cut(src200sym,lp111ma2,[0,0.005,1],othrEi200cut111{1:2},[0,2,165]);
-w2_200off200ma.full_filename = [fname,', w2_200off200ma'];
+w2_200off200ma.full_filename = [fname200,', w2_200off200ma'];
 fh= plot(w2_200off200ma); lz 0 4; %[output:9063a9ce]
 [w2_200off110maff,cuts2fit200GP] = draw_masks_helper(fh,cuts2fit200GP,'msk200_dir_111',1);
 plot(w2_200off110maff); lz 0 1;keep_figure %[output:9063a9ce]
 %
 lp111pma2 = line_proj([1,1,1],[1,-1,0],'offset',[0,2,0]);
 w2_200off200pma = cut(src200sym,lp111p2,[0,0.005,1.5],othrEi200cut111{1:2},[0,2,155]);
-w2_200off200pma.full_filename = [fname,', w2_200off200pMaff'];
+w2_200off200pma.full_filename = [fname200,', w2_200off200pMaff'];
 fh = plot(w2_200off200pma); lz 0 4; %[output:68ccd341]
 [w2_200off200pmaf,cuts2fit200GP] = draw_masks_helper(fh,cuts2fit200GP,'msk020_dir_111',2);
 plot(w2_200off200pmaf); lz 0 1;keep_figure; %[output:68ccd341]
@@ -225,7 +226,7 @@ targ_proj.offset = [0,0,0];
 w2_400Sum = sqw_op_bin_pixels(sources,@move_all_to_proj,{src_proj}, ...
     targ_proj,[0,0.005,0.5],[-0.1,0.1],[-0.1,0.1],[0,4,450], ...
     '-combine');
-w2_400Sum.full_filename = [fname,',  ei400_allSym; bg_removed; ff_corrected'];
+w2_400Sum.full_filename = [fname200,',  ei400_allSym; bg_removed; ff_corrected'];
 
 plot(w2_400Sum); lz 0 1;keep_figure; %[output:48102594]
 %%

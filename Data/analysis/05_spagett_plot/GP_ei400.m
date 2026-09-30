@@ -12,15 +12,15 @@ plot(w2_000b);lz 0 1; keep_figure; %[output:3179c6e2]
 
 hc.log_level = ll; %[output:8e9da991] %[output:180f73de]
 
-% retrieve selected cuts and masks used to improve the cuts
-cuts2fit400GP  = recover_masks_file('cuts2fit400GP');
-
 
 othrEi400cut111 = {[-0.1,0.1],[-0.1,0.1],[0,2,250]};
 file = src400sym.full_filename %[output:21a0a3e4]
 [~,fname400] = fileparts(file);
+
+% recover masks not to draw them again
+[cuts2fit400GP,cuts_res_file]  = recover_selected_cuts('cuts2fit400GP','e:\SHARE\Fe\Data\analysis\06_fit_with_J0\sym4D_cutsAndFits');
 % retrieve selected cuts used for further fitting
-[GP_FFCutsFits,allJfitfile] = recover_selected_cuts('GP_FFCutsFits');
+[GP_FFCutsFits,allJfitfile] = recover_selected_cuts('GP_FFCutsFits','e:\SHARE\Fe\Data\analysis\07_fit_with_multicut_allJ\sel_cuts');
 
 %%
 hc.log_level = -2;

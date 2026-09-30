@@ -16,14 +16,16 @@ plot(w2_000b);lz 0 2; keep_figure; %[output:171c725a]
 %[output:88164110] %[output:7fe5f879]
 hc.log_level = ll;
 
-cuts2fit400NG  = recover_masks_file('cuts2fit400NG');
-
 othrEi400cut110 = {[-0.1,0.1],[-0.1,0.1],[0,2,260]};
 file = src400sym.full_filename %[output:4c828ed2]
 [~,fname] = fileparts(file);
 
+% recover masks not to draw them again
+[cuts2fit400NG,masks_file]  = recover_selected_cuts('cuts2fit400NG','e:\SHARE\Fe\Data\analysis\06_fit_with_J0\sym4D_cutsAndFits');
 % retrieve selected cuts used for further fitting
-[NG_FFCutsFits,allJfitfile] = recover_selected_cuts('NG_FFCutsFits');
+[NG_FFCutsFits,allJfitfile] = recover_selected_cuts('NG_FFCutsFits','e:\SHARE\Fe\Data\analysis\07_fit_with_multicut_allJ\sel_cuts');
+%%
+
 
 %%
 hc.log_level = -2;
@@ -49,7 +51,7 @@ plot(w2_400NGfit); lz 0 1; keep_figure; %[output:1a5868f9]
 
 cuts2fit400NG.all_cff_cuts = {w2_400NGfit};
 %%
-save(cuts_res_file,'cuts2fit400NG','-v7.3');
+save(masks_file,'cuts2fit400NG','-v7.3');
 %%
 % <110> min FF change cut
 

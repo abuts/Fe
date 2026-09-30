@@ -4,7 +4,8 @@ if ~exist('force_save','var')
     force_save = false;
 end
 
-if isempty(fit_src_struc)
+fnames = fieldnames(fit_src_struc);
+if isempty(fnames) || (isscalar(fnames) && strcmp(fnames{1},'data_name'))
     if isfile(Jfitfile)
         ld = load(Jfitfile);
         fit_src_struc = ld.fit_src_struc;

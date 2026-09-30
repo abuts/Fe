@@ -17,9 +17,10 @@ othrEi800cut110 = {[-0.1,0.1],[-0.1,0.1],[0,4,500]};
 file = src800sym.full_filename %[output:1989d97b]
 [~,fname] = fileparts(file);
 
-cuts2fit800NG  = recover_masks_file('cuts2fit800NG');
+% recover masks not to draw them again
+[cuts2fit800NG,masks_file]  = recover_selected_cuts('cuts2fit800NG','e:\SHARE\Fe\Data\analysis\06_fit_with_J0\sym4D_cutsAndFits\');
 % retrieve selected cuts used for further fitting
-[NG_FFCutsFits,allJfitfile] = recover_selected_cuts('NG_FFCutsFits');
+[NG_FFCutsFits,allJfitfile] = recover_selected_cuts('NG_FFCutsFits','e:\SHARE\Fe\Data\analysis\07_fit_with_multicut_allJ\sel_cuts');
 %%
 
 % make all cuts in <110> directions, around <110> symmetry-related Braggs
@@ -47,7 +48,7 @@ w2_800alls = cut(src800sym,line_proj([-1,1,0],[1,1,0],'offset',[1,1,0]),[-1,0.04
 plot(w2_800alls); lz 0 1;keep_figure; %[output:440e4933]
 
 %%
-save(cuts_res_file,'cuts2fit800NG');
+save(masks_file,'cuts2fit800NG');
 %%
 w2_800 = cut(src800,line_proj([-1,1,0],[1,1,0],'offset',[1,1,0]),[-2,0.04,2],othrEi800cut110{:});
 plot(w2_800);lz 0 1;liny; keep_figure %[output:933e7815]

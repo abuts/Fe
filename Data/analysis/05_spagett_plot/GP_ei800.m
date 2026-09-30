@@ -17,10 +17,11 @@ hc.log_level = ll;
 
 all111CutPar800 = {[-0.1,0.1],[-0.1,0.1],[0,4,600]};
 
-% retrieve selected cuts and masks used to improve the cuts
-cuts2fit800GP  = recover_masks_file('cuts2fit800GP');
+% recover masks not to draw them again
+[cuts2fit800GP,cuts_res_file]  = recover_selected_cuts('cuts2fit800GP','e:\SHARE\Fe\Data\analysis\06_fit_with_J0\sym4D_cutsAndFits');
 % retrieve selected cuts used for further fitting
-[GP_FFCutsFits,allJfitfile] = recover_selected_cuts('GP_FFCutsFits');
+[GP_FFCutsFits,allJfitfile] = recover_selected_cuts('GP_FFCutsFits','e:\SHARE\Fe\Data\analysis\07_fit_with_multicut_allJ\sel_cuts');
+
 %%
 hc.log_level = -2;
 
