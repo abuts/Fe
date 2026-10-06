@@ -7,7 +7,7 @@ function plot_fp_var(separate_figures,color,varargin)
 %
 
 ranges = {[0.5,2],[10,70],[0,200]};
-types = {'o','x','+','d'};
+types = {'o','x','+','d','*'};
 gp = genieplot.instance();
 gp.marker_types = types;
 acolor(color);
@@ -30,7 +30,11 @@ for j=1:numel(varargin)
 
     ly(range(1),range(2))
     keep_figure;
-    lg =  {'<110> minFF','<200> minFF','<110> max FF','<200> max FF'};
+    if numel(varagin)>4
+        lg =  {'<110> minFF','<200> minFF','<110> mid FF','<110> max FF','<200> max FF'};        
+    else
+        lg =  {'<110> minFF','<200> minFF','<110> max FF','<200> max FF'};
+    end
     lg = lg(valid);
     legend(lg);
 end

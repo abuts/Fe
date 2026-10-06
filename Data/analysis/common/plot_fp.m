@@ -1,7 +1,7 @@
 function plot_fp(separate_fig,title,rg,varargin)
 % Helper function to plot S,J,Gamma dataset arrays for different
 % incident energies
-colors = {'g','b','r','k'};
+colors = {'g','b','r','k','y'};
 if isa(rg,'IX_dataset_1d')
     ranges = {[0.2,2],[10,70],[0,200]};
     argi = [{rg},varargin(:)'];
@@ -33,8 +33,10 @@ for j=1:numel(argi )
     keep_figure;
     if numel(ds) == 3
         lg = {'Ei200','Ei400','Ei800'};        
-    else
+    elseif numel(ds) == 4
         lg = {'Ei200','Ei400','Ei800min','Ei800max'};
+    else
+        lg = {'Ei200','Ei400','Ei800min','Ei800mid','Ei800max'};        
     end
     legend(lg(1:numel(ds)));
 end

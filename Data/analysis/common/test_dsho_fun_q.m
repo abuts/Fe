@@ -1,6 +1,8 @@
 function weight = test_dsho_fun_q(q,en,par,varargin)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%Function models scattering pattern along q-direction 
+% to be normalized by one
+%
+%
 enAv  = par(2);
 gamma = par(3);
 A = par(4);

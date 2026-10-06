@@ -57,14 +57,14 @@ spp.Ei800_off200GPmaxNbg = GP_FFCutsFits.Ei800_off200GPmaxFF - ...
 
 
 %%
-cuts_ranges = containers.Map();
-cuts_ranges('Ei200_off110GPminNbg')  = [0;110];
-cuts_ranges('Ei400_off110GPminNbg') = [110;160];
-cuts_ranges('Ei800_off110GPminNbg') = [160;240];
-cuts_ranges('Ei800_off200GPmaxNbg') = [240;460];
+cuts_rangesGP = containers.Map();
+cuts_rangesGP('Ei200_off110GPminNbg')  = [0;110];
+cuts_rangesGP('Ei400_off110GPminNbg') = [110;160];
+cuts_rangesGP('Ei800_off110GPminNbg') = [160;240];
+cuts_rangesGP('Ei800_off200GPmaxNbg') = [240;460];
 
-[w2,fh] = build_disp_in_dir_with_ds(spp,cuts_ranges,[0,0.01,0.5],false); %[output:877db28f]
-data_ranges = cuts_ranges.values;
+[w2,fh] = build_disp_in_dir_with_ds(spp,cuts_rangesGP,[0,0.01,0.5],false); %[output:877db28f]
+data_ranges = cuts_rangesGP.values;
 data_ranges  = [data_ranges{:}];
 pan_data = struct('data_ranges',data_ranges,'combined_ds',w2);
 save('GP_0p5_0p5_0p5_data','pan_data');
@@ -119,8 +119,8 @@ plot(spp.Ei800_off110GPminNbg); lz 0 1; keep_figure %[output:515e4bc4]
 spp.Ei800_off200GPmaxNbg = magi.correct_mag_ff(spp.Ei800_off200GPmaxNbg);
 plot(spp.Ei800_off200GPmaxNbg); lz 0 1; keep_figure %[output:552bc267]
 
-[w2,fh] = build_disp_in_dir_with_ds(spp,cuts_ranges,0.01,0.5,false); %[output:3192a9ef] %[output:486800d7]
-data_ranges = cuts_ranges.values;
+[w2,fh] = build_disp_in_dir_with_ds(spp,cuts_rangesGP,0.01,0.5,false); %[output:3192a9ef] %[output:486800d7]
+data_ranges = cuts_rangesGP.values;
 data_ranges  = [data_ranges{:}];
 pan_data = struct('data_ranges',data_ranges,'combined_ds',w2);
 

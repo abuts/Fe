@@ -24,12 +24,15 @@ if ~iscell(cuts_list)
     cuts_list = {cuts_list};
 end
 if contains(selectCuts,'Ei200')
+    min_Ei = 30;    
     mi = maps_instrument(200,600,'S');
 end
 if contains(selectCuts,'Ei400')
+    min_Ei = 40;    
     mi = maps_instrument(401,600,'S');
 end
 if contains(selectCuts,'Ei800')
+    min_Ei =70;    
     mi = maps_instrument(786,600,'S');
 end
 sample=IX_sample(true,[1,0,0],[0,1,0],'cuboid',[0.04,0.03,0.02]);
