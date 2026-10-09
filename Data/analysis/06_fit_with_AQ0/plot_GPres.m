@@ -1,15 +1,13 @@
 %root_path = fileparts(mfilename("fullpath"));
 %root_path = pwd;
-scuts_path = 'e:\SHARE\Fe\Data\analysis\07_fit_with_multicut_allJ\sel_cuts';
-Cutfitfile = fullfile(scuts_path,'GP_FFCutsFits.mat');
 
-if ~exist('GP_FFCutsFits','var')
-    ld = load(Cutfitfile);
-    GP_FFCutsFits = ld.fit_src_struc;
-end
+% retrieve selected cuts used for further fitting
+GP_FFCutsFits = recover_selected_cuts('GP_FFCutsFits','e:\SHARE\Fe\Data\analysis\07_fit_with_multicut_allJ\sel_cuts');
+
 fit_res_field = 'all_fit_par';
-separate_fig  = false; % if true, detach figures from live script
+separate_fig  = true; % if true, detach figures from live script
 %%
+
 % Plot S,J0,gamma as function of direction and incident energy
 
 [S_op11Ei200,J_op11Ei200,Gam_op11Ei200,S_op11Ei200q] = extract_fit_par( ...

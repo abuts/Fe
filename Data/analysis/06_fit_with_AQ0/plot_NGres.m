@@ -1,14 +1,10 @@
 %root_path = fileparts(mfilename("fullpath"));
 %root_path = pwd;
-scuts_path = 'e:\SHARE\Fe\Data\analysis\07_fit_with_multicut_allJ\sel_cuts';
-Cutfitfile = fullfile(scuts_path,'NG_FFCutsFits.mat');
+NG_FFCutsFits = recover_selected_cuts('NG_FFCutsFits','e:\SHARE\Fe\Data\analysis\07_fit_with_multicut_allJ\sel_cuts');
 
-if ~exist('NG_FFCutsFits','var')
-    ld = load(Cutfitfile);
-    NG_FFCutsFits = ld.fit_src_struc;
-end
 fit_res_field = 'all_fit_par';
 separate_fig  = true; % if true, detach figures from live script
+
 %%
 [S_op11Ei200,J_op11Ei200,Gam_op11Ei200,S_op11Ei200q] = extract_fit_par( ...
     NG_FFCutsFits.(['Ei200_off110NGminFF_',fit_res_field]));

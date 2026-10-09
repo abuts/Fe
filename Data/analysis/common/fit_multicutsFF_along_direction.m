@@ -39,13 +39,13 @@ J0=34; J1=0; % Fitting with 1J
 %J0=39;
 %J1=35;
 correct_ff = 1;
-gap = 0;    %
+gap = 250;    %
 %gamma = 10; A =1; stiff = 90;
 
 
 %init_fg_params0 = [correct_ff,35,gamma,A, gap, stiff, 0,  0,  0,  0];
 %init_fg_params0 = [correct_ff,T,gamma,Seff0, gap, J0, 5.5,24, 40.,0]
-init_fg_params0 = [correct_ff,8,gamma,Seff0,  0,   J0, J1,  0,  0,  0];
+init_fg_params0 = [correct_ff,8,gamma,Seff0,  gap,   J0, J1,  0,  0,  0];
 init_fg_params = init_fg_params0;
 
 
@@ -65,7 +65,7 @@ for i = 1:N_points
         init_fg_params = all_fit_par{i}.p;
     end
     %init_fg_params(2) = en; % for dsho_fun_q
-    %[fit_obj,fit_par]=fit_single_set(the_2Dcuts,en,half_dE,dE_step,init_fg_params,init_bg_par,true);
+    %[fit_obj,fit_par,figa]=fit_single_set(the_2Dcuts,en,half_dE,dE_step,init_fg_params,init_bg_par,true);
     [fit_obj,fit_par,figa,figb]=fit_single_set_logBg(the_2Dcuts,n_dim2fit,en_range,init_fg_params,do_fit);
     if isempty(fit_obj)
         valid_fits(i) = false;
@@ -87,9 +87,9 @@ all_fit_par = all_fit_par(valid_fits);
 
 if do_fit
     [S_eff,J0_eff,G_eff] = extract_fit_par(all_fit_par );
-    plot(S_eff); keep_figure;
-    plot(J0_eff);keep_figure
-    plot(G_eff); keep_figure;
+    pd(S_eff); ly 0 2; keep_figure;
+    pd(J0_eff);ly 0 200; keep_figure
+    pd(G_eff); ly 0 200; keep_figure;
 
     all_fit_par = [all_fit_par{:}];
     cuts_data.(fit_res_field_name) = all_fit_par;

@@ -21,6 +21,7 @@ function cuts2fit = fit_1DsBg_helper(cuts2fit,source_ds,bg_Qrange,bg_en_range,in
 if ~exist('plot_fit','var')
     plot_fit = true;
 end
+
 w1t = cut(source_ds,bg_Qrange,bg_en_range,'-nopix');
 ds1 = IX_dataset_1d(w1t);
 ds1 = log(ds1);ds1.signal = real(ds1.signal);
