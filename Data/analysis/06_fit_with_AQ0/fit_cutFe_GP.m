@@ -2,7 +2,8 @@
 %root_path = pwd;
 
 % retrieve selected cuts used for further fitting
-[GP_FFCutsFits,CutFitFileGP] = recover_selected_cuts('GP_FFCutsFits','e:\SHARE\Fe\Data\analysis\07_fit_with_multicut_allJ\sel_cuts');
+[GP_FFCutsFits,CutFitFileGP] = recover_selected_cuts('GP_FFCutsFits', ...
+    'e:\SHARE\Fe\Data\analysis\07_fit_with_multicut_allJ\sel_cuts');
 
 %%
 fn = fieldnames(GP_FFCutsFits);
@@ -87,7 +88,7 @@ save(CutFitFileGP,"fit_src_struc",'-v7.3')
 %[appendix]{"version":"1.0"}
 %---
 %[metadata:view]
-%   data: {"layout":"onright","rightPanelPercent":46}
+%   data: {"layout":"onright","rightPanelPercent":28.2}
 %---
 %[output:3783f932]
 %   data: {"dataType":"text","outputData":{"text":"Processing cuts: Ei200_off110GPminFF \n","truncated":false}}

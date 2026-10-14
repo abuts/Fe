@@ -1,4 +1,4 @@
-function [varargout] = extract_fit_par(all_fit_par,idx)
+function [varargout] = extract_fit_par(all_fit_par,idx,varargin)
 %[S_eff,J0_eff,G_eff] = extract_fit_par(all_fit_par,idx)
 %Extract global fit parameters from fit data to plot
 %
@@ -32,8 +32,17 @@ elseif numel(idx)==4
         };
 else
     ii = 1:numel(idx);
-    captions = arrayfun(@(x)(''),ii,UniformOutput=false);
-    units = arrayfun(@(x)(''),ii,UniformOutput=false);
+    if nargin>2
+        captions = {varargin{1}};
+        if numel(varargin) > 1
+            units = {varargin{2}};
+        else
+            units = arrayfun(@(x)(''),ii,UniformOutput=false);
+        end
+    else
+        captions = arrayfun(@(x)(''),ii,UniformOutput=false);
+        units = arrayfun(@(x)(''),ii,UniformOutput=false);
+    end    
 end
 n_elem  = numel(all_fit_par);
 cut_en  = zeros(1,n_elem);
