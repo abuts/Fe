@@ -31,7 +31,7 @@ for j=1:n_samples
     else
         range2  = [en_range(1),en_range(3)];
     end
-    sub_cuts{j} = cut(the_2Dcuts{j},0.04,range2 );
+    sub_cuts{j} = cut(the_2Dcuts{j},0.02,range2 );
     valid(j) = sub_cuts{j}.num_pixels>sum(free_sw_param);
     if valid(j)
         nplots = nplots+1;

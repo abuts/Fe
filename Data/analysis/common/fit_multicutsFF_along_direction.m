@@ -39,7 +39,7 @@ J0=34; J1=0; % Fitting with 1J
 %J0=39;
 %J1=35;
 correct_ff = 1;
-gap = 250;    %
+gap = 0;    %
 %gamma = 10; A =1; stiff = 90;
 
 

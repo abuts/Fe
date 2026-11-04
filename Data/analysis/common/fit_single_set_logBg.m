@@ -5,7 +5,7 @@ function [fit_obj,fit_par,figa,figb]=fit_single_set_logBg(the_2Dcuts,n_dim2fit,e
 %free_sw_param  =  [0          0, 1   ,1   , 0,    1, 0,   0, 0,  0];
 
 %init_fg_params = [coffect_ff,T,gamma,Seff, gap, J0, J1, J2, J3, J4];
-free_sw_param  =  [0          0, 1   ,1   , 1,    1, 0,   0,  0,  0];
+free_sw_param  =  [0          0, 1   ,1   , 0,    1, 0,   0,  0,  0];
 if nargout == 4
     eval_sw = true;
 else
