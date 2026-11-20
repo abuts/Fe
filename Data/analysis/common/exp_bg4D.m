@@ -1,7 +1,7 @@
 function weight=exp_bg4D(~,~,~,en,p,varargin)
-% Linear background function
+% Interpolating background function
 %
-%   >> y = exp_bg2D (x,y,p)
+%   >> y = exp_bg4D (x,y,p)
 %
 % Input:
 % =======
@@ -10,7 +10,7 @@ function weight=exp_bg4D(~,~,~,en,p,varargin)
 % Output:
 % ========
 %   y   Array of calculated y-axis values
-
+par = varargin{1};
 x = par.x;
 y = par.signal;
 if numel(x) == numel(y)+1
